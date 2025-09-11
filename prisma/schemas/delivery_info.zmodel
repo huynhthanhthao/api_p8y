@@ -1,0 +1,15 @@
+import 'invoice'
+
+model DeliveryInfo {
+  invoiceId String   @id @unique @map("invoice_id") @db.Uuid
+  address   String?  @map("address") @db.VarChar(255)
+  ward      String?  @map("ward") @db.VarChar(100)
+  district  String?  @map("district") @db.VarChar(100)
+  province  String?  @map("province") @db.VarChar(100)
+  note      String?  @map("note") @db.Text
+  
+  // Relations
+  invoice   Invoice? @relation(fields: [invoiceId], references: [id])
+  @@map("delivery_infos")
+  @@allow('all', true)
+}

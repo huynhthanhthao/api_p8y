@@ -1,0 +1,17 @@
+import 'role'
+import 'permission_group'
+
+// Permission model
+model Permission {
+  code      String          @id @db.VarChar(50)
+  name      String          @db.VarChar(255)
+  roleId    String          @map("role_id") @db.Uuid
+  groupCode String          @map("group_code") @db.VarChar(50)
+
+  // Relations
+  role      Role            @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  group     PermissionGroup @relation(fields: [groupCode], references: [code])
+
+  @@map("permissions")
+  @@allow('all', true)
+}

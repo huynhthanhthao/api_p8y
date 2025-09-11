@@ -1,0 +1,19 @@
+import 'invoice'
+
+model TransportInfo {
+  invoiceId     String   @id @db.Uuid() @map("invoice_id") @unique // ID hóa đơn
+  
+  weight        Float?   @map("weight") @default(0)               // Khối lượng (gram)
+  length        Float?   @map("length") @default(0)               // Dài (cm)
+  width         Float?   @map("width") @default(0)                // Rộng (cm)
+  height        Float?   @map("height") @default(0)               // Cao (cm)
+  weightUnit    String?  @map("weight_unit") @default("gram")     // Đơn vị khối lượng (gram/kg)
+  dimensionUnit String?  @map("dimension_unit") @default("cm") // Đơn vị kích thước (cm/m)
+  note          String?  @map("note") @db.VarChar(500)        // Ghi chú vận chuyển
+
+  // Relations
+  invoice       Invoice? @relation(fields: [invoiceId], references: [id])
+
+  @@map("transport_infos")
+  @@allow('all', true)
+}

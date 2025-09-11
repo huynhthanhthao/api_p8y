@@ -1,0 +1,25 @@
+import 'base'
+import 'branch'
+import 'customer'
+import 'user'
+import 'customer_group'
+import 'supplier'
+import 'supplier_group'
+
+// Store model
+model Store {
+  code           String          @unique @db.VarChar(50) @id
+  name           String          @db.VarChar(255)
+  logo           String?         @db.VarChar(500)
+  expiryAt       DateTime?       @map("expiry_at") @db.Timestamptz(6)
+
+  // Relations
+  branches       Branch[]
+  users          User[]
+  customers      Customer[]
+  customerGroups CustomerGroup[]
+  suppliers      Supplier[]
+  supplierGroups SupplierGroup[]
+
+  @@map("stores")
+}

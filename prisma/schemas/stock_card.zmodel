@@ -1,0 +1,21 @@
+import 'product'
+import 'stock_transaction'
+import 'base'
+
+model StockCard extends BaseModel {
+  productId        String            @db.Uuid
+  transId          String?           @db.Uuid
+  orderId          String?           @db.Uuid
+
+  type             String            @db.VarChar(20) // ORDER, Tran
+  inQty            Float             @default(0)
+  outQty           Float             @default(0)
+  balance          Float             @default(0)
+  note             String?           @db.Text
+
+  // Relations
+  product          Product           @relation(fields: [productId], references: [id])
+  stockTransaction StockTransaction? @relation(fields: [transId], references: [id])
+
+  @@map("stock_cards")
+}

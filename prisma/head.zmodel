@@ -1,0 +1,18 @@
+generator client {
+  provider      = "prisma-client-js"
+  engineType    = "binary"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator dbml {
+  provider = "prisma-dbml-generator"
+  output     = "./dbml"
+  projectName = "IIT P8Y"
+  projectDatabaseType = "PostgreSQL"
+  outputName = "IIT_P8Y.dbml"
+}

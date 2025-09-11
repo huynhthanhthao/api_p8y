@@ -1,0 +1,14 @@
+import 'base'
+import 'user'
+import 'permission'
+
+// Role model
+model Role extends BaseModel {
+  name        String       @db.VarChar(255)
+
+  // Relations
+  users       User[]
+  permissions Permission[]
+
+  @@map("roles")
+}

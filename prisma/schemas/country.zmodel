@@ -1,0 +1,12 @@
+import 'base'
+import 'medicine_info'
+
+model Country {
+  code          String         @unique @db.VarChar(10)   // ISO code: VN, US, JP
+  name          String         @db.VarChar(100)         // Tên quốc gia
+
+  // Relations
+  medicineInfos MedicineInfo[]
+
+  @@map("countries")
+}

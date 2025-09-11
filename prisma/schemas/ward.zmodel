@@ -1,0 +1,18 @@
+import 'branch'
+import 'province'
+
+model Ward {
+  code          Int      @id
+  name          String   @db.VarChar(100)
+  codeName      String   @map("code_name") @db.VarChar(50)
+  divisionType  String   @map("division_type") @db.VarChar(50)
+  shortCodeName String   @map("short_code_name") @db.VarChar(50)
+  provinceCode  Int      @map("province_code")
+
+  // Relations
+  province      Province @relation(fields: [provinceCode], references: [code])
+  branches      Branch[]
+
+  @@map("wards")
+  @@allow('all', true)
+}

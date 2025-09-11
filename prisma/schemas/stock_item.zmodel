@@ -1,0 +1,18 @@
+import 'base'
+import 'stock_transaction'
+import 'product'
+
+model StockItem  extends BaseModel {
+  transId           String           @db.Uuid
+  productId         String           @db.Uuid
+  quantity          Float            @default(0)    // Quantity
+  unitPrice         Float            @default(0)    // Unit price
+  total             Float            @default(0)    // Total amount
+  batchCode         String?          @db.VarChar(50)  // Batch number
+
+  // relations
+  product           Product          @relation(fields: [productId], references: [id])
+  stockTransactions StockTransaction @relation(fields: [transId], references: [id], onDelete: Cascade)
+
+  @@map("stock_items")
+}

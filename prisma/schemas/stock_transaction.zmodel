@@ -1,0 +1,20 @@
+import 'base'
+import 'branch'
+import 'stock_item'
+import 'stock_card'
+
+model StockTransaction extends BaseModel {
+  code       String      @unique @db.VarChar(50)    // Transaction code
+  type       String      @db.VarChar(20)            // IN, OUT, ADJUST
+  status     String      @db.VarChar(20) @default("DRAFT")
+  transDate  DateTime    @default(now())            // Transaction date
+  note       String?     @db.Text
+  branchId   String      @map("branch_id") @db.Uuid
+
+  // Relations
+  branch     Branch      @relation(fields: [branchId], references: [id])
+  items      StockItem[]
+  stockCards StockCard[]  
+
+  @@map("stock_transactions")
+}

@@ -1,0 +1,1 @@
+export const PAGINATE_DEFAULT_PER_PAGE = 20

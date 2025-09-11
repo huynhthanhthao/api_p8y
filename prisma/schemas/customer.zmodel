@@ -1,0 +1,36 @@
+import 'base'
+import 'store'
+import 'customer_group'
+import 'invoice'
+
+model Customer extends BaseModel {
+  name              String         @db.VarChar(255)
+  code              String         @unique @db.VarChar(50)
+  email             String?        @db.VarChar(255)
+  phone             String?        @db.VarChar(20)
+  birthday          DateTime?      @db.Date
+  gender            String?        @db.VarChar(20)
+  avatarUrl         String?        @map("avatar_url") @db.VarChar(500)
+  note              String?        @db.VarChar(500)
+
+  // Invoice information
+  invBuyerName      Boolean?       @map("inv_buyer_name")
+  invTaxCode        String?        @map("inv_tax_code") @db.VarChar(50)
+  invAddress        String?        @map("inv_address") @db.VarChar(500)
+  invProvince       String?        @map("inv_province") @db.VarChar(100)
+  invWard           String?        @map("inv_ward") @db.VarChar(100)
+  invIdentityNumber String?        @map("inv_identity_number") @db.VarChar(50)
+  invEmail          String?        @map("inv_email") @db.VarChar(255)
+  invPhone          String?        @map("inv_phone") @db.VarChar(20)
+  invBankName       String?        @map("inv_bank_name") @db.VarChar(255)
+  invBankAccount    String?        @map("inv_bank_account") @db.VarChar(50)
+  invBudgetUnitCode String?        @map("inv_budget_unit_code") @db.VarChar(50)
+
+  // Relations
+  customerGroup     CustomerGroup? @relation(fields: [customerGroupId], references: [id])
+  customerGroupId   String?        @map("customer_group_id") @db.Uuid
+  stores            Store[]
+  invoices          Invoice[] 
+
+  @@map("customers")
+}

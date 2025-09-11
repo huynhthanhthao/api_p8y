@@ -1,0 +1,19 @@
+import 'base'
+import 'product'
+
+model ProductUnit extends BaseModel {
+  name       String  @db.VarChar(50)              // Tên đơn vị: cái, lốc, thùng
+  isBase     Boolean @default(false)              // Đơn vị cơ bản
+  conversion Float   @default(1)                  // Quy đổi: VD 1 lốc = 10 cái
+  sku        String? @db.VarChar(100)             // Mã hàng (tự động / nhập tay)
+  barcode    String? @db.VarChar(100)             // Mã vạch
+  costPrice  Float?  @default(0)                  // Giá vốn
+  salePrice  Float?  @default(0)                  // Giá bán
+  isSale     Boolean @map("is_sale") @default(true) // Có bán không
+  productId  String  @map("product_id") @db.Uuid // Id sản phẩm
+
+  // relations
+  product    Product @relation(fields: [productId], references: [id])
+
+  @@map("product_units")
+}

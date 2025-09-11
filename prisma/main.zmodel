@@ -1,0 +1,9 @@
+import 'head'
+
+import './schemas/base'
+import './schemas/store'
+import './schemas/branch'
+import './schemas/permission_group'
+import './schemas/role'
+import './schemas/permission'
+import './schemas/user'

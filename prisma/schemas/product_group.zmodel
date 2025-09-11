@@ -1,0 +1,18 @@
+import 'base'
+import 'branch'
+import 'product'
+
+model ProductGroup extends BaseModel {
+  name     String         @db.VarChar(255)
+  code     String         @db.VarChar(50)
+  parentId String?        @map("parent_id") @db.Uuid
+  branchId String         @map("branch_id") @db.Uuid
+  
+  // Relations
+  branch   Branch         @relation(fields: [branchId], references: [id])
+  parent   ProductGroup?  @relation("ProductGroupToParent", fields: [parentId], references: [id])
+  children ProductGroup[] @relation("ProductGroupToParent")
+  products Product[]
+
+  @@map("product_groups")
+}

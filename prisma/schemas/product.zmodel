@@ -1,0 +1,43 @@
+import 'base'
+import 'branch'
+import 'product_group'
+import 'supplier'
+import 'stock_location'
+import 'product_weight'
+import 'medicine_info'
+import 'product_unit'
+import 'invoice_item'
+import 'stock_card'
+import 'stock_item'
+
+model Product extends BaseModel {
+  name           String          @db.VarChar(255)
+  code           String          @db.VarChar(50)
+  productGroupId String          @map("group_id") @db.Uuid
+  branchId       String          @map("branch_id") @db.Uuid
+  barcode        String?         @db.VarChar(100) @default("")
+  shortName      String?         @map("short_name") @db.VarChar(100) @default("")
+  description    String?         @db.Text @default("")
+
+  salePrice      Float?          @map("sale_price") @default(0)
+  costPrice      Float?          @map("cost_price") @default(0)
+
+  type           String?         @db.VarChar(50) @default("PRODUCT") // PRODUCT, SERVICE, COMBO, MEDICINE
+
+  minStock       Float?          @map("min_stock") @default(0)
+  maxStock       Float?          @map("max_stock") @default(999999999)
+
+
+  // Relations
+  branch         Branch          @relation(fields: [branchId], references: [id])
+  productGroup   ProductGroup?   @relation(fields: [productGroupId], references: [id])
+  productWeight  ProductWeight?
+  medicineInfo   MedicineInfo?
+  productUnits   ProductUnit[]
+  stockLocations StockLocation[]
+  invoiceItems   InvoiceItem[]
+  stockCards     StockCard[]
+  stockItems     StockItem[]
+
+  @@map("products")
+}

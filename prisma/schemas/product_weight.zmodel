@@ -1,0 +1,11 @@
+import 'product'
+
+model ProductWeight {
+  unit      String? @db.VarChar(20) @default("KG")
+  value     Float?  @default(0)
+
+  productId String  @map("product_id") @db.Uuid @unique
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@map("product_weights")
+}

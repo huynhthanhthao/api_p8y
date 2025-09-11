@@ -1,0 +1,15 @@
+import 'base'
+import 'store'
+import 'customer'
+
+model CustomerGroup extends BaseModel {
+  name         String     @db.VarChar(255)
+  discount     Float?     @db.DoublePrecision
+  discountType String?    @db.VarChar(50)
+
+  // Relations
+  stores       Store[]
+  customers    Customer[]
+
+  @@map("customer_groups")
+}
