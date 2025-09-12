@@ -1,14 +1,14 @@
 // src/interface-adapter/controllers/province/province.controller.ts
 import { Controller, Get, Param, Query } from '@nestjs/common'
+import { GetAllProvinceUseCase, GetOneProvinceUseCase } from '@usecases/provinces'
 import { GetAllProvincesRequestDto } from '../dtos/provinces'
-import { GetAllProvinceUseCase, GetOneProvinceUseCase } from 'src/application/usercases/provinces'
 
 @Controller('provinces')
 export class ProvinceController {
   constructor(
     private readonly _getAllProvinceUseCase: GetAllProvinceUseCase,
     private readonly _getOneProvinceUseCase: GetOneProvinceUseCase
-  ) { }
+  ) {}
 
   @Get()
   getAllProvinces(@Query() queryParams: GetAllProvincesRequestDto) {

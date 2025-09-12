@@ -1,16 +1,17 @@
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
-import { PrismaService } from 'src/infrastructure/prisma'
-import { HttpException } from 'src/common/exceptions'
-import { ACCESS_BRANCH_ERROR } from 'src/common/errors'
-import { ACCESS_TOKEN_EXPIRY, REFRESH_TOKEN_EXPIRY } from 'src/common/contants'
+import { PrismaService } from '@infrastructure/prisma'
+import { HttpException } from '@common/exceptions'
+import { ACCESS_BRANCH_ERROR } from '@common/errors'
+import { ACCESS_TOKEN_EXPIRY, REFRESH_TOKEN_EXPIRY } from '@common/constants'
 import {
   AccessBranchRequestDto,
   AccessBranchResponseDto
-} from 'src/interface-adapter/dtos/auth/access-branch.dto'
-import { UserBasicInfo } from 'src/common/types'
-import { getBranchWithUserAccess, getStoreWithAccessibleBranches } from 'src/common/utils'
-import { UserTypeEnum } from 'src/common/enums'
+} from '@interface-adapter/dtos/auth/access-branch.dto'
+import { UserBasicInfo } from '@common/types'
+import { getBranchWithUserAccess, getStoreWithAccessibleBranches } from '@common/utils'
+import { UserTypeEnum } from '@common/enums'
+import { AccessBranchDecodeJWT } from '@common/interfaces'
 
 @Injectable()
 export class AccessBranchUseCase {
@@ -60,7 +61,7 @@ export class AccessBranchUseCase {
   }
 
   private generateTokens(userId: string, storeCode: string, branchId: string) {
-    const payload = { userId, storeCode, branchId }
+    const payload: AccessBranchDecodeJWT = { userId, storeCode, branchId }
 
     const accessToken = this.jwtService.sign(payload, {
       expiresIn: ACCESS_TOKEN_EXPIRY,

@@ -1,14 +1,19 @@
-import { AppService } from './app.service'
-import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
-import { AppController } from './controllers/app.controller'
-import { ProvinceController } from './controllers/province.controller'
-import { GetAllProvinceUseCase, GetOneProvinceUseCase } from 'src/application/usercases/provinces'
-import { PrismaModule, PrismaService } from 'src/infrastructure/prisma'
-import { AuthController } from './controllers/auth.controller'
-import { SignInUseCase, SignUpUseCase } from 'src/application/usercases/auth'
 import { JwtModule } from '@nestjs/jwt'
-import { AccessBranchUseCase } from 'src/application/usercases/auth/access-branch.usecase'
+import { ConfigModule } from '@nestjs/config'
+import { Module } from '@nestjs/common'
+import { AppService } from './app.service'
+import { PrismaModule, PrismaService } from '@infrastructure/prisma'
+import { ProvinceController } from './controllers/province.controller'
+import { AuthController } from './controllers/auth.controller'
+import { AppController } from './controllers/app.controller'
+import {
+  SignInUseCase,
+  SignUpUseCase,
+  AccessBranchUseCase,
+  GetMeUseCase,
+  RefreshTokenUseCase
+} from '@usecases/auth'
+import { GetAllProvinceUseCase, GetOneProvinceUseCase } from '@usecases/provinces'
 
 const useCases = [
   // Province
@@ -18,7 +23,9 @@ const useCases = [
   // Auth
   SignInUseCase,
   SignUpUseCase,
-  AccessBranchUseCase
+  AccessBranchUseCase,
+  GetMeUseCase,
+  RefreshTokenUseCase
 ]
 
 @Module({

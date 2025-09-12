@@ -1,12 +1,12 @@
 import * as bcrypt from 'bcrypt'
-import { PrismaService } from 'src/infrastructure/prisma'
-import { SignUpRequestDto, SignUpResponseDto } from 'src/interface-adapter/dtos/auth'
-import { UserTypeEnum, UserStatusEnum } from 'src/common/enums'
-import { generateStoreCode } from 'src/common/helpers'
-import { HttpException } from 'src/common/exceptions'
+import { PrismaService } from '@infrastructure/prisma'
+import { SignUpRequestDto, SignUpResponseDto } from '@interface-adapter/dtos/auth'
+import { UserTypeEnum, UserStatusEnum } from '@common/enums'
+import { generateStoreCode } from '@common/helpers'
+import { HttpException } from '@common/exceptions'
 import { HttpStatus, Injectable } from '@nestjs/common'
-import { STORE_EXPIRY_DAYS } from 'src/common/contants/time.constant'
-import { SIGNUP_ERROR } from 'src/common/errors'
+import { STORE_EXPIRY_DAYS } from '@common/constants/time.constants'
+import { SIGNUP_ERROR } from '@common/errors'
 
 @Injectable()
 export class SignUpUseCase {

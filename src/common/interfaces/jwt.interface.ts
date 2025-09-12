@@ -3,7 +3,19 @@ export interface RequestAccessBranchJWT extends Request {
   storeCode: string
 }
 
-export interface LoginDecodeJWT {
+export interface SignInDecodeJWT {
+  userId: string
+  storeCode: string
+}
+
+export interface AccessBranchDecodeJWT {
+  branchId: string
+  userId: string
+  storeCode: string
+}
+
+export interface RefreshTokenDecodeJWT {
+  branchId: string
   userId: string
   storeCode: string
 }

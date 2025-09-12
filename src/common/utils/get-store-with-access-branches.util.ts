@@ -1,12 +1,12 @@
-import { PrismaService } from 'src/infrastructure/prisma'
+import { PrismaService } from '@infrastructure/prisma'
 import { StoreWithBranches } from '../types'
 
 export async function getStoreWithAccessibleBranches(
   prisma: PrismaService,
   storeCode: string,
   userId?: string
-): Promise<StoreWithBranches | null> {
-  return prisma.store.findUnique({
+): Promise<StoreWithBranches> {
+  return prisma.store.findUniqueOrThrow({
     where: {
       code: storeCode
     },

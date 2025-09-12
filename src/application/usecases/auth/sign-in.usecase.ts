@@ -1,14 +1,14 @@
 import * as bcrypt from 'bcrypt'
 import { HttpStatus, Injectable } from '@nestjs/common'
-import { PrismaService } from 'src/infrastructure/prisma'
-import { SignInRequestDto, SignInResponseDto } from 'src/interface-adapter/dtos/auth/sign-in.dto'
+import { PrismaService } from '@infrastructure/prisma'
+import { SignInRequestDto, SignInResponseDto } from '@interface-adapter/dtos/auth/sign-in.dto'
 import { JwtService } from '@nestjs/jwt'
-import { UserStatusEnum, UserTypeEnum } from 'src/common/enums'
-import { HttpException } from 'src/common/exceptions'
-import { SIGNIN_ERROR } from 'src/common/errors'
-import { SIGNIN_EXPIRY } from 'src/common/contants'
-import { getStoreWithAccessibleBranches } from 'src/common/utils/get-store-with-access-branches.util'
-import { LoginDecodeJWT } from 'src/common/interfaces'
+import { UserStatusEnum, UserTypeEnum } from '@common/enums'
+import { HttpException } from '@common/exceptions'
+import { SIGNIN_ERROR } from '@common/errors'
+import { SIGNIN_EXPIRY } from '@common/constants'
+import { getStoreWithAccessibleBranches } from '@common/utils/get-store-with-access-branches.util'
+import { SignInDecodeJWT } from '@common/interfaces'
 
 @Injectable()
 export class SignInUseCase {
@@ -60,7 +60,7 @@ export class SignInUseCase {
       {
         userId: user.id,
         storeCode: store.code
-      } as LoginDecodeJWT,
+      } as SignInDecodeJWT,
       { expiresIn: SIGNIN_EXPIRY, secret: process.env.JWT_SECRET_KEY_SIGNUP }
     )
 

@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsUUID } from 'class-validator'
-import { StoreWithBranches, UserBasicInfo } from 'src/common/types'
-import { Branch } from 'src/common/types/branch.type'
+import { StoreWithBranches, UserBasicInfo } from '@common/types'
+import { Branch } from '@common/types/branch.type'
 
 export class AccessBranchRequestDto {
   @IsNotEmpty({ message: 'Chi nhánh không được để trống' })

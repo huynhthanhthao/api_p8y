@@ -1,15 +1,8 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  HttpStatus,
-  Injectable,
-  UnauthorizedException
-} from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
-
-import { ACCESS_BRANCH_ERROR, GUARD_ERROR } from 'src/common/errors'
 import { HttpException } from '../exceptions'
-import { LoginDecodeJWT } from '../interfaces'
+import { SignInDecodeJWT } from '../interfaces'
+import { CanActivate, ExecutionContext, HttpStatus, Injectable } from '@nestjs/common'
+import { GUARD_ERROR } from '@common/errors'
 
 @Injectable()
 export class SignInGuard implements CanActivate {
@@ -30,7 +23,7 @@ export class SignInGuard implements CanActivate {
     }
 
     try {
-      const decoded: LoginDecodeJWT = this.jwtService.verify(token, {
+      const decoded: SignInDecodeJWT = this.jwtService.verify(token, {
         secret: process.env.JWT_SECRET_KEY_SIGNUP
       })
 

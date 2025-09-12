@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
-import { PrismaService } from 'src/infrastructure/prisma'
+import { PrismaService } from '@infrastructure/prisma'
 import {
   GetAllProvincesRequestDto,
   GetAllProvincesResponseDto
-} from 'src/interface-adapter/dtos/provinces'
+} from '@interface-adapter/dtos/provinces'
 
 @Injectable()
 export class GetAllProvinceUseCase {
@@ -28,7 +28,7 @@ export class GetAllProvinceUseCase {
       'province',
       {
         where,
-        orderBy: { name: 'asc' },
+        orderBy: { name: 'asc' }
       },
       { page, perPage }
     )

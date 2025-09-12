@@ -2,9 +2,9 @@ import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common'
 import { PrismaClient } from '@prisma/client'
 import { createSoftDeleteExtension } from 'prisma-extension-soft-delete'
 import { paginator, PaginatorTypes } from '@nodeteam/nestjs-prisma-pagination'
-import { PAGINATE_DEFAULT_PER_PAGE } from 'src/common/contants'
-import { PaginationArgs } from 'src/common/interfaces'
-import { AnyObject } from 'src/common/interfaces/any-object.interface'
+import { PAGINATE_DEFAULT_PER_PAGE } from '@common/constants'
+import { PaginationArgs } from '@common/interfaces'
+import { AnyObject } from '@common/interfaces/any-object.interface'
 
 const softDelete = createSoftDeleteExtension({
   models: {

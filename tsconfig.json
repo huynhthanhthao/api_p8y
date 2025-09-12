@@ -17,6 +17,20 @@
     "strictNullChecks": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
+    "paths": {
+      "@common/*": [
+        "src/common/*"
+      ],
+      "@interface-adapter/*": [
+        "src/interface-adapter/*"
+      ],
+      "@infrastructure/*": [
+        "src/infrastructure/*"
+      ],
+      "@usecases/*": [
+        "src/application/usecases/*"
+      ]
+    },
   },
   "include": [
     "src/**/*"
@@ -26,5 +40,5 @@
     "dist",
     "uploads/**/*",
     "public/**/*"
-  ]
+  ],
 }

@@ -1,23 +1,33 @@
-import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common'
-import { SignInUseCase, SignUpUseCase } from 'src/application/usercases/auth'
-import { AccessBranchUseCase } from 'src/application/usercases/auth/access-branch.usecase'
-import { SignInGuard } from 'src/common/guards/sign-in.guard'
-import { RequestAccessBranchJWT } from 'src/common/interfaces'
+import { Controller, Post, Body, UseGuards, Req, Get } from '@nestjs/common'
+import { GetMeUseCase, SignInUseCase, SignUpUseCase } from '@usecases/auth'
+import { AccessBranchUseCase } from '@usecases/auth/access-branch.usecase'
+import { SignInGuard } from '@common/guards/sign-in.guard'
+import {
+  AccessBranchDecodeJWT,
+  RefreshTokenDecodeJWT,
+  RequestAccessBranchJWT
+} from '@common/interfaces'
 import {
   AccessBranchRequestDto,
   AccessBranchResponseDto,
+  RefreshTokenResponseDto,
   SignInRequestDto,
   SignInResponseDto,
   SignUpRequestDto,
   SignUpResponseDto
-} from 'src/interface-adapter/dtos/auth'
+} from '@interface-adapter/dtos/auth'
+import { AccessTokenGuard } from '@common/guards/access-token.guard'
+import { RefreshTokenGuard } from '@common/guards/refresh-token.guard'
+import { RefreshTokenUseCase } from '@usecases/auth/refresh-token.usecase'
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly _signInUseCase: SignInUseCase,
     private readonly _signUpUseCase: SignUpUseCase,
-    private readonly _accessBranchUseCase: AccessBranchUseCase
+    private readonly _accessBranchUseCase: AccessBranchUseCase,
+    private readonly _getMeUseCase: GetMeUseCase,
+    private readonly _refreshTokenUseCase: RefreshTokenUseCase
   ) {}
 
   @Post('sign-up')
@@ -37,5 +47,17 @@ export class AuthController {
     @Req() req: RequestAccessBranchJWT
   ): Promise<AccessBranchResponseDto> {
     return this._accessBranchUseCase.execute(data, req.userId, req.storeCode)
+  }
+
+  @Get('me')
+  @UseGuards(AccessTokenGuard)
+  async getMe(@Req() req: AccessBranchDecodeJWT) {
+    return this._getMeUseCase.execute(req.userId, req.branchId, req.storeCode)
+  }
+
+  @Post('refresh-token')
+  @UseGuards(RefreshTokenGuard)
+  async refreshToken(@Req() req: RefreshTokenDecodeJWT): Promise<RefreshTokenResponseDto> {
+    return this._refreshTokenUseCase.execute(req.userId, req.branchId, req.storeCode)
   }
 }

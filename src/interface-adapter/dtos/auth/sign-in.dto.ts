@@ -1,6 +1,6 @@
 import { Transform, TransformFnParams } from 'class-transformer'
 import { IsNotEmpty, IsString } from 'class-validator'
-import { StoreWithBranches, UserBasicInfo } from 'src/common/types'
+import { StoreWithBranches, UserBasicInfo } from '@common/types'
 
 export class SignInRequestDto {
   @IsNotEmpty({ message: 'Số điện thoại không được để trống' })
