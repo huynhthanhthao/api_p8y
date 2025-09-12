@@ -1,6 +1,11 @@
-import { Controller, Post, Body } from '@nestjs/common'
+import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common'
 import { SignInUseCase, SignUpUseCase } from 'src/application/usercases/auth'
+import { AccessBranchUseCase } from 'src/application/usercases/auth/access-branch.usecase'
+import { SignInGuard } from 'src/common/guards/sign-in.guard'
+import { RequestAccessBranchJWT } from 'src/common/interfaces'
 import {
+  AccessBranchRequestDto,
+  AccessBranchResponseDto,
   SignInRequestDto,
   SignInResponseDto,
   SignUpRequestDto,
@@ -11,7 +16,8 @@ import {
 export class AuthController {
   constructor(
     private readonly _signInUseCase: SignInUseCase,
-    private readonly _signUpUseCase: SignUpUseCase
+    private readonly _signUpUseCase: SignUpUseCase,
+    private readonly _accessBranchUseCase: AccessBranchUseCase
   ) {}
 
   @Post('sign-up')
@@ -22,5 +28,14 @@ export class AuthController {
   @Post('sign-in')
   async signIn(@Body() data: SignInRequestDto): Promise<SignInResponseDto> {
     return this._signInUseCase.execute(data)
+  }
+
+  @Post('access-branch')
+  @UseGuards(SignInGuard)
+  async accessBranch(
+    @Body() data: AccessBranchRequestDto,
+    @Req() req: RequestAccessBranchJWT
+  ): Promise<AccessBranchResponseDto> {
+    return this._accessBranchUseCase.execute(data, req.userId, req.storeCode)
   }
 }

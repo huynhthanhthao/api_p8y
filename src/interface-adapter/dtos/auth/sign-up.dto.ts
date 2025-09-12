@@ -23,6 +23,5 @@ export class SignUpRequestDto {
 }
 
 export class SignUpResponseDto {
-  isSuccess: boolean
   storeCode: string
 }

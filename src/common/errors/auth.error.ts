@@ -15,7 +15,26 @@ export const SIGNIN_ERROR = {
     message: 'Tài khoản hoạt mật khẩu không chính xác'
   },
   ACCOUNT_LOCKED: {
-    code: 'SIGNIN_03',
+    code: 'SIGNIN_02',
     message: 'Tài khoản đã bị khóa'
+  },
+  SHOP_ACCESS_DENIED: {
+    code: 'SIGNIN_03',
+    message: 'Bạn không có quyền truy cập cửa hàng này'
+  }
+}
+
+export const ACCESS_BRANCH_ERROR = {
+  BRANCH_ACCESS_DENIED: {
+    code: 'ACCESS_BRANCH_01',
+    message: 'Bạn không có quyền truy cập chi nhánh này'
+  },
+  BRANCH_EXPIRED: {
+    code: 'ACCESS_BRANCH_02',
+    message: 'Chi nhánh đã hết hạn hoạt động'
+  },
+  INVALID_TOKEN: {
+    code: 'ACCESS_BRANCH_03',
+    message: 'Token không hợp lệ'
   }
 }

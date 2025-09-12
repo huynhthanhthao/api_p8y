@@ -8,8 +8,18 @@ import { PrismaModule, PrismaService } from 'src/infrastructure/prisma'
 import { AuthController } from './controllers/auth.controller'
 import { SignInUseCase, SignUpUseCase } from 'src/application/usercases/auth'
 import { JwtModule } from '@nestjs/jwt'
+import { AccessBranchUseCase } from 'src/application/usercases/auth/access-branch.usecase'
 
-const useCases = [GetAllProvinceUseCase, GetOneProvinceUseCase, SignInUseCase, SignUpUseCase]
+const useCases = [
+  // Province
+  GetAllProvinceUseCase,
+  GetOneProvinceUseCase,
+
+  // Auth
+  SignInUseCase,
+  SignUpUseCase,
+  AccessBranchUseCase
+]
 
 @Module({
   imports: [

@@ -7,6 +7,8 @@ import { UserStatusEnum } from 'src/common/enums'
 import { HttpException } from 'src/common/exceptions'
 import { SIGNIN_ERROR } from 'src/common/errors'
 import { SIGNIN_EXPIRY } from 'src/common/contants'
+import { getStoreWithUserBranches } from 'src/common/utils/get-store-with-user.util'
+import { LoginDecodeJWT } from 'src/common/interfaces'
 
 @Injectable()
 export class SignInUseCase {
@@ -46,37 +48,16 @@ export class SignInUseCase {
     }
 
     // Lấy danh sách branch mà user có quyền truy cập
-    const store = await this.prisma.store.findUniqueOrThrow({
-      where: {
-        code: user.storeCode
-      },
-      include: {
-        branches: {
-          where: {
-            users: {
-              some: {
-                id: user.id
-              }
-            }
-          },
-          omit: {
-            deletedAt: true,
-            deletedBy: true,
-            createdBy: true,
-            createdAt: true,
-            updatedAt: true,
-            updatedBy: true
-          }
-        }
-      }
-    })
+    const store = await getStoreWithUserBranches(this.prisma, user.storeCode, user.id)
+
+    if (!store) throw new HttpException(HttpStatus.BAD_REQUEST, SIGNIN_ERROR.SHOP_ACCESS_DENIED)
 
     // Tạo signInToken
     const signInToken = this.jwtService.sign(
       {
         userId: user.id,
         storeCode: store.code
-      },
+      } as LoginDecodeJWT,
       { expiresIn: SIGNIN_EXPIRY, secret: process.env.JWT_SECRET_KEY_SIGNUP }
     )
 

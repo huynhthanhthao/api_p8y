@@ -21,7 +21,7 @@ export class SignUpUseCase {
 
     await this.createStoreAndUserSuperAdmin(data, storeCode)
 
-    return { isSuccess: true, storeCode }
+    return { storeCode }
   }
 
   private async validateStoreExists(storeCode: string): Promise<void> {
