@@ -8,9 +8,9 @@ import {
   AccessBranchRequestDto,
   AccessBranchResponseDto
 } from 'src/interface-adapter/dtos/auth/access-branch.dto'
-import { StoreWithBranches } from 'src/common/types'
-import { getBranchWithUser, getStoreWithUserBranches } from 'src/common/utils'
-import { Branch } from 'src/common/types/branch.type'
+import { UserBasicInfo } from 'src/common/types'
+import { getBranchWithUserAccess, getStoreWithAccessibleBranches } from 'src/common/utils'
+import { UserTypeEnum } from 'src/common/enums'
 
 @Injectable()
 export class AccessBranchUseCase {
@@ -24,35 +24,29 @@ export class AccessBranchUseCase {
     userId: string,
     storeCode: string
   ): Promise<AccessBranchResponseDto> {
-    // Kiểm tra và lấy dữ liệu
-    const [branch, store] = await this.fetchUserAccessData(data.branchId, storeCode, userId)
+    const user = await this.getUserByIdAndStoreCode(userId, storeCode)
+
+    const accessUserId = user.type === UserTypeEnum.SUPER_ADMIN ? undefined : userId
+
+    const [branch, store] = await Promise.all([
+      getBranchWithUserAccess(this.prisma, data.branchId, accessUserId),
+      getStoreWithAccessibleBranches(this.prisma, storeCode, accessUserId)
+    ])
 
     if (!branch || !store)
       throw new HttpException(HttpStatus.BAD_REQUEST, ACCESS_BRANCH_ERROR.BRANCH_ACCESS_DENIED)
 
-    // Validate branch access
     this.validateBranchAccess(branch)
 
-    // Tạo tokens
     const { accessToken, refreshToken } = this.generateTokens(userId, storeCode, branch.id)
 
     return {
       currentBranch: branch,
       store: store,
+      user,
       accessToken,
       refreshToken
     }
-  }
-
-  private async fetchUserAccessData(
-    branchId: string,
-    storeCode: string,
-    userId: string
-  ): Promise<[Branch | null, StoreWithBranches | null]> {
-    return Promise.all([
-      getBranchWithUser(this.prisma, branchId, userId),
-      getStoreWithUserBranches(this.prisma, storeCode, userId)
-    ])
   }
 
   private validateBranchAccess(branch: any): void {
@@ -79,5 +73,23 @@ export class AccessBranchUseCase {
     })
 
     return { accessToken, refreshToken }
+  }
+
+  private async getUserByIdAndStoreCode(userId: string, storeCode: string): Promise<UserBasicInfo> {
+    return this.prisma.user.findUniqueOrThrow({
+      where: { id: userId, storeCode },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        phone: true,
+        email: true,
+        type: true,
+        status: true,
+        address: true,
+        lastLogin: true,
+        avatarUrl: true
+      }
+    })
   }
 }

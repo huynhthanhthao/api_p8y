@@ -34,8 +34,6 @@ export class SignInGuard implements CanActivate {
         secret: process.env.JWT_SECRET_KEY_SIGNUP
       })
 
-      console.log(decoded, 123)
-
       request.storeCode = decoded.storeCode
       request.userId = decoded.userId
 

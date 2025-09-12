@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsUUID } from 'class-validator'
-import { StoreWithBranches } from 'src/common/types'
+import { StoreWithBranches, UserBasicInfo } from 'src/common/types'
 import { Branch } from 'src/common/types/branch.type'
 
 export class AccessBranchRequestDto {
@@ -13,4 +13,5 @@ export class AccessBranchResponseDto {
   store: StoreWithBranches
   accessToken: string
   refreshToken: string
+  user: UserBasicInfo
 }

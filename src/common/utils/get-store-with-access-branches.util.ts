@@ -1,10 +1,10 @@
 import { PrismaService } from 'src/infrastructure/prisma'
 import { StoreWithBranches } from '../types'
 
-export async function getStoreWithUserBranches(
+export async function getStoreWithAccessibleBranches(
   prisma: PrismaService,
   storeCode: string,
-  userId: string
+  userId?: string
 ): Promise<StoreWithBranches | null> {
   return prisma.store.findUnique({
     where: {
@@ -13,11 +13,13 @@ export async function getStoreWithUserBranches(
     include: {
       branches: {
         where: {
-          users: {
-            some: {
-              id: userId
+          ...(userId && {
+            users: {
+              some: {
+                id: userId
+              }
             }
-          }
+          })
         },
         omit: {
           deletedAt: true,

@@ -1,19 +1,21 @@
 import { PrismaService } from 'src/infrastructure/prisma'
 import { Branch } from '../types/branch.type'
 
-export async function getBranchWithUser(
+export async function getBranchWithUserAccess(
   prisma: PrismaService,
   branchId: string,
-  userId: string
+  userId?: string
 ): Promise<Branch | null> {
   return prisma.branch.findUnique({
     where: {
       id: branchId,
-      users: {
-        some: {
-          id: userId
+      ...(userId && {
+        users: {
+          some: {
+            id: userId
+          }
         }
-      }
+      })
     },
     omit: {
       deletedAt: true,
