@@ -2,15 +2,15 @@ import { Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 import { PrismaService } from '@infrastructure/prisma'
 import {
-  GetAllProvincesRequestDto,
-  GetAllProvincesResponseDto
-} from '@interface-adapter/dtos/provinces'
+  GetAllProvinceRequestDto,
+  GetAllProvinceResponseDto
+} from '@interface-adapter/dtos/provinces/get-all-province.dto'
 
 @Injectable()
 export class GetAllProvinceUseCase {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute(data: GetAllProvincesRequestDto): Promise<GetAllProvincesResponseDto> {
+  async execute(data: GetAllProvinceRequestDto): Promise<GetAllProvinceResponseDto> {
     const { page, perPage, keyword } = data
 
     // Build where condition

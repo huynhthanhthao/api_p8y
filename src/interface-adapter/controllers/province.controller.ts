@@ -1,7 +1,7 @@
-// src/interface-adapter/controllers/province/province.controller.ts
 import { Controller, Get, Param, Query } from '@nestjs/common'
 import { GetAllProvinceUseCase, GetOneProvinceUseCase } from '@usecases/provinces'
-import { GetAllProvincesRequestDto } from '../dtos/provinces'
+import { GetAllProvinceRequestDto, GetAllProvinceResponseDto } from '../dtos/provinces'
+import { Province } from '@prisma/client'
 
 @Controller('provinces')
 export class ProvinceController {
@@ -11,12 +11,14 @@ export class ProvinceController {
   ) {}
 
   @Get()
-  getAllProvinces(@Query() queryParams: GetAllProvincesRequestDto) {
+  getAllProvinces(
+    @Query() queryParams: GetAllProvinceRequestDto
+  ): Promise<GetAllProvinceResponseDto> {
     return this._getAllProvinceUseCase.execute(queryParams)
   }
 
   @Get(':code')
-  getOneProvince(@Param('code') code: number) {
+  getOneProvince(@Param('code') code: number): Promise<Province> {
     return this._getOneProvinceUseCase.execute(code)
   }
 }

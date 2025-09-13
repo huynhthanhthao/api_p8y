@@ -16,9 +16,13 @@ import { AccessBranchDecodeJWT } from '@common/interfaces'
 @Injectable()
 export class AccessBranchUseCase {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prismaService: PrismaService,
     private readonly jwtService: JwtService
   ) {}
+
+  private get prismaClient(): PrismaService {
+    return this.prismaService.client
+  }
 
   async execute(
     data: AccessBranchRequestDto,
@@ -30,8 +34,8 @@ export class AccessBranchUseCase {
     const accessUserId = user.type === UserTypeEnum.SUPER_ADMIN ? undefined : userId
 
     const [branch, store] = await Promise.all([
-      getBranchWithUserAccess(this.prisma, data.branchId, accessUserId),
-      getStoreWithAccessibleBranches(this.prisma, storeCode, accessUserId)
+      getBranchWithUserAccess(this.prismaClient, data.branchId, accessUserId),
+      getStoreWithAccessibleBranches(this.prismaClient, storeCode, accessUserId)
     ])
 
     if (!branch || !store)
@@ -77,7 +81,7 @@ export class AccessBranchUseCase {
   }
 
   private async getUserByIdAndStoreCode(userId: string, storeCode: string): Promise<UserBasicInfo> {
-    return this.prisma.user.findUniqueOrThrow({
+    return this.prismaClient.user.findUniqueOrThrow({
       where: { id: userId, storeCode },
       select: {
         id: true,

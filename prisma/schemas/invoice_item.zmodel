@@ -7,7 +7,7 @@ model InvoiceItem  extends BaseModel {
   salePrice     Float   @map("sale_price") @default(0)            // Đơn giá tại thời điểm bán
   productName   String? @map("product_name") @db.VarChar(255)    // Tên sản phẩm tại thời điểm bán
   discountValue Float?  @map("discount_value") @default(0)              // Giảm giá (VND hoặc %)
-  discountType  String? @map("discount_type") @db.VarChar(10)     // PERCENT or VALUE
+  discountType  String? @map("discount_type") @db.VarChar(10) @default("VALUE")    // PERCENT or VALUE
   note          String? @map("note") @db.VarChar(500)        // Ghi chú
   productId     String  @map("product_id") @db.Uuid
   invoiceId     String  @map("invoice_id") @db.Uuid

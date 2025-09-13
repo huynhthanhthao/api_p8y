@@ -10,5 +10,5 @@ export enum UserGenderEnum {
 
 export enum UserStatusEnum {
   ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
+  INACTIVE = 'INACTIVE'
 }

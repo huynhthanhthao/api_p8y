@@ -1,0 +1,545 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Project "IIT P8Y" {
+  database_type: 'PostgreSQL'
+  Note: ''
+}
+
+Table stores {
+  code String [pk]
+  name String [not null]
+  logo String
+  expiryAt DateTime
+  branches branches [not null]
+  users users [not null]
+  customers customers [not null]
+  customerGroups customer_groups [not null]
+  suppliers suppliers [not null]
+  supplierGroups supplier_groups [not null]
+}
+
+Table branches {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  name String [not null]
+  email String [default: '']
+  phone String [default: '']
+  storeCode String [not null]
+  wardCode Int
+  provinceCode Int
+  ward wards
+  province provinces
+  store stores [not null]
+  users users [not null]
+  productGroups product_groups [not null]
+  invoices invoices [not null]
+  stockTransactions stock_transactions [not null]
+  products products [not null]
+}
+
+Table users {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  firstName String [not null]
+  lastName String [default: '']
+  phone String [not null]
+  storeCode String [not null]
+  status String [not null]
+  type String [not null]
+  password String [not null]
+  email String [default: '']
+  lastLogin DateTime
+  wareCode String
+  address String [default: '']
+  avatarUrl String [default: '']
+  roles roles [not null]
+  branches branches [not null]
+  store stores [not null]
+
+  indexes {
+    (storeCode, phone) [unique]
+    (storeCode, email) [unique]
+  }
+}
+
+Table roles {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  name String [not null]
+  users users [not null]
+  permissions permissions [not null]
+}
+
+Table permissions {
+  code String [pk]
+  name String [not null]
+  roleId String [not null]
+  groupCode String [not null]
+  role roles [not null]
+  group permission_groups [not null]
+}
+
+Table permission_groups {
+  code String [pk]
+  name String [not null]
+  permissions permissions [not null]
+}
+
+Table product_groups {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  name String [not null]
+  code String [not null]
+  parentId String
+  branchId String [not null]
+  branch branches [not null]
+  parent product_groups
+  children product_groups [not null]
+  products products [not null]
+}
+
+Table products {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  name String [not null]
+  code String [not null]
+  productGroupId String [not null]
+  branchId String [not null]
+  barcode String [default: '']
+  shortName String [default: '']
+  description String [default: '']
+  salePrice Float [default: 0]
+  costPrice Float [default: 0]
+  type String [default: 'PRODUCT']
+  minStock Float [default: 0]
+  maxStock Float [default: 999999999]
+  branch branches [not null]
+  productGroup product_groups
+  productWeight product_weights
+  medicineInfo medicine_infos
+  productUnits product_units [not null]
+  stockLocations stock_locations [not null]
+  invoiceItems invoice_items [not null]
+  stockCards stock_cards [not null]
+  stockItems stock_items [not null]
+}
+
+Table suppliers {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  name String [not null]
+  code String [not null]
+  phone String
+  email String
+  tax String
+  supplierGroupId String
+  storeCode String [not null]
+  branchId String [not null]
+  supplierGroup supplier_groups
+  store stores [not null]
+}
+
+Table supplier_groups {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  name String [not null]
+  note String
+  storeCode String [not null]
+  suppliers suppliers [not null]
+  store stores [not null]
+}
+
+Table stock_locations {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  name String [not null]
+  products products [not null]
+}
+
+Table product_weights {
+  unit String [default: 'KG']
+  value Float [default: 0]
+  productId String [unique, not null]
+  product products [not null]
+}
+
+Table medicine_infos {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  regNumber String [not null]
+  ingredient String [not null]
+  dosage String [not null]
+  route String [not null]
+  package String [not null]
+  origin String [not null]
+  countryCode String
+  manufacturerId String [not null]
+  productId String [unique, not null]
+  country countries
+  product products [not null]
+  manufacturer manufacturers [not null]
+}
+
+Table manufacturers {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  name String [not null]
+  country String
+  medicines medicine_infos [not null]
+}
+
+Table countries {
+  code String [unique, not null]
+  name String [not null]
+  medicineInfos medicine_infos [not null]
+}
+
+Table product_units {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  name String [not null]
+  isBase Boolean [not null, default: false]
+  conversion Float [not null, default: 1]
+  sku String
+  barcode String
+  costPrice Float [default: 0]
+  salePrice Float [default: 0]
+  isSale Boolean [not null, default: true]
+  productId String [not null]
+  product products [not null]
+}
+
+Table invoice_items {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  qty Float [not null, default: 1]
+  salePrice Float [not null, default: 0]
+  productName String
+  discountValue Float [default: 0]
+  discountType String [default: 'VALUE']
+  note String
+  productId String [not null]
+  invoiceId String [not null]
+  product products [not null]
+  invoice invoices [not null]
+}
+
+Table invoices {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  code String [not null]
+  status String [not null]
+  discountValue Float [default: 0]
+  discountType String [default: 'VALUE']
+  note String
+  customerId String
+  transportId String [unique]
+  branchId String [not null]
+  branch branches [not null]
+  transport transport_infos
+  deliveryInfo delivery_infos
+  customer customers
+  invoiceItems invoice_items [not null]
+
+  indexes {
+    (code, branchId) [unique]
+  }
+}
+
+Table transport_infos {
+  invoiceId String [pk]
+  weight Float [default: 0]
+  length Float [default: 0]
+  width Float [default: 0]
+  height Float [default: 0]
+  weightUnit String [default: 'gram']
+  dimensionUnit String [default: 'cm']
+  note String
+  invoice invoices
+}
+
+Table delivery_infos {
+  invoiceId String [pk]
+  address String
+  ward String
+  district String
+  province String
+  note String
+  invoice invoices
+}
+
+Table customers {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  name String [not null]
+  code String [unique, not null]
+  storeCode String [not null]
+  email String
+  phone String
+  birthday DateTime
+  gender String
+  avatarUrl String
+  note String
+  invBuyerName Boolean
+  invTaxCode String
+  invAddress String
+  invProvince String
+  invWard String
+  invIdentityNumber String
+  invEmail String
+  invPhone String
+  invBankName String
+  invBankAccount String
+  invBudgetUnitCode String
+  store stores
+  customerGroup customer_groups
+  customerGroupId String
+  invoices invoices [not null]
+}
+
+Table customer_groups {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  name String [not null]
+  discountValue Float [default: 0]
+  discountType String [default: 'VALUE']
+  storeCode String [not null]
+  store stores
+  customers customers [not null]
+}
+
+Table stock_cards {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  productId String [not null]
+  transId String
+  orderId String
+  type String [not null]
+  inQty Float [not null, default: 0]
+  outQty Float [not null, default: 0]
+  balance Float [not null, default: 0]
+  note String
+  product products [not null]
+  stockTransaction stock_transactions
+}
+
+Table stock_transactions {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  code String [unique, not null]
+  type String [not null]
+  status String [not null, default: 'DRAFT']
+  transDate DateTime [default: `now()`, not null]
+  note String
+  branchId String [not null]
+  branch branches [not null]
+  items stock_items [not null]
+  stockCards stock_cards [not null]
+}
+
+Table stock_items {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  transId String [not null]
+  productId String [not null]
+  quantity Float [not null, default: 0]
+  unitPrice Float [not null, default: 0]
+  total Float [not null, default: 0]
+  batchCode String
+  product products [not null]
+  stockTransactions stock_transactions [not null]
+}
+
+Table wards {
+  code Int [pk]
+  name String [not null]
+  codeName String [not null]
+  divisionType String [not null]
+  shortCodeName String [not null]
+  provinceCode Int [not null]
+  province provinces [not null]
+  branches branches [not null]
+}
+
+Table provinces {
+  code Int [pk]
+  name String [not null]
+  divisionType String [not null]
+  codeName String [not null]
+  phoneCode String [not null]
+  branches branches [not null]
+  wards wards [not null]
+}
+
+Table BranchToUser {
+  usersId String [ref: > users.id]
+  branchesId String [ref: > branches.id]
+}
+
+Table RoleToUser {
+  rolesId String [ref: > roles.id]
+  usersId String [ref: > users.id]
+}
+
+Table ProductToStockLocation {
+  stocklocationsId String [ref: > stock_locations.id]
+  productsId String [ref: > products.id]
+}
+
+Ref: branches.wardCode > wards.code [delete: Set Null]
+
+Ref: branches.provinceCode > provinces.code [delete: Set Null]
+
+Ref: branches.storeCode > stores.code [delete: Cascade]
+
+Ref: users.storeCode > stores.code
+
+Ref: permissions.roleId > roles.id [delete: Cascade]
+
+Ref: permissions.groupCode > permission_groups.code
+
+Ref: product_groups.branchId > branches.id
+
+Ref: product_groups.parentId - product_groups.id
+
+Ref: products.branchId > branches.id
+
+Ref: products.productGroupId > product_groups.id
+
+Ref: suppliers.supplierGroupId > supplier_groups.id
+
+Ref: suppliers.storeCode > stores.code
+
+Ref: supplier_groups.storeCode > stores.code
+
+Ref: product_weights.productId - products.id
+
+Ref: medicine_infos.countryCode > countries.code
+
+Ref: medicine_infos.productId - products.id
+
+Ref: medicine_infos.manufacturerId > manufacturers.id
+
+Ref: product_units.productId > products.id
+
+Ref: invoice_items.productId > products.id
+
+Ref: invoice_items.invoiceId > invoices.id
+
+Ref: invoices.branchId > branches.id
+
+Ref: invoices.customerId > customers.id
+
+Ref: transport_infos.invoiceId - invoices.id
+
+Ref: delivery_infos.invoiceId - invoices.id
+
+Ref: customers.storeCode > stores.code [delete: Set Null]
+
+Ref: customers.customerGroupId > customer_groups.id
+
+Ref: customer_groups.storeCode > stores.code [delete: Set Null]
+
+Ref: stock_cards.productId > products.id
+
+Ref: stock_cards.transId > stock_transactions.id
+
+Ref: stock_transactions.branchId > branches.id
+
+Ref: stock_items.productId > products.id
+
+Ref: stock_items.transId > stock_transactions.id [delete: Cascade]
+
+Ref: wards.provinceCode > provinces.code

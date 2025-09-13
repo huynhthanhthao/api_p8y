@@ -8,14 +8,18 @@ import { GetMeResponseDto } from '@interface-adapter/dtos/auth'
 
 @Injectable()
 export class GetMeUseCase {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) {}
+
+  private get prismaClient(): PrismaService {
+    return this.prismaService.client
+  }
 
   async execute(userId: string, branchId: string, storeCode: string): Promise<GetMeResponseDto> {
-    const user = await getUserInfo(this.prisma, userId)
+    const user = await getUserInfo(this.prismaClient, userId)
 
     const accessUserId = user.type === UserTypeEnum.SUPER_ADMIN ? undefined : user.id
 
-    const store = await getStoreWithAccessibleBranches(this.prisma, storeCode, accessUserId)
+    const store = await getStoreWithAccessibleBranches(this.prismaClient, storeCode, accessUserId)
 
     const currentBranch = await this.getBranchById(branchId)
 
@@ -27,9 +31,17 @@ export class GetMeUseCase {
   }
 
   private async getBranchById(branchId: string): Promise<Branch> {
-    return this.prisma.branch.findUniqueOrThrow({
+    return this.prismaClient.branch.findUniqueOrThrow({
       where: {
         id: branchId
+      },
+      omit: {
+        deletedAt: true,
+        deletedBy: true,
+        createdBy: true,
+        createdAt: true,
+        updatedAt: true,
+        updatedBy: true
       }
     })
   }

@@ -13,7 +13,9 @@ const softDelete = createSoftDeleteExtension({
     Branch: true,
     Customer: true,
     Supplier: true,
-    Product: true
+    Product: true,
+    ProductGroup: true,
+    CustomerGroup: true
   },
   defaultConfig: {
     field: 'deletedAt',
@@ -56,11 +58,11 @@ export async function customPaginate(
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
-  public readonly client
+  public readonly client: PrismaService
 
   constructor() {
     super()
-    this.client = this.$extends(softDelete)
+    this.client = this.$extends(softDelete) as PrismaService
   }
 
   async onModuleInit() {
@@ -71,14 +73,13 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     await this.$disconnect()
   }
 
-  // Custom method for pagination with soft delete
-  async findManyWithPagination<T extends keyof PrismaClient>(
+  // Sửa thành arrow function để khớp với property signature
+  findManyWithPagination = async <T extends keyof PrismaClient>(
     model: T,
     queryArgs: AnyObject = {},
     paginationArgs: PaginationArgs = { page: 1, perPage: PAGINATE_DEFAULT_PER_PAGE }
-  ) {
+  ) => {
     const prismaModel = this.client[model] as PrismaModelDelegate
-
     return customPaginate(prismaModel, queryArgs, paginationArgs)
   }
 }

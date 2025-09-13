@@ -12,7 +12,7 @@ model Invoice extends BaseModel {
   code          String         @map("code") @db.VarChar(50)     // Mã hóa đơn
   status        String         @map("status") @db.VarChar(20)           // Trạng thái: NEW, PAID, CANCELLED
   discountValue Float?         @map("discount_value") @default(0)              // Giảm giá (VND hoặc %)
-  discountType  String?        @map("discount_type") @db.VarChar(10)     // PERCENT or VALUE
+  discountType  String?        @map("discount_type") @db.VarChar(10) @default("VALUE")   // PERCENT or VALUE
   note          String?        @map("note") @db.Text                    // Ghi chú đơn hàng
 
   customerId    String?        @map("customer_id") @db.Uuid

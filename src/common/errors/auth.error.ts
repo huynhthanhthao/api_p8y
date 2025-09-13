@@ -12,7 +12,7 @@ export const SIGNUP_ERROR = {
 export const SIGNIN_ERROR = {
   INVALID_CREDENTIALS: {
     code: 'SIGNIN_01',
-    message: 'Tài khoản hoạt mật khẩu không chính xác'
+    message: 'Tài khoản hoặc mật khẩu không chính xác'
   },
   ACCOUNT_LOCKED: {
     code: 'SIGNIN_02',

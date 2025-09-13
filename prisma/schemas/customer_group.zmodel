@@ -3,13 +3,14 @@ import 'store'
 import 'customer'
 
 model CustomerGroup extends BaseModel {
-  name         String     @db.VarChar(255)
-  discount     Float?     @db.DoublePrecision
-  discountType String?    @db.VarChar(50)
+  name          String     @db.VarChar(255)
+  discountValue Float?     @db.DoublePrecision @default(0)
+  discountType  String?    @db.VarChar(10) @default("VALUE")
+  storeCode     String     @db.VarChar(50)
 
   // Relations
-  stores       Store[]
-  customers    Customer[]
+  store         Store?     @relation(fields: [storeCode], references: [code], onDelete: SetNull)
+  customers     Customer[]
 
   @@map("customer_groups")
 }

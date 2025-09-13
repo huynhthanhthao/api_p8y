@@ -6,6 +6,7 @@ import 'invoice'
 model Customer extends BaseModel {
   name              String         @db.VarChar(255)
   code              String         @unique @db.VarChar(50)
+  storeCode         String         @db.VarChar(50)
   email             String?        @db.VarChar(255)
   phone             String?        @db.VarChar(20)
   birthday          DateTime?      @db.Date
@@ -27,10 +28,10 @@ model Customer extends BaseModel {
   invBudgetUnitCode String?        @map("inv_budget_unit_code") @db.VarChar(50)
 
   // Relations
+  store             Store?         @relation(fields: [storeCode], references: [code], onDelete: SetNull)
   customerGroup     CustomerGroup? @relation(fields: [customerGroupId], references: [id])
   customerGroupId   String?        @map("customer_group_id") @db.Uuid
-  stores            Store[]
-  invoices          Invoice[] 
+  invoices          Invoice[]
 
   @@map("customers")
 }

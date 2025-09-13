@@ -46,8 +46,8 @@ model Branch {
   deletedAt         DateTime?          @map("deleted_at") @db.Timestamptz(6)
   deletedBy         String?            @map("deleted_by") @db.Uuid()
   name              String             @db.VarChar(255)
-  email             String?            @db.VarChar(255)
-  phone             String?            @db.VarChar(20)
+  email             String?            @default("") @db.VarChar(255)
+  phone             String?            @default("") @db.VarChar(20)
   storeCode         String             @map("store_code") @db.VarChar(50)
   wardCode          Int?               @map("ward_code")
   provinceCode      Int?               @map("province_code")
@@ -322,7 +322,7 @@ model InvoiceItem {
   salePrice     Float     @default(0) @map("sale_price")
   productName   String?   @map("product_name") @db.VarChar(255)
   discountValue Float?    @default(0) @map("discount_value")
-  discountType  String?   @map("discount_type") @db.VarChar(10)
+  discountType  String?   @default("VALUE") @map("discount_type") @db.VarChar(10)
   note          String?   @map("note") @db.VarChar(500)
   productId     String    @map("product_id") @db.Uuid()
   invoiceId     String    @map("invoice_id") @db.Uuid()
@@ -343,7 +343,7 @@ model Invoice {
   code          String         @map("code") @db.VarChar(50)
   status        String         @map("status") @db.VarChar(20)
   discountValue Float?         @default(0) @map("discount_value")
-  discountType  String?        @map("discount_type") @db.VarChar(10)
+  discountType  String?        @default("VALUE") @map("discount_type") @db.VarChar(10)
   note          String?        @map("note") @db.Text()
   customerId    String?        @map("customer_id") @db.Uuid()
   transportId   String?        @unique() @map("transport_id") @db.Uuid()
@@ -394,6 +394,7 @@ model Customer {
   deletedBy         String?        @map("deleted_by") @db.Uuid()
   name              String         @db.VarChar(255)
   code              String         @unique() @db.VarChar(50)
+  storeCode         String         @db.VarChar(50)
   email             String?        @db.VarChar(255)
   phone             String?        @db.VarChar(20)
   birthday          DateTime?      @db.Date()
@@ -411,27 +412,28 @@ model Customer {
   invBankName       String?        @map("inv_bank_name") @db.VarChar(255)
   invBankAccount    String?        @map("inv_bank_account") @db.VarChar(50)
   invBudgetUnitCode String?        @map("inv_budget_unit_code") @db.VarChar(50)
+  store             Store?         @relation(fields: [storeCode], references: [code], onDelete: SetNull)
   customerGroup     CustomerGroup? @relation(fields: [customerGroupId], references: [id])
   customerGroupId   String?        @map("customer_group_id") @db.Uuid()
-  stores            Store[]
   invoices          Invoice[]
 
   @@map("customers")
 }
 
 model CustomerGroup {
-  id           String     @id() @default(uuid()) @db.Uuid()
-  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
-  createdBy    String?    @map("created_by") @db.Uuid()
-  updatedAt    DateTime   @updatedAt() @map("updated_at") @db.Timestamptz(6)
-  updatedBy    String?    @map("updated_by") @db.Uuid()
-  deletedAt    DateTime?  @map("deleted_at") @db.Timestamptz(6)
-  deletedBy    String?    @map("deleted_by") @db.Uuid()
-  name         String     @db.VarChar(255)
-  discount     Float?     @db.DoublePrecision()
-  discountType String?    @db.VarChar(50)
-  stores       Store[]
-  customers    Customer[]
+  id            String     @id() @default(uuid()) @db.Uuid()
+  createdAt     DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdBy     String?    @map("created_by") @db.Uuid()
+  updatedAt     DateTime   @updatedAt() @map("updated_at") @db.Timestamptz(6)
+  updatedBy     String?    @map("updated_by") @db.Uuid()
+  deletedAt     DateTime?  @map("deleted_at") @db.Timestamptz(6)
+  deletedBy     String?    @map("deleted_by") @db.Uuid()
+  name          String     @db.VarChar(255)
+  discountValue Float?     @default(0) @db.DoublePrecision()
+  discountType  String?    @default("VALUE") @db.VarChar(10)
+  storeCode     String     @db.VarChar(50)
+  store         Store?     @relation(fields: [storeCode], references: [code], onDelete: SetNull)
+  customers     Customer[]
 
   @@map("customer_groups")
 }

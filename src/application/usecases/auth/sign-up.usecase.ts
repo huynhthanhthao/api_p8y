@@ -10,7 +10,11 @@ import { SIGNUP_ERROR } from '@common/errors'
 
 @Injectable()
 export class SignUpUseCase {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) {}
+
+  private get prismaClient(): PrismaService {
+    return this.prismaService.client
+  }
 
   async execute(data: SignUpRequestDto): Promise<SignUpResponseDto> {
     const storeCode = generateStoreCode(data.storeName)
@@ -25,7 +29,7 @@ export class SignUpUseCase {
   }
 
   private async validateStoreExists(storeCode: string): Promise<void> {
-    const store = await this.prisma.store.findUnique({ where: { code: storeCode } })
+    const store = await this.prismaClient.store.findUnique({ where: { code: storeCode } })
 
     if (store) {
       throw new HttpException(HttpStatus.CONFLICT, SIGNUP_ERROR.STORE_ALREADY_EXISTS)
@@ -33,7 +37,7 @@ export class SignUpUseCase {
   }
 
   private async validateUserExists(phone: string): Promise<void> {
-    const user = await this.prisma.user.findFirst({
+    const user = await this.prismaClient.user.findFirst({
       where: { phone, type: UserTypeEnum.SUPER_ADMIN }
     })
     if (user) {
@@ -45,7 +49,7 @@ export class SignUpUseCase {
     data: SignUpRequestDto,
     storeCode: string
   ): Promise<void> {
-    await this.prisma.$transaction(async tx => {
+    await this.prismaClient.$transaction(async tx => {
       const store = await tx.store.create({
         data: {
           name: data.storeName,

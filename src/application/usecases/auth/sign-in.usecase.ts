@@ -13,12 +13,16 @@ import { SignInDecodeJWT } from '@common/interfaces'
 @Injectable()
 export class SignInUseCase {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prismaService: PrismaService,
     private readonly jwtService: JwtService
   ) {}
 
+  private get prismaClient(): PrismaService {
+    return this.prismaService.client
+  }
+
   async execute(data: SignInRequestDto): Promise<SignInResponseDto> {
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prismaClient.user.findUnique({
       where: {
         idx_store_phone: {
           storeCode: data.storeCode,
@@ -51,7 +55,11 @@ export class SignInUseCase {
     // Lấy danh sách branch mà user có quyền truy cập
     const accessUserId = user.type === UserTypeEnum.SUPER_ADMIN ? undefined : user.id
 
-    const store = await getStoreWithAccessibleBranches(this.prisma, user.storeCode, accessUserId)
+    const store = await getStoreWithAccessibleBranches(
+      this.prismaClient,
+      user.storeCode,
+      accessUserId
+    )
 
     if (!store) throw new HttpException(HttpStatus.BAD_REQUEST, SIGNIN_ERROR.SHOP_ACCESS_DENIED)
 
@@ -64,7 +72,7 @@ export class SignInUseCase {
       { expiresIn: SIGNIN_EXPIRY, secret: process.env.JWT_SECRET_KEY_SIGNUP }
     )
 
-    const userUpdated = await this.prisma.user.update({
+    const userUpdated = await this.prismaClient.user.update({
       where: { id: user.id },
       data: { lastLogin: new Date() },
       select: {

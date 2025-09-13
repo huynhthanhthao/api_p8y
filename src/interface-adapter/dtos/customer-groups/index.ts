@@ -1,0 +1,5 @@
+export * from './create-customer-group.dto'
+export * from './update-customer-group.dto'
+export * from './get-all-customer-group.dto'
+// export * from './delete-customer-group.dto'
+// export * from './get-one-customer-group.dto'
