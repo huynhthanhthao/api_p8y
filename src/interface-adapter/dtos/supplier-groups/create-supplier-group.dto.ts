@@ -1,0 +1,23 @@
+import { IsString, IsNotEmpty, IsOptional, MaxLength } from 'class-validator'
+
+import { SupplierGroup } from '@common/types'
+
+export class CreateSupplierGroupRequestDto {
+  @IsNotEmpty({ message: 'Tên nhóm nhà cung cấp không được để trống' })
+  @IsString({ message: 'Tên nhóm nhà cung cấp phải là chuỗi ký tự' })
+  @MaxLength(255, { message: 'Tên nhóm nhà cung cấp không được vượt quá 255 ký tự' })
+  name: string
+
+  @IsOptional()
+  @IsString({ message: 'Ghi chú phải là chuỗi ký tự' })
+  @MaxLength(500, { message: 'Tên nhóm nhà cung cấp không được vượt quá 500 ký tự' })
+  note: string
+}
+
+export class CreateSupplierGroupResponseDto {
+  constructor(entity: SupplierGroup) {
+    Object.assign(this, {
+      entity
+    })
+  }
+}

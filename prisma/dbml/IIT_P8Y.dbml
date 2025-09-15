@@ -185,7 +185,7 @@ Table supplier_groups {
   deletedAt DateTime
   deletedBy String
   name String [not null]
-  note String
+  note String [default: '']
   storeCode String [not null]
   suppliers suppliers [not null]
   store stores [not null]

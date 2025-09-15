@@ -212,7 +212,7 @@ model SupplierGroup {
   deletedAt DateTime?  @map("deleted_at") @db.Timestamptz(6)
   deletedBy String?    @map("deleted_by") @db.Uuid()
   name      String     @db.VarChar(255)
-  note      String?    @db.VarChar(500)
+  note      String?    @default("") @db.VarChar(500)
   storeCode String     @map("store_code") @db.VarChar(50)
   suppliers Supplier[]
   store     Store      @relation(fields: [storeCode], references: [code])

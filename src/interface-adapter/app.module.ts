@@ -32,13 +32,23 @@ import {
   UpdateCustomerUseCase
 } from '@usecases/customers'
 import { UploadMultipleFileUseCase } from '@usecases/files'
+import {
+  CreateSupplierGroupUseCase,
+  DeleteSupplierGroupUseCase,
+  DeleteManySupplierGroupUseCase,
+  GetAllSupplierGroupUseCase,
+  GetOneSupplierGroupUseCase,
+  UpdateSupplierGroupUseCase
+} from '@usecases/supplier-groups'
+import { SupplierGroupController } from './controllers/supplier-group.controller'
 
 const controllers = [
   AuthController,
   ProvinceController,
   CustomerGroupController,
   CustomerController,
-  FileController
+  FileController,
+  SupplierGroupController
 ]
 
 const useCases = [
@@ -70,7 +80,15 @@ const useCases = [
   UpdateCustomerUseCase,
 
   // File
-  UploadMultipleFileUseCase
+  UploadMultipleFileUseCase,
+
+  // SupplierGroup
+  CreateSupplierGroupUseCase,
+  DeleteSupplierGroupUseCase,
+  DeleteManySupplierGroupUseCase,
+  GetAllSupplierGroupUseCase,
+  GetOneSupplierGroupUseCase,
+  UpdateSupplierGroupUseCase
 ]
 
 @Module({
