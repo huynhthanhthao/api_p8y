@@ -1,6 +1,7 @@
 export interface RequestAccessBranchJWT extends Request {
   userId: string
   storeCode: string
+  branchId: string
 }
 
 export interface SignInDecodeJWT {
