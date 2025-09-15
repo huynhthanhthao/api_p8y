@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 import {
   Body,
   Controller,
@@ -20,11 +21,15 @@ import {
 } from '@usecases/customer-groups'
 import {
   CreateCustomerGroupRequestDto,
-  GetAllCustomerGroupRequestDto
+  CreateCustomerGroupResponseDto,
+  GetAllCustomerGroupRequestDto,
+  GetAllCustomerGroupResponseDto,
+  UpdateCustomerGroupResponseDto
 } from '@interface-adapter/dtos/customer-groups'
 import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
 import { DeleteManyRequestDto } from '@common/dtos'
+import { CustomerGroup } from '@common/types'
 
 @Controller('customer-groups')
 @UseGuards(AccessTokenGuard)
@@ -39,7 +44,10 @@ export class CustomerGroupController {
   ) {}
 
   @Post()
-  create(@Body() data: CreateCustomerGroupRequestDto, @Req() req: RequestAccessBranchJWT) {
+  create(
+    @Body() data: CreateCustomerGroupRequestDto,
+    @Req() req: RequestAccessBranchJWT
+  ): Promise<CreateCustomerGroupResponseDto> {
     return this._createCustomerGroupUseCase.execute(data, req.userId, req.storeCode)
   }
 
@@ -48,27 +56,33 @@ export class CustomerGroupController {
     @Param('id') id: string,
     @Body() data: CreateCustomerGroupRequestDto,
     @Req() req: RequestAccessBranchJWT
-  ) {
+  ): Promise<UpdateCustomerGroupResponseDto> {
     return this._updateCustomerGroupUseCase.execute(id, data, req.userId, req.storeCode)
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string, @Req() req: RequestAccessBranchJWT) {
+  delete(@Param('id') id: string, @Req() req: RequestAccessBranchJWT): Promise<string> {
     return this._deleteCustomerGroupUseCase.execute(id, req.userId, req.storeCode)
   }
 
   @Delete('')
-  deleteMany(@Body() data: DeleteManyRequestDto, @Req() req: RequestAccessBranchJWT) {
+  deleteMany(
+    @Body() data: DeleteManyRequestDto,
+    @Req() req: RequestAccessBranchJWT
+  ): Promise<Prisma.BatchPayload> {
     return this._deleteManyCustomerGroupUseCase.execute(data, req.userId, req.storeCode)
   }
 
   @Get(':id')
-  getOne(@Param('id') id: string, @Req() req: RequestAccessBranchJWT) {
+  getOne(@Param('id') id: string, @Req() req: RequestAccessBranchJWT): Promise<CustomerGroup> {
     return this._getOneCustomerGroupUseCase.execute(id, req.storeCode)
   }
 
   @Get()
-  getAll(@Query() queryParams: GetAllCustomerGroupRequestDto, @Req() req: RequestAccessBranchJWT) {
+  getAll(
+    @Query() queryParams: GetAllCustomerGroupRequestDto,
+    @Req() req: RequestAccessBranchJWT
+  ): Promise<GetAllCustomerGroupResponseDto> {
     return this._getAllCustomerGroupUseCase.execute(queryParams, req.storeCode)
   }
 }

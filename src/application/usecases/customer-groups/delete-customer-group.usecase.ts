@@ -13,7 +13,7 @@ export class DeleteCustomerGroupUseCase {
     return this.prismaService.client
   }
 
-  async execute(id: string, userId: string, storeCode: string): Promise<CustomerGroup> {
+  async execute(id: string, userId: string, storeCode: string): Promise<string> {
     const customerGroup = await this.prismaClient.customerGroup.findUnique({
       where: { id, storeCode }
     })
@@ -29,7 +29,7 @@ export class DeleteCustomerGroupUseCase {
       }
     })
 
-    return await this.prismaClient.customerGroup.delete({
+    await this.prismaClient.customerGroup.delete({
       where: {
         id,
         storeCode
@@ -41,5 +41,7 @@ export class DeleteCustomerGroupUseCase {
         updatedBy: true
       }
     })
+
+    return id
   }
 }

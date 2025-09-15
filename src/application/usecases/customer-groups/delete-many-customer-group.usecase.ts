@@ -1,7 +1,7 @@
+import { Prisma } from '@prisma/client'
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { PrismaService } from '@infrastructure/prisma'
 import { DeleteManyRequestDto } from '@common/dtos'
-import { Prisma } from '@prisma/client'
 import { HttpException } from '@common/exceptions'
 import { CUSTOMER_GROUP_ERROR } from '@common/errors'
 

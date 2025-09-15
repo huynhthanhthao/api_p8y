@@ -1,7 +1,7 @@
+import { IsString, IsNotEmpty, MaxLength, IsNumber, IsOptional, IsEnum } from 'class-validator'
+import { Transform, TransformFnParams } from 'class-transformer'
 import { DiscountTypeEnum } from '@common/enums'
 import { CustomerGroup } from '@common/types'
-import { Transform, TransformFnParams } from 'class-transformer'
-import { IsString, IsNotEmpty, MaxLength, IsNumber, IsOptional, IsEnum } from 'class-validator'
 
 export class CreateCustomerGroupRequestDto {
   @IsNotEmpty({ message: 'Tên không được để trống' })
