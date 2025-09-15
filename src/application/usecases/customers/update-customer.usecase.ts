@@ -23,14 +23,14 @@ export class UpdateCustomerUseCase {
     userId: string,
     storeCode: string
   ): Promise<UpdateCustomerResponseDto> {
-    const existingGroup = await this.prismaClient.customer.findUniqueOrThrow({
+    const customer = await this.prismaClient.customer.findUniqueOrThrow({
       where: {
         id: id,
         storeCode
       }
     })
 
-    if (data.name && data.name !== existingGroup.name) {
+    if (data.name && data.name !== customer.name) {
       const recordWithSameName = await this.prismaClient.customer.findFirst({
         where: {
           name: {
