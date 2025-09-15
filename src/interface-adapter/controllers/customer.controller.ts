@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 import {
   Body,
   Controller,
@@ -20,11 +21,15 @@ import {
 } from '@usecases/customers'
 import {
   CreateCustomerRequestDto,
-  GetAllCustomerRequestDto
+  CreateCustomerResponseDto,
+  GetAllCustomerRequestDto,
+  GetAllCustomerResponseDto,
+  UpdateCustomerResponseDto
 } from '@interface-adapter/dtos/customers'
 import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
 import { DeleteManyRequestDto } from '@common/dtos'
+import { Customer } from '@common/types'
 
 @Controller('customers')
 @UseGuards(AccessTokenGuard)
@@ -39,7 +44,10 @@ export class CustomerController {
   ) {}
 
   @Post()
-  create(@Body() data: CreateCustomerRequestDto, @Req() req: RequestAccessBranchJWT) {
+  create(
+    @Body() data: CreateCustomerRequestDto,
+    @Req() req: RequestAccessBranchJWT
+  ): Promise<CreateCustomerResponseDto> {
     return this._createCustomerUseCase.execute(data, req.userId, req.storeCode)
   }
 
@@ -48,27 +56,33 @@ export class CustomerController {
     @Param('id') id: string,
     @Body() data: CreateCustomerRequestDto,
     @Req() req: RequestAccessBranchJWT
-  ) {
+  ): Promise<UpdateCustomerResponseDto> {
     return this._updateCustomerUseCase.execute(id, data, req.userId, req.storeCode)
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string, @Req() req: RequestAccessBranchJWT) {
+  delete(@Param('id') id: string, @Req() req: RequestAccessBranchJWT): Promise<string> {
     return this._deleteCustomerUseCase.execute(id, req.userId, req.storeCode)
   }
 
   @Delete('')
-  deleteMany(@Body() data: DeleteManyRequestDto, @Req() req: RequestAccessBranchJWT) {
+  deleteMany(
+    @Body() data: DeleteManyRequestDto,
+    @Req() req: RequestAccessBranchJWT
+  ): Promise<Prisma.BatchPayload> {
     return this._deleteManyCustomerUseCase.execute(data, req.userId, req.storeCode)
   }
 
   @Get(':id')
-  getOne(@Param('id') id: string, @Req() req: RequestAccessBranchJWT) {
+  getOne(@Param('id') id: string, @Req() req: RequestAccessBranchJWT): Promise<Customer> {
     return this._getOneCustomerUseCase.execute(id, req.storeCode)
   }
 
   @Get()
-  getAll(@Query() queryParams: GetAllCustomerRequestDto, @Req() req: RequestAccessBranchJWT) {
+  getAll(
+    @Query() queryParams: GetAllCustomerRequestDto,
+    @Req() req: RequestAccessBranchJWT
+  ): Promise<GetAllCustomerResponseDto> {
     return this._getAllCustomerUseCase.execute(queryParams, req.storeCode)
   }
 }
