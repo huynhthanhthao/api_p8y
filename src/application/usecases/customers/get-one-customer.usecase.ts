@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import { HttpStatus, Injectable } from '@nestjs/common'
 import { PrismaService } from '@infrastructure/prisma'
 import { Customer } from '@common/types'
+import { HttpException } from '@common/exceptions'
+import { CUSTOMER_ERROR } from '@common/errors'
 
 @Injectable()
 export class GetOneCustomerUseCase {
@@ -11,7 +13,7 @@ export class GetOneCustomerUseCase {
   }
 
   async execute(id: string, storeCode: string): Promise<Customer> {
-    return await this.prismaClient.customer.findUniqueOrThrow({
+    const customer = await this.prismaClient.customer.findUnique({
       where: { id, storeCode },
       omit: {
         deletedAt: true,
@@ -39,5 +41,11 @@ export class GetOneCustomerUseCase {
         }
       }
     })
+
+    if (!customer) {
+      throw new HttpException(HttpStatus.NOT_FOUND, CUSTOMER_ERROR.CUSTOMER_NOT_FOUND)
+    }
+
+    return customer
   }
 }

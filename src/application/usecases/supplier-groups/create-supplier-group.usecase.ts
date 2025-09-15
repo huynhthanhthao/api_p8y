@@ -6,7 +6,7 @@ import {
   CreateSupplierGroupRequestDto,
   CreateSupplierGroupResponseDto
 } from '@interface-adapter/dtos/supplier-groups'
-import { SUPPLIER_GROUP_ERROR } from '@common/errors/supplier-group.error'
+import { SUPPLIER_GROUP_ERROR } from '@common/errors'
 
 @Injectable()
 export class CreateSupplierGroupUseCase {

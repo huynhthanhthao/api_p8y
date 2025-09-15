@@ -3,7 +3,7 @@ import { HttpStatus, Injectable } from '@nestjs/common'
 import { PrismaService } from '@infrastructure/prisma'
 import { DeleteManyRequestDto } from '@common/dtos'
 import { HttpException } from '@common/exceptions'
-import { SUPPLIER_GROUP_ERROR } from '@common/errors/supplier-group.error'
+import { SUPPLIER_GROUP_ERROR } from '@common/errors'
 
 @Injectable()
 export class DeleteManySupplierGroupUseCase {
