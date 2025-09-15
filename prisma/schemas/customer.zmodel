@@ -4,34 +4,45 @@ import 'customer_group'
 import 'invoice'
 
 model Customer extends BaseModel {
-  name              String         @db.VarChar(255)
-  code              String         @unique @db.VarChar(50)
-  storeCode         String         @db.VarChar(50)
-  email             String?        @db.VarChar(255)
-  phone             String?        @db.VarChar(20)
-  birthday          DateTime?      @db.Date
-  gender            String?        @db.VarChar(20)
-  avatarUrl         String?        @map("avatar_url") @db.VarChar(500)
-  note              String?        @db.VarChar(500)
-
-  // Invoice information
-  invBuyerName      Boolean?       @map("inv_buyer_name")
-  invTaxCode        String?        @map("inv_tax_code") @db.VarChar(50)
-  invAddress        String?        @map("inv_address") @db.VarChar(500)
-  invProvince       String?        @map("inv_province") @db.VarChar(100)
-  invWard           String?        @map("inv_ward") @db.VarChar(100)
-  invIdentityNumber String?        @map("inv_identity_number") @db.VarChar(50)
-  invEmail          String?        @map("inv_email") @db.VarChar(255)
-  invPhone          String?        @map("inv_phone") @db.VarChar(20)
-  invBankName       String?        @map("inv_bank_name") @db.VarChar(255)
-  invBankAccount    String?        @map("inv_bank_account") @db.VarChar(50)
-  invBudgetUnitCode String?        @map("inv_budget_unit_code") @db.VarChar(50)
+  name                String               @db.VarChar(255)
+  code                String               @db.VarChar(50)
+  storeCode           String               @db.VarChar(50)
+  email               String?              @db.VarChar(255)
+  phone               String?              @db.VarChar(50)
+  birthday            DateTime?            @db.Date
+  gender              String?              @db.VarChar(20)
+  avatarUrl           String?              @map("avatar_url") @db.VarChar(500) @default("")
+  note                String?              @db.VarChar(500) @default("")
 
   // Relations
-  store             Store?         @relation(fields: [storeCode], references: [code], onDelete: SetNull)
-  customerGroup     CustomerGroup? @relation(fields: [customerGroupId], references: [id])
-  customerGroupId   String?        @map("customer_group_id") @db.Uuid
-  invoices          Invoice[]
+  store               Store?               @relation(fields: [storeCode], references: [code], onDelete: SetNull)
+  customerGroup       CustomerGroup?       @relation(fields: [customerGroupId], references: [id])
+  customerGroupId     String?              @map("customer_group_id") @db.Uuid
+  customerInvoiceInfo CustomerInvoiceInfo?
+  invoices            Invoice[]
 
+  @@unique([phone, storeCode])
+  @@unique([email, storeCode])
+  @@unique([code, storeCode])
   @@map("customers")
+}
+
+model CustomerInvoiceInfo {
+  buyerName      String   @map("buyer_name") @db.VarChar(255)
+  taxCode        String?  @map("tax_code") @db.VarChar(50) @default("")
+  address        String?  @db.VarChar(500) @default("")
+  province       String?  @db.VarChar(100) @default("")
+  ward           String?  @db.VarChar(100) @default("")
+  identityNumber String?  @map("identity_number") @db.VarChar(50) @default("")
+  email          String?  @db.VarChar(255) @default("")
+  phone          String?  @db.VarChar(20) @default("")
+  bankName       String?  @map("bank_name") @db.VarChar(255) @default("")
+  bankAccount    String?  @map("bank_account") @db.VarChar(50) @default("")
+  budgetUnitCode String?  @map("budget_unit_code") @db.VarChar(50) @default("")
+
+  // Relation
+  customer       Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId     String   @unique @map("customer_id") @db.Uuid
+
+  @@map("customer_invoice_info")
 }

@@ -344,29 +344,41 @@ Table customers {
   deletedAt DateTime
   deletedBy String
   name String [not null]
-  code String [unique, not null]
+  code String [not null]
   storeCode String [not null]
   email String
   phone String
   birthday DateTime
   gender String
-  avatarUrl String
-  note String
-  invBuyerName Boolean
-  invTaxCode String
-  invAddress String
-  invProvince String
-  invWard String
-  invIdentityNumber String
-  invEmail String
-  invPhone String
-  invBankName String
-  invBankAccount String
-  invBudgetUnitCode String
+  avatarUrl String [default: '']
+  note String [default: '']
   store stores
   customerGroup customer_groups
   customerGroupId String
+  customerInvoiceInfo customer_invoice_info
   invoices invoices [not null]
+
+  indexes {
+    (phone, storeCode) [unique]
+    (email, storeCode) [unique]
+    (code, storeCode) [unique]
+  }
+}
+
+Table customer_invoice_info {
+  buyerName String [not null]
+  taxCode String [default: '']
+  address String [default: '']
+  province String [default: '']
+  ward String [default: '']
+  identityNumber String [default: '']
+  email String [default: '']
+  phone String [default: '']
+  bankName String [default: '']
+  bankAccount String [default: '']
+  budgetUnitCode String [default: '']
+  customer customers [not null]
+  customerId String [unique, not null]
 }
 
 Table customer_groups {
@@ -529,6 +541,8 @@ Ref: delivery_infos.invoiceId - invoices.id
 Ref: customers.storeCode > stores.code [delete: Set Null]
 
 Ref: customers.customerGroupId > customer_groups.id
+
+Ref: customer_invoice_info.customerId - customers.id [delete: Cascade]
 
 Ref: customer_groups.storeCode > stores.code [delete: Set Null]
 

@@ -6,7 +6,7 @@ import { JwtService } from '@nestjs/jwt'
 import { UserStatusEnum, UserTypeEnum } from '@common/enums'
 import { HttpException } from '@common/exceptions'
 import { SIGNIN_ERROR } from '@common/errors'
-import { SIGNIN_EXPIRY } from '@common/constants'
+import { SIGNIN_TOKEN_EXPIRY } from '@common/constants'
 import { getStoreWithAccessibleBranches } from '@common/utils/get-store-with-access-branches.util'
 import { SignInDecodeJWT } from '@common/interfaces'
 
@@ -69,7 +69,7 @@ export class SignInUseCase {
         userId: user.id,
         storeCode: store.code
       } as SignInDecodeJWT,
-      { expiresIn: SIGNIN_EXPIRY, secret: process.env.JWT_SECRET_KEY_SIGNUP }
+      { expiresIn: SIGNIN_TOKEN_EXPIRY, secret: process.env.JWT_SECRET_KEY_SIGNUP }
     )
 
     const userUpdated = await this.prismaClient.user.update({

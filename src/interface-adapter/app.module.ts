@@ -6,6 +6,8 @@ import { PrismaModule, PrismaService } from '@infrastructure/prisma'
 import { ProvinceController } from './controllers/province.controller'
 import { AuthController } from './controllers/auth.controller'
 import { AppController } from './controllers/app.controller'
+import { GetAllProvinceUseCase, GetOneProvinceUseCase } from '@usecases/provinces'
+import { CustomerController, CustomerGroupController } from './controllers'
 import {
   SignInUseCase,
   SignUpUseCase,
@@ -13,8 +15,6 @@ import {
   GetMeUseCase,
   RefreshTokenUseCase
 } from '@usecases/auth'
-import { GetAllProvinceUseCase, GetOneProvinceUseCase } from '@usecases/provinces'
-import { CustomerGroupController } from './controllers/customer-group.controller'
 import {
   CreateCustomerGroupUseCase,
   DeleteCustomerGroupUseCase,
@@ -23,6 +23,21 @@ import {
   GetOneCustomerGroupUseCase,
   UpdateCustomerGroupUseCase
 } from '@usecases/customer-groups'
+import {
+  CreateCustomerUseCase,
+  DeleteCustomerUseCase,
+  DeleteManyCustomerUseCase,
+  GetAllCustomerUseCase,
+  GetOneCustomerUseCase,
+  UpdateCustomerUseCase
+} from '@usecases/customers'
+
+const controllers = [
+  AuthController,
+  ProvinceController,
+  CustomerGroupController,
+  CustomerController
+]
 
 const useCases = [
   // Province
@@ -42,7 +57,15 @@ const useCases = [
   DeleteManyCustomerGroupUseCase,
   GetAllCustomerGroupUseCase,
   GetOneCustomerGroupUseCase,
-  UpdateCustomerGroupUseCase
+  UpdateCustomerGroupUseCase,
+
+  // Customer
+  CreateCustomerUseCase,
+  DeleteCustomerUseCase,
+  DeleteManyCustomerUseCase,
+  GetAllCustomerUseCase,
+  GetOneCustomerUseCase,
+  UpdateCustomerUseCase
 ]
 
 @Module({
@@ -58,7 +81,7 @@ const useCases = [
       signOptions: { expiresIn: process.env.EXPIRES_IN_ACCESS_TOKEN }
     })
   ],
-  controllers: [AppController, ProvinceController, AuthController, CustomerGroupController],
+  controllers: [AppController, ...controllers],
   providers: [AppService, PrismaService, ...useCases]
 })
 export class AppModule {}

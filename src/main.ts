@@ -13,7 +13,6 @@ async function bootstrap() {
       logger: ['error', 'warn', 'log', 'debug']
     })
     const cfgService = app.get(ConfigService)
-    const { httpAdapter } = app.get(HttpAdapterHost)
 
     app.use((req, res, next) => {
       res.header('Access-Control-Allow-Origin', '*')
@@ -52,6 +51,7 @@ async function bootstrap() {
     await app.listen(port)
 
     console.log(`🌟 Server is running on http://localhost:${port}`)
+    console.log(`Swagger documentation available at: http://localhost:${port}/api`)
   } catch (error) {
     console.error('❌ Failed to start server:', error)
   }
