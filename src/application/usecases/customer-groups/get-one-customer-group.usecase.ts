@@ -11,9 +11,9 @@ export class GetOneCustomerGroupUseCase {
     return this.prismaService.client
   }
 
-  async execute(id: string): Promise<CustomerGroup> {
+  async execute(id: string, storeCode: string): Promise<CustomerGroup> {
     return await this.prismaClient.customerGroup.findUniqueOrThrow({
-      where: { id },
+      where: { id, storeCode },
       omit: {
         deletedAt: true,
         deletedBy: true,

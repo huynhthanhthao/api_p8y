@@ -14,10 +14,15 @@ export class GetAllCustomerGroupUseCase {
     return this.prismaService.client
   }
 
-  async execute(data: GetAllCustomerGroupRequestDto): Promise<GetAllCustomerGroupResponseDto> {
+  async execute(
+    data: GetAllCustomerGroupRequestDto,
+    storeCode: string
+  ): Promise<GetAllCustomerGroupResponseDto> {
     const { page, perPage, keyword, orderBy, sortBy } = data
 
-    const where: Prisma.CustomerGroupWhereInput = {}
+    const where: Prisma.CustomerGroupWhereInput = {
+      storeCode
+    }
 
     if (keyword) {
       where.OR = [{ name: { contains: keyword, mode: 'insensitive' } }]

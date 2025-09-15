@@ -2,7 +2,8 @@ import { HttpStatus, Injectable } from '@nestjs/common'
 import { PrismaService } from '@infrastructure/prisma'
 import { CustomerGroup } from '@common/types'
 import { HttpException } from '@common/exceptions'
-import { CUSTOMER_GROUP_ERROR } from '@common/errors/customer-group.error'
+import { CUSTOMER_GROUP_ERROR } from '@common/errors'
+import { AccessBranchDecodeJWT } from '@common/interfaces'
 
 @Injectable()
 export class DeleteCustomerGroupUseCase {

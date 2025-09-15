@@ -1,9 +1,9 @@
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { PrismaService } from '@infrastructure/prisma'
-import { DeleteManyQueryDto } from '@common/dtos'
+import { DeleteManyRequestDto } from '@common/dtos'
 import { Prisma } from '@prisma/client'
 import { HttpException } from '@common/exceptions'
-import { CUSTOMER_GROUP_ERROR } from '@common/errors/customer-group.error'
+import { CUSTOMER_GROUP_ERROR } from '@common/errors'
 
 @Injectable()
 export class DeleteManyCustomerGroupUseCase {
@@ -14,7 +14,7 @@ export class DeleteManyCustomerGroupUseCase {
   }
 
   async execute(
-    data: DeleteManyQueryDto,
+    data: DeleteManyRequestDto,
     userId: string,
     storeCode: string
   ): Promise<Prisma.BatchPayload> {

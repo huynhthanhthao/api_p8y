@@ -5,7 +5,7 @@ import {
   CreateCustomerGroupRequestDto,
   CreateCustomerGroupResponseDto
 } from '@interface-adapter/dtos/customer-groups'
-import { CUSTOMER_GROUP_ERROR } from '@common/errors/customer-group.error'
+import { CUSTOMER_GROUP_ERROR } from '@common/errors'
 
 @Injectable()
 export class CreateCustomerGroupUseCase {

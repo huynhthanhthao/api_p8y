@@ -6,7 +6,6 @@ import {
   UpdateCustomerGroupResponseDto
 } from '@interface-adapter/dtos/customer-groups'
 import { CUSTOMER_GROUP_ERROR } from '@common/errors'
-import { AccessBranchDecodeJWT } from '@common/interfaces'
 
 @Injectable()
 export class UpdateCustomerGroupUseCase {
@@ -19,22 +18,16 @@ export class UpdateCustomerGroupUseCase {
   async execute(
     id: string,
     data: UpdateCustomerGroupRequestDto,
-    userId: string,
-    storeCode: string
+    userId: string
   ): Promise<UpdateCustomerGroupResponseDto> {
-    const customerGroup = await this.prismaClient.customerGroup.findUnique({
+    const existingGroup = await this.prismaClient.customerGroup.findUniqueOrThrow({
       where: {
-        id: id,
-        storeCode
+        id: id
       }
     })
 
-    if (!customerGroup) {
-      throw new HttpException(HttpStatus.NOT_FOUND, CUSTOMER_GROUP_ERROR.CUSTOMER_GROUP_NOT_FOUND)
-    }
-
-    if (data.name && data.name !== customerGroup.name) {
-      const recordWithSameName = await this.prismaClient.customerGroup.findFirst({
+    if (data.name && data.name !== existingGroup.name) {
+      const groupWithSameName = await this.prismaClient.customerGroup.findFirst({
         where: {
           name: {
             equals: data.name,
@@ -42,20 +35,18 @@ export class UpdateCustomerGroupUseCase {
           },
           id: {
             not: id
-          },
-          storeCode
+          }
         }
       })
 
-      if (recordWithSameName) {
+      if (groupWithSameName) {
         throw new HttpException(HttpStatus.CONFLICT, CUSTOMER_GROUP_ERROR.NAME_ALREADY_EXISTS)
       }
     }
 
     return this.prismaClient.customerGroup.update({
       where: {
-        id: id,
-        storeCode
+        id: id
       },
       data: {
         name: data.name,
