@@ -104,9 +104,8 @@ export class CreateCustomerRequestDto {
   gender: GenderEnum
 
   @IsOptional()
-  @IsString({ message: 'URL ảnh đại diện phải là chuỗi ký tự' })
-  @MaxLength(500, { message: 'URL ảnh đại diện không được vượt quá 500 ký tự' })
-  avatarUrl: string
+  @IsUUID('4', { message: 'ID file là UUID hợp lệ' })
+  avatarId: string
 
   @IsOptional()
   @IsString({ message: 'Ghi chú phải là chuỗi ký tự' })

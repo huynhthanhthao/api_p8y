@@ -7,7 +7,7 @@ import { ProvinceController } from './controllers/province.controller'
 import { AuthController } from './controllers/auth.controller'
 import { AppController } from './controllers/app.controller'
 import { GetAllProvinceUseCase, GetOneProvinceUseCase } from '@usecases/provinces'
-import { CustomerController, CustomerGroupController } from './controllers'
+import { CustomerController, CustomerGroupController, FileController } from './controllers'
 import {
   SignInUseCase,
   SignUpUseCase,
@@ -31,12 +31,14 @@ import {
   GetOneCustomerUseCase,
   UpdateCustomerUseCase
 } from '@usecases/customers'
+import { UploadMultipleFileUseCase } from '@usecases/files'
 
 const controllers = [
   AuthController,
   ProvinceController,
   CustomerGroupController,
-  CustomerController
+  CustomerController,
+  FileController
 ]
 
 const useCases = [
@@ -65,7 +67,10 @@ const useCases = [
   DeleteManyCustomerUseCase,
   GetAllCustomerUseCase,
   GetOneCustomerUseCase,
-  UpdateCustomerUseCase
+  UpdateCustomerUseCase,
+
+  // File
+  UploadMultipleFileUseCase
 ]
 
 @Module({

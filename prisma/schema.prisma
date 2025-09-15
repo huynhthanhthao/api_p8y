@@ -189,15 +189,17 @@ model Supplier {
   deletedBy       String?        @map("deleted_by") @db.Uuid()
   name            String         @db.VarChar(255)
   code            String         @db.VarChar(50)
-  phone           String?        @db.VarChar(20)
-  email           String?        @db.VarChar(100)
-  tax             String?        @db.VarChar(50)
+  phone           String?        @db.VarChar(50)
+  email           String?        @db.VarChar(255)
+  tax             String?        @default("") @db.VarChar(50)
   supplierGroupId String?        @map("supplier_group_id") @db.Uuid()
   storeCode       String         @map("store_code") @db.VarChar(50)
   branchId        String         @map("branch_id") @db.Uuid()
   supplierGroup   SupplierGroup? @relation(fields: [supplierGroupId], references: [id])
   store           Store          @relation(fields: [storeCode], references: [code])
 
+  @@unique([code, branchId])
+  @@unique([phone, branchId])
   @@map("suppliers")
 }
 
@@ -399,8 +401,9 @@ model Customer {
   phone               String?              @db.VarChar(50)
   birthday            DateTime?            @db.Date()
   gender              String?              @db.VarChar(20)
-  avatarUrl           String?              @default("") @map("avatar_url") @db.VarChar(500)
   note                String?              @default("") @db.VarChar(500)
+  avatarId            String?              @db.Uuid()
+  avatar              File?                @relation(fields: [avatarId], references: [id])
   store               Store?               @relation(fields: [storeCode], references: [code], onDelete: SetNull)
   customerGroup       CustomerGroup?       @relation(fields: [customerGroupId], references: [id])
   customerGroupId     String?              @map("customer_group_id") @db.Uuid()
@@ -447,6 +450,25 @@ model CustomerGroup {
   customers     Customer[]
 
   @@map("customer_groups")
+}
+
+model File {
+  id           String     @id() @default(uuid()) @db.Uuid()
+  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdBy    String?    @map("created_by") @db.Uuid()
+  updatedAt    DateTime   @updatedAt() @map("updated_at") @db.Timestamptz(6)
+  updatedBy    String?    @map("updated_by") @db.Uuid()
+  deletedAt    DateTime?  @map("deleted_at") @db.Timestamptz(6)
+  deletedBy    String?    @map("deleted_by") @db.Uuid()
+  filename     String     @map("filename") @db.VarChar(255)
+  originalName String     @map("original_name") @db.VarChar(255)
+  mimetype     String     @map("mimetype") @db.VarChar(255)
+  size         Int
+  path         String     @db.Text()
+  type         String     @map("type") @db.VarChar(255)
+  customers    Customer[]
+
+  @@map("files")
 }
 
 model StockCard {

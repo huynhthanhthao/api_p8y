@@ -5,7 +5,7 @@ export const STORE_EXPIRY_DAYS = 15
 export const SIGNIN_TOKEN_EXPIRY = '15m'
 
 // Thời gian hết hạn access token
-export const ACCESS_TOKEN_EXPIRY = '5s'
+export const ACCESS_TOKEN_EXPIRY = '1h'
 
 // Thời gian hết hạn refresh token
 export const REFRESH_TOKEN_EXPIRY = '7d'

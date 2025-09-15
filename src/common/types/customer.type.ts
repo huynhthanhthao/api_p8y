@@ -1,28 +1,31 @@
 import { Prisma } from '@prisma/client'
 
-const customerSelect = Prisma.validator<Prisma.CustomerSelect>()({
-  id: true,
-  name: true,
-  code: true,
-  storeCode: true,
-  email: true,
-  phone: true,
-  birthday: true,
-  gender: true,
-  avatarUrl: true,
-  note: true,
-  customerGroupId: true,
-  customerGroup: {
-    omit: {
-      deletedAt: true,
-      deletedBy: true,
-      createdBy: true,
-      updatedBy: true
-    }
+export const customerSelect = Prisma.validator<Prisma.CustomerFindFirstArgs>()({
+  include: {
+    customerGroup: {
+      omit: {
+        deletedAt: true,
+        deletedBy: true,
+        createdBy: true,
+        updatedBy: true
+      }
+    },
+    avatar: {
+      omit: {
+        deletedAt: true,
+        deletedBy: true,
+        createdBy: true,
+        updatedBy: true
+      }
+    },
+    customerInvoiceInfo: true
   },
-  customerInvoiceInfo: true
+  omit: {
+    deletedAt: true,
+    deletedBy: true,
+    createdBy: true,
+    updatedBy: true
+  }
 })
 
-export type Customer = Prisma.CustomerGetPayload<{
-  select: typeof customerSelect
-}>
+export type Customer = Prisma.CustomerGetPayload<typeof customerSelect>

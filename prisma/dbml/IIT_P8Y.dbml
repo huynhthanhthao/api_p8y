@@ -163,12 +163,17 @@ Table suppliers {
   code String [not null]
   phone String
   email String
-  tax String
+  tax String [default: '']
   supplierGroupId String
   storeCode String [not null]
   branchId String [not null]
   supplierGroup supplier_groups
   store stores [not null]
+
+  indexes {
+    (code, branchId) [unique]
+    (phone, branchId) [unique]
+  }
 }
 
 Table supplier_groups {
@@ -350,8 +355,9 @@ Table customers {
   phone String
   birthday DateTime
   gender String
-  avatarUrl String [default: '']
   note String [default: '']
+  avatarId String
+  avatar files
   store stores
   customerGroup customer_groups
   customerGroupId String
@@ -394,6 +400,23 @@ Table customer_groups {
   discountType String [default: 'VALUE']
   storeCode String [not null]
   store stores
+  customers customers [not null]
+}
+
+Table files {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  filename String [not null]
+  originalName String [not null]
+  mimetype String [not null]
+  size Int [not null]
+  path String [not null]
+  type String [not null]
   customers customers [not null]
 }
 
@@ -537,6 +560,8 @@ Ref: invoices.customerId > customers.id
 Ref: transport_infos.invoiceId - invoices.id
 
 Ref: delivery_infos.invoiceId - invoices.id
+
+Ref: customers.avatarId > files.id
 
 Ref: customers.storeCode > stores.code [delete: Set Null]
 

@@ -59,7 +59,7 @@ export class UpdateCustomerUseCase {
       data: {
         name: data.name,
         code: data.code || (await generateCodeModel({ model: 'Customer', storeCode })),
-        avatarUrl: data.avatarUrl,
+        avatarId: data.avatarId,
         birthday: data.birthday,
         customerGroupId: data.customerGroupId,
         gender: data.gender,
@@ -92,6 +92,7 @@ export class UpdateCustomerUseCase {
         updatedBy: true
       },
       include: {
+        customerInvoiceInfo: true,
         customerGroup: {
           omit: {
             deletedAt: true,
@@ -100,7 +101,14 @@ export class UpdateCustomerUseCase {
             updatedBy: true
           }
         },
-        customerInvoiceInfo: true
+        avatar: {
+          omit: {
+            deletedAt: true,
+            deletedBy: true,
+            createdBy: true,
+            updatedBy: true
+          }
+        }
       }
     })
   }

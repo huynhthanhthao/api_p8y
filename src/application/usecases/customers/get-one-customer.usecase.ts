@@ -3,7 +3,6 @@ import { PrismaService } from '@infrastructure/prisma'
 import { Customer } from '@common/types'
 
 @Injectable()
-@Injectable()
 export class GetOneCustomerUseCase {
   constructor(private readonly prismaService: PrismaService) {}
 
@@ -21,6 +20,7 @@ export class GetOneCustomerUseCase {
         updatedBy: true
       },
       include: {
+        customerInvoiceInfo: true,
         customerGroup: {
           omit: {
             deletedAt: true,
@@ -29,7 +29,14 @@ export class GetOneCustomerUseCase {
             updatedBy: true
           }
         },
-        customerInvoiceInfo: true
+        avatar: {
+          omit: {
+            deletedAt: true,
+            deletedBy: true,
+            createdBy: true,
+            updatedBy: true
+          }
+        }
       }
     })
   }

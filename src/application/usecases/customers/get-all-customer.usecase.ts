@@ -52,6 +52,14 @@ export class GetAllCustomerUseCase {
               createdBy: true,
               updatedBy: true
             }
+          },
+          avatar: {
+            omit: {
+              deletedAt: true,
+              deletedBy: true,
+              createdBy: true,
+              updatedBy: true
+            }
           }
         }
       },
