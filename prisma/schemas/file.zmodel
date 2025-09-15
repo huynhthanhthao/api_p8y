@@ -1,0 +1,16 @@
+import 'base'
+import 'file'
+import 'customer'
+
+model File extends BaseModel {
+  filename     String     @map("filename") @db.VarChar(255)
+  originalName String     @map('original_name') @db.VarChar(255)
+  mimetype     String     @map('mimetype') @db.VarChar(255)
+  size         Int
+  path         String     @db.Text
+  type         String     @map("type") @db.VarChar(255)
+
+  // Relations
+  customers    Customer[]
+  @@map("files")
+}
