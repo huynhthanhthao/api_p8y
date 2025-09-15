@@ -19,12 +19,12 @@ export class UpdateSupplierGroupUseCase {
     id: string,
     data: UpdateSupplierGroupRequestDto,
     userId: string,
-    storeCode: string
+    branchId: string
   ): Promise<UpdateSupplierGroupResponseDto> {
     const supplierGroup = await this.prismaClient.supplierGroup.findUnique({
       where: {
         id: id,
-        storeCode
+        branchId
       }
     })
 
@@ -42,7 +42,7 @@ export class UpdateSupplierGroupUseCase {
           id: {
             not: id
           },
-          storeCode
+          branchId
         }
       })
 
@@ -54,7 +54,7 @@ export class UpdateSupplierGroupUseCase {
     return this.prismaClient.supplierGroup.update({
       where: {
         id: id,
-        storeCode
+        branchId
       },
       data: {
         name: data.name,

@@ -3,8 +3,6 @@ import 'branch'
 import 'customer'
 import 'user'
 import 'customer_group'
-import 'supplier'
-import 'supplier_group'
 
 // Store model
 model Store {
@@ -18,8 +16,6 @@ model Store {
   users          User[]
   customers      Customer[]
   customerGroups CustomerGroup[]
-  suppliers      Supplier[]
-  supplierGroups SupplierGroup[]
 
   @@map("stores")
 }

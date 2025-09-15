@@ -7,6 +7,8 @@ import 'invoice'
 import 'stock_transaction'
 import 'ward'
 import 'province'
+import 'supplier'
+import 'supplier_group'
 
 // Branch model
 model Branch extends BaseModel {
@@ -26,6 +28,8 @@ model Branch extends BaseModel {
   invoices          Invoice[]
   stockTransactions StockTransaction[]
   products          Product[]
+  suppliers         Supplier[]
+  supplierGroups    SupplierGroup[]
 
   @@map("branches")
 }

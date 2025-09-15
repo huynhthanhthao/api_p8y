@@ -16,12 +16,12 @@ export class DeleteManySupplierGroupUseCase {
   async execute(
     data: DeleteManyRequestDto,
     userId: string,
-    storeCode: string
+    branchId: string
   ): Promise<Prisma.BatchPayload> {
     const suppliers = await this.prismaClient.supplierGroup.findMany({
       where: {
         id: { in: data.ids },
-        storeCode
+        branchId
       }
     })
 
@@ -35,7 +35,7 @@ export class DeleteManySupplierGroupUseCase {
     await this.prismaClient.supplierGroup.updateMany({
       where: {
         id: { in: data.ids },
-        storeCode
+        branchId
       },
       data: {
         deletedBy: userId
@@ -45,7 +45,7 @@ export class DeleteManySupplierGroupUseCase {
     return await this.prismaClient.supplierGroup.deleteMany({
       where: {
         id: { in: data.ids },
-        storeCode
+        branchId
       }
     })
   }

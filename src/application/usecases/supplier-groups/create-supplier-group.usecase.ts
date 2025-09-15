@@ -19,7 +19,7 @@ export class CreateSupplierGroupUseCase {
   async execute(
     data: CreateSupplierGroupRequestDto,
     userId: string,
-    storeCode: string
+    branchId: string
   ): Promise<CreateSupplierGroupResponseDto> {
     const existingGroup = await this.prismaClient.supplierGroup.findFirst({
       where: {
@@ -27,7 +27,7 @@ export class CreateSupplierGroupUseCase {
           equals: data.name,
           mode: 'insensitive'
         },
-        storeCode
+        branchId
       }
     })
 
@@ -39,7 +39,7 @@ export class CreateSupplierGroupUseCase {
         name: data.name,
         note: data.note,
         createdBy: userId,
-        storeCode
+        branchId
       },
       omit: {
         deletedAt: true,

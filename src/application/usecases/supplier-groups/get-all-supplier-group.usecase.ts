@@ -16,12 +16,12 @@ export class GetAllSupplierGroupUseCase {
 
   async execute(
     params: GetAllSupplierGroupRequestDto,
-    storeCode: string
+    branchId: string
   ): Promise<GetAllSupplierGroupResponseDto> {
     const { page, perPage, keyword, orderBy, sortBy } = params
 
     const where: Prisma.SupplierGroupWhereInput = {
-      storeCode
+      branchId
     }
 
     if (keyword) {

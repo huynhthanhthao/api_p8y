@@ -40,7 +40,7 @@ export class SupplierGroupController {
 
   @Post()
   create(@Body() data: CreateSupplierGroupRequestDto, @Req() req: RequestAccessBranchJWT) {
-    return this._createSupplierGroupUseCase.execute(data, req.userId, req.storeCode)
+    return this._createSupplierGroupUseCase.execute(data, req.userId, req.branchId)
   }
 
   @Patch(':id')
@@ -49,26 +49,26 @@ export class SupplierGroupController {
     @Body() data: CreateSupplierGroupRequestDto,
     @Req() req: RequestAccessBranchJWT
   ) {
-    return this._updateSupplierGroupUseCase.execute(id, data, req.userId, req.storeCode)
+    return this._updateSupplierGroupUseCase.execute(id, data, req.userId, req.branchId)
   }
 
   @Delete(':id')
   delete(@Param('id') id: string, @Req() req: RequestAccessBranchJWT) {
-    return this._deleteSupplierGroupUseCase.execute(id, req.userId, req.storeCode)
+    return this._deleteSupplierGroupUseCase.execute(id, req.userId, req.branchId)
   }
 
   @Delete('')
   deleteMany(@Body() data: DeleteManyRequestDto, @Req() req: RequestAccessBranchJWT) {
-    return this._deleteManySupplierGroupUseCase.execute(data, req.userId, req.storeCode)
+    return this._deleteManySupplierGroupUseCase.execute(data, req.userId, req.branchId)
   }
 
   @Get(':id')
   getOne(@Param('id') id: string, @Req() req: RequestAccessBranchJWT) {
-    return this._getOneSupplierGroupUseCase.execute(id, req.storeCode)
+    return this._getOneSupplierGroupUseCase.execute(id, req.branchId)
   }
 
   @Get()
   getAll(@Query() queryParams: GetAllSupplierGroupRequestDto, @Req() req: RequestAccessBranchJWT) {
-    return this._getAllSupplierGroupUseCase.execute(queryParams, req.storeCode)
+    return this._getAllSupplierGroupUseCase.execute(queryParams, req.branchId)
   }
 }

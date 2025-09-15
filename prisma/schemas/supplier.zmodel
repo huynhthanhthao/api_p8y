@@ -1,19 +1,21 @@
 import 'base'
 import 'store'
 import 'supplier_group'
+import 'branch'
 
 model Supplier extends BaseModel {
   name            String         @db.VarChar(255)
   code            String         @db.VarChar(50)
-  phone           String?        @db.VarChar(20)
-  email           String?        @db.VarChar(100)
-  tax             String?        @db.VarChar(50)
+  phone           String?        @db.VarChar(50)
+  email           String?        @db.VarChar(255)
+  tax             String?        @db.VarChar(50) @default("")
   supplierGroupId String?        @map("supplier_group_id") @db.Uuid
-  storeCode       String         @map("store_code") @db.VarChar(50)
   branchId        String         @map("branch_id") @db.Uuid
 
   supplierGroup   SupplierGroup? @relation(fields: [supplierGroupId], references: [id])
-  store           Store          @relation(fields: [storeCode], references: [code])
+  branch          Branch         @relation(fields: [branchId], references: [id])
 
+  @@unique([code, branchId])
+  @@unique([phone, branchId])
   @@map("suppliers")
 }
