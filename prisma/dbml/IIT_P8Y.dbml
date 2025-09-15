@@ -16,8 +16,6 @@ Table stores {
   users users [not null]
   customers customers [not null]
   customerGroups customer_groups [not null]
-  suppliers suppliers [not null]
-  supplierGroups supplier_groups [not null]
 }
 
 Table branches {
@@ -42,6 +40,8 @@ Table branches {
   invoices invoices [not null]
   stockTransactions stock_transactions [not null]
   products products [not null]
+  suppliers suppliers [not null]
+  supplierGroups supplier_groups [not null]
 }
 
 Table users {
@@ -165,10 +165,9 @@ Table suppliers {
   email String
   tax String [default: '']
   supplierGroupId String
-  storeCode String [not null]
   branchId String [not null]
   supplierGroup supplier_groups
-  store stores [not null]
+  branch branches [not null]
 
   indexes {
     (code, branchId) [unique]
@@ -186,9 +185,9 @@ Table supplier_groups {
   deletedBy String
   name String [not null]
   note String [default: '']
-  storeCode String [not null]
+  branchId String [not null]
   suppliers suppliers [not null]
-  store stores [not null]
+  branch branches [not null]
 }
 
 Table stock_locations {
@@ -535,9 +534,9 @@ Ref: products.productGroupId > product_groups.id
 
 Ref: suppliers.supplierGroupId > supplier_groups.id
 
-Ref: suppliers.storeCode > stores.code
+Ref: suppliers.branchId > branches.id
 
-Ref: supplier_groups.storeCode > stores.code
+Ref: supplier_groups.branchId > branches.id
 
 Ref: product_weights.productId - products.id
 

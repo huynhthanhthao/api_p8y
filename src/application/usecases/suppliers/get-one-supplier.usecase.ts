@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import { HttpStatus, Injectable } from '@nestjs/common'
 import { PrismaService } from '@infrastructure/prisma'
 import { Supplier } from '@common/types'
+import { HttpException } from '@common/exceptions'
+import { SUPPLIER_ERROR } from '@common/errors'
 
 @Injectable()
 export class GetOneSupplierUseCase {
@@ -11,7 +13,7 @@ export class GetOneSupplierUseCase {
   }
 
   async execute(id: string, branchId: string): Promise<Supplier> {
-    return await this.prismaClient.supplier.findUniqueOrThrow({
+    const supplier = await this.prismaClient.supplier.findUnique({
       where: { id, branchId },
       omit: {
         deletedAt: true,
@@ -30,5 +32,9 @@ export class GetOneSupplierUseCase {
         }
       }
     })
+
+    if (!supplier) throw new HttpException(HttpStatus.NOT_FOUND, SUPPLIER_ERROR.SUPPLIER_NOT_FOUND)
+
+    return supplier
   }
 }

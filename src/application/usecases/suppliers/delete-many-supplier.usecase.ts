@@ -3,11 +3,11 @@ import { PrismaService } from '@infrastructure/prisma'
 import { DeleteManyRequestDto } from '@common/dtos'
 import { Prisma } from '@prisma/client'
 import { HttpException } from '@common/exceptions'
-import { CUSTOMER_ERROR } from '@common/errors'
 import { generateTimesTamp } from '@common/helpers'
+import { SUPPLIER_ERROR } from '@common/errors'
 
 @Injectable()
-export class DeleteManyCustomerUseCase {
+export class DeleteManySupplierUseCase {
   constructor(private readonly prismaService: PrismaService) {}
 
   private get prismaClient(): PrismaService {
@@ -17,44 +17,42 @@ export class DeleteManyCustomerUseCase {
   async execute(
     data: DeleteManyRequestDto,
     userId: string,
-    storeCode: string
+    branchId: string
   ): Promise<Prisma.BatchPayload> {
-    const customers = await this.prismaClient.customer.findMany({
+    const suppliers = await this.prismaClient.supplier.findMany({
       where: {
         id: { in: data.ids },
-        storeCode
+        branchId
       },
       select: {
         id: true,
         code: true,
-        phone: true,
-        email: true
+        phone: true
       }
     })
 
-    if (customers.length !== data.ids.length) {
-      throw new HttpException(HttpStatus.NOT_FOUND, CUSTOMER_ERROR.SOME_CUSTOMERS_NOT_FOUND)
+    if (suppliers.length !== data.ids.length) {
+      throw new HttpException(HttpStatus.NOT_FOUND, SUPPLIER_ERROR.SOME_SUPPLIERS_NOT_FOUND)
     }
 
     // Cập nhật thông tin trước khi xóa (đánh dấu đã xóa và thay đổi các trường duy nhất)
-    const updatePromises = customers.map(customer =>
-      this.prismaClient.customer.update({
-        where: { id: customer.id, storeCode },
+    const updatePromises = suppliers.map(supplier =>
+      this.prismaClient.supplier.update({
+        where: { id: supplier.id, branchId },
         data: {
           deletedBy: userId,
-          code: `del_${customer.code}_${generateTimesTamp()}`,
-          phone: customer.phone ? `del_${customer.phone}_${generateTimesTamp()}` : null,
-          email: customer.email ? `del_${customer.email}_${generateTimesTamp()}` : null
+          code: `del_${supplier.code}_${generateTimesTamp()}`,
+          phone: supplier.phone ? `del_${supplier.phone}_${generateTimesTamp()}` : null
         }
       })
     )
 
     await Promise.all(updatePromises)
 
-    return await this.prismaClient.customer.deleteMany({
+    return await this.prismaClient.supplier.deleteMany({
       where: {
         id: { in: data.ids },
-        storeCode
+        branchId
       }
     })
   }

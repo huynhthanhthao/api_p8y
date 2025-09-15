@@ -1,13 +1,13 @@
 import { PrismaService } from '@infrastructure/prisma'
 import {
-  GetAllCustomerRequestDto,
-  GetAllCustomerResponseDto
-} from '@interface-adapter/dtos/customers'
+  GetAllSupplierRequestDto,
+  GetAllSupplierResponseDto
+} from '@interface-adapter/dtos/suppliers'
 import { Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 
 @Injectable()
-export class GetAllCustomerUseCase {
+export class GetAllSupplierUseCase {
   constructor(private readonly prismaService: PrismaService) {}
 
   private get prismaClient(): PrismaService {
@@ -15,16 +15,16 @@ export class GetAllCustomerUseCase {
   }
 
   async execute(
-    params: GetAllCustomerRequestDto,
-    storeCode: string
-  ): Promise<GetAllCustomerResponseDto> {
-    const { page, perPage, keyword, orderBy, sortBy, customerGroupIds } = params
+    params: GetAllSupplierRequestDto,
+    branchId: string
+  ): Promise<GetAllSupplierResponseDto> {
+    const { page, perPage, keyword, orderBy, sortBy, supplierGroupIds } = params
 
-    const where: Prisma.CustomerWhereInput = {
-      storeCode,
-      ...(!!customerGroupIds?.length && {
-        customerGroupId: {
-          in: customerGroupIds
+    const where: Prisma.SupplierWhereInput = {
+      branchId,
+      ...(!!supplierGroupIds?.length && {
+        supplierGroupId: {
+          in: supplierGroupIds
         }
       })
     }
@@ -34,7 +34,7 @@ export class GetAllCustomerUseCase {
     }
 
     return await this.prismaClient.findManyWithPagination(
-      'customer',
+      'supplier',
       {
         where,
         orderBy: { [sortBy]: orderBy },
@@ -45,15 +45,7 @@ export class GetAllCustomerUseCase {
           updatedBy: true
         },
         include: {
-          customerGroup: {
-            omit: {
-              deletedAt: true,
-              deletedBy: true,
-              createdBy: true,
-              updatedBy: true
-            }
-          },
-          avatar: {
+          supplierGroup: {
             omit: {
               deletedAt: true,
               deletedBy: true,

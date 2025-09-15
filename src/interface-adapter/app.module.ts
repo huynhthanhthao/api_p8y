@@ -41,6 +41,15 @@ import {
   UpdateSupplierGroupUseCase
 } from '@usecases/supplier-groups'
 import { SupplierGroupController } from './controllers/supplier-group.controller'
+import { SupplierController } from './controllers/supplier.controller'
+import {
+  CreateSupplierUseCase,
+  DeleteSupplierUseCase,
+  DeleteManySupplierUseCase,
+  GetAllSupplierUseCase,
+  GetOneSupplierUseCase,
+  UpdateSupplierUseCase
+} from '@usecases/suppliers'
 
 const controllers = [
   AuthController,
@@ -48,7 +57,8 @@ const controllers = [
   CustomerGroupController,
   CustomerController,
   FileController,
-  SupplierGroupController
+  SupplierGroupController,
+  SupplierController
 ]
 
 const useCases = [
@@ -88,7 +98,15 @@ const useCases = [
   DeleteManySupplierGroupUseCase,
   GetAllSupplierGroupUseCase,
   GetOneSupplierGroupUseCase,
-  UpdateSupplierGroupUseCase
+  UpdateSupplierGroupUseCase,
+
+  // SupplierGroup
+  CreateSupplierUseCase,
+  DeleteSupplierUseCase,
+  DeleteManySupplierUseCase,
+  GetAllSupplierUseCase,
+  GetOneSupplierUseCase,
+  UpdateSupplierUseCase
 ]
 
 @Module({

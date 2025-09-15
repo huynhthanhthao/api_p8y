@@ -1,10 +1,11 @@
 import { Transform, TransformFnParams } from 'class-transformer'
-import { IsInt, IsNotEmpty, IsString, MinLength } from 'class-validator'
+import { IsInt, IsNotEmpty, IsString, Matches, MinLength } from 'class-validator'
 
 export class SignUpRequestDto {
   @IsNotEmpty({ message: 'Số điện thoại không được để trống' })
   @IsString({ message: 'Số điện thoại phải là chuỗi ký tự' })
   @Transform(({ value }: TransformFnParams) => value?.trim())
+  @Matches(/^0\d{9,10}$/, { message: 'Số điện thoại phải bắt đầu bằng 0 và có 10-11 chữ số' })
   phone: string
 
   @IsNotEmpty({ message: 'Mật khẩu không được để trống' })

@@ -92,6 +92,7 @@ export class CreateCustomerRequestDto {
   @IsOptional()
   @IsString({ message: 'Số điện thoại phải là chuỗi ký tự' })
   @MaxLength(20, { message: 'Số điện thoại không được vượt quá 20 ký tự' })
+  @Matches(/^[0-9]+$/, { message: 'Số điện thoại chỉ được chứa ký tự số' })
   phone: string
 
   @IsOptional()

@@ -31,8 +31,6 @@ model Store {
   users          User[]
   customers      Customer[]
   customerGroups CustomerGroup[]
-  suppliers      Supplier[]
-  supplierGroups SupplierGroup[]
 
   @@map("stores")
 }
@@ -59,6 +57,8 @@ model Branch {
   invoices          Invoice[]
   stockTransactions StockTransaction[]
   products          Product[]
+  suppliers         Supplier[]
+  supplierGroups    SupplierGroup[]
 
   @@map("branches")
 }
@@ -193,10 +193,9 @@ model Supplier {
   email           String?        @db.VarChar(255)
   tax             String?        @default("") @db.VarChar(50)
   supplierGroupId String?        @map("supplier_group_id") @db.Uuid()
-  storeCode       String         @map("store_code") @db.VarChar(50)
   branchId        String         @map("branch_id") @db.Uuid()
   supplierGroup   SupplierGroup? @relation(fields: [supplierGroupId], references: [id])
-  store           Store          @relation(fields: [storeCode], references: [code])
+  branch          Branch         @relation(fields: [branchId], references: [id])
 
   @@unique([code, branchId])
   @@unique([phone, branchId])
@@ -213,9 +212,9 @@ model SupplierGroup {
   deletedBy String?    @map("deleted_by") @db.Uuid()
   name      String     @db.VarChar(255)
   note      String?    @default("") @db.VarChar(500)
-  storeCode String     @map("store_code") @db.VarChar(50)
+  branchId  String     @map("branch_id") @db.Uuid()
   suppliers Supplier[]
-  store     Store      @relation(fields: [storeCode], references: [code])
+  branch    Branch     @relation(fields: [branchId], references: [id])
 
   @@map("supplier_groups")
 }
