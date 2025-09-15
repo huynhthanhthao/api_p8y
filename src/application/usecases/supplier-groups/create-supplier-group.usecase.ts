@@ -1,7 +1,7 @@
 import { PrismaService } from '@infrastructure/prisma'
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { HttpException } from '@common/exceptions'
-import { CUSTOMER_GROUP_ERROR } from '@common/errors'
+
 import {
   CreateSupplierGroupRequestDto,
   CreateSupplierGroupResponseDto

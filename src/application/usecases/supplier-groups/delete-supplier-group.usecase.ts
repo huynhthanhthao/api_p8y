@@ -11,19 +11,19 @@ export class DeleteSupplierGroupUseCase {
     return this.prismaService.client
   }
 
-  async execute(id: string, userId: string, storeCode: string): Promise<string> {
-    const customer = await this.prismaClient.supplierGroup.findUnique({
-      where: { id, storeCode }
+  async execute(id: string, userId: string, branchId: string): Promise<string> {
+    const supplierGroup = await this.prismaClient.supplierGroup.findUnique({
+      where: { id, branchId }
     })
 
-    if (!customer) {
+    if (!supplierGroup) {
       throw new HttpException(HttpStatus.NOT_FOUND, SUPPLIER_GROUP_ERROR.SUPPLIER_GROUP_NOT_FOUND)
     }
 
     await this.prismaClient.supplierGroup.update({
       where: {
         id,
-        storeCode
+        branchId
       },
       data: {
         deletedBy: userId
@@ -33,7 +33,7 @@ export class DeleteSupplierGroupUseCase {
     await this.prismaClient.supplierGroup.delete({
       where: {
         id,
-        storeCode
+        branchId
       }
     })
 
