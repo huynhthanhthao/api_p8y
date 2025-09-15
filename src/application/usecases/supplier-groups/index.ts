@@ -1,5 +1,5 @@
 export * from './create-supplier-group.usecase'
-export * from './delete-supplier.usecase'
+export * from './delete-supplier-group.usecase'
 export * from './get-all-supplier-group.usecase'
 export * from './get-one-supplier-group.usecase'
 export * from './update-supplier-group.usecase'

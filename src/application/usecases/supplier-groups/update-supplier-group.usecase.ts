@@ -5,7 +5,7 @@ import {
   UpdateSupplierGroupResponseDto
 } from '@interface-adapter/dtos/supplier-groups'
 import { HttpException } from '@common/exceptions'
-import { SUPPLIER_GROUP_ERROR } from '@common/errors/supplier-group.error'
+import { SUPPLIER_GROUP_ERROR } from '@common/errors'
 
 @Injectable()
 export class UpdateSupplierGroupUseCase {
