@@ -1,12 +1,14 @@
 import { Prisma } from '@prisma/client'
 
-export type Branch = Prisma.BranchGetPayload<{
+export const branchSelect = Prisma.validator<Prisma.BranchFindFirstArgs>()({
   omit: {
-    deletedAt: true
-    deletedBy: true
-    createdBy: true
-    createdAt: true
+    deletedAt: true,
+    deletedBy: true,
+    createdBy: true,
+    updatedBy: true,
+    createdAt: true,
     updatedAt: true
-    updatedBy: true
   }
-}>
+})
+
+export type Branch = Prisma.BranchGetPayload<typeof branchSelect>

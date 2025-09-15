@@ -1,11 +1,14 @@
 import { Prisma } from '@prisma/client'
 
-export type CustomerGroup = Prisma.CustomerGroupGetPayload<{
-  select: {
-    id: true
-    name: true
-    discountValue: true
-    discountType: true
-    createdAt: true
+export const customerGroupSelect = Prisma.validator<Prisma.CustomerGroupFindFirstArgs>()({
+  omit: {
+    deletedAt: true,
+    deletedBy: true,
+    createdBy: true,
+    updatedBy: true,
+    createdAt: true,
+    updatedAt: true
   }
-}>
+})
+
+export type CustomerGroup = Prisma.CustomerGroupGetPayload<typeof customerGroupSelect>
