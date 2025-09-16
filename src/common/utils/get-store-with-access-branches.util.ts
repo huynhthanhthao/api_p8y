@@ -28,6 +28,10 @@ export async function getStoreWithAccessibleBranches(
           createdAt: true,
           updatedAt: true,
           updatedBy: true
+        },
+        include: {
+          province: true,
+          ward: true
         }
       }
     }

@@ -33,7 +33,8 @@
     },
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "src/common/types/.type.ts"
   ],
   "exclude": [
     "node_modules",

@@ -71,7 +71,7 @@ export class UploadMultipleFileUseCase {
         }
       })
     } catch (error) {
-      throw new Error(`Failed to upload multiple files: ${error.message}`)
+      throw new HttpException(HttpStatus.BAD_REQUEST, FILE_ERROR.FILE_INVALID)
     }
   }
 

@@ -1,6 +1,4 @@
 import 'base'
-import 'user'
-import 'product'
 import 'invoice_item'
 import 'transport_info'
 import 'delivery_info'

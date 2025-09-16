@@ -1,0 +1,14 @@
+import 'base'
+import 'product'
+import 'branch'
+
+model Manufacturer extends BaseModel {
+  name     String    @db.VarChar(255)
+  branchId String    @map("branch_id") @db.Uuid
+  
+  // Relations
+  products Product[]
+  branch   Branch    @relation(fields: [branchId], references: [id])
+
+  @@map("manufacturers")
+} 

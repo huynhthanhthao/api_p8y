@@ -24,6 +24,10 @@ export async function getBranchWithUserAccess(
       createdAt: true,
       updatedAt: true,
       updatedBy: true
+    },
+    include: {
+      province: true,
+      ward: true
     }
   })
 }

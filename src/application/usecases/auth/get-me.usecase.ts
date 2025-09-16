@@ -42,6 +42,10 @@ export class GetMeUseCase {
         createdAt: true,
         updatedAt: true,
         updatedBy: true
+      },
+      include: {
+        province: true,
+        ward: true
       }
     })
   }

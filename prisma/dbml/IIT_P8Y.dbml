@@ -42,6 +42,9 @@ Table branches {
   products products [not null]
   suppliers suppliers [not null]
   supplierGroups supplier_groups [not null]
+  manufacturers manufacturers [not null]
+  productLocations stock_locations [not null]
+  medicineRoutes medicine_routes [not null]
 }
 
 Table users {
@@ -131,23 +134,36 @@ Table products {
   code String [not null]
   productGroupId String [not null]
   branchId String [not null]
+  type String [not null, default: 'PRODUCT']
   barcode String [default: '']
   shortName String [default: '']
   description String [default: '']
+  isDirectSale Boolean [not null, default: true]
   salePrice Float [default: 0]
   costPrice Float [default: 0]
-  type String [default: 'PRODUCT']
+  isStockEnabled Boolean [not null, default: false]
+  stockQuantity Float
   minStock Float [default: 0]
   maxStock Float [default: 999999999]
+  package String
+  country String
+  manufacturerId String
   branch branches [not null]
+  manufacturer manufacturers
   productGroup product_groups
   productWeight product_weights
   medicineInfo medicine_infos
   productUnits product_units [not null]
-  stockLocations stock_locations [not null]
+  productLocations stock_locations [not null]
   invoiceItems invoice_items [not null]
   stockCards stock_cards [not null]
   stockItems stock_items [not null]
+  photos files [not null]
+
+  indexes {
+    (code, branchId) [unique]
+    (barcode, branchId) [unique]
+  }
 }
 
 Table suppliers {
@@ -198,6 +214,8 @@ Table stock_locations {
   deletedAt DateTime
   deletedBy String
   name String [not null]
+  branchId String [not null]
+  branch branches [not null]
   products products [not null]
 }
 
@@ -209,28 +227,16 @@ Table product_weights {
 }
 
 Table medicine_infos {
-  id String [pk]
-  createdAt DateTime [default: `now()`, not null]
-  createdBy String
-  updatedAt DateTime [not null]
-  updatedBy String
-  deletedAt DateTime
-  deletedBy String
   regNumber String [not null]
   ingredient String [not null]
   dosage String [not null]
-  route String [not null]
-  package String [not null]
-  origin String [not null]
-  countryCode String
-  manufacturerId String [not null]
   productId String [unique, not null]
-  country countries
+  routeId String [not null]
   product products [not null]
-  manufacturer manufacturers [not null]
+  route medicine_routes [not null]
 }
 
-Table manufacturers {
+Table medicine_routes {
   id String [pk]
   createdAt DateTime [default: `now()`, not null]
   createdBy String
@@ -239,14 +245,9 @@ Table manufacturers {
   deletedAt DateTime
   deletedBy String
   name String [not null]
-  country String
+  branchId String [not null]
   medicines medicine_infos [not null]
-}
-
-Table countries {
-  code String [unique, not null]
-  name String [not null]
-  medicineInfos medicine_infos [not null]
+  branch branches [not null]
 }
 
 Table product_units {
@@ -260,13 +261,18 @@ Table product_units {
   name String [not null]
   isBase Boolean [not null, default: false]
   conversion Float [not null, default: 1]
-  sku String
+  code String
   barcode String
   costPrice Float [default: 0]
   salePrice Float [default: 0]
-  isSale Boolean [not null, default: true]
+  isDirectSale Boolean [not null, default: true]
   productId String [not null]
   product products [not null]
+
+  indexes {
+    (code, productId) [unique]
+    (barcode, productId) [unique]
+  }
 }
 
 Table invoice_items {
@@ -416,6 +422,7 @@ Table files {
   path String [not null]
   type String [not null]
   customers customers [not null]
+  products products [not null]
 }
 
 Table stock_cards {
@@ -475,6 +482,20 @@ Table stock_items {
   stockTransactions stock_transactions [not null]
 }
 
+Table manufacturers {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  name String [not null]
+  branchId String [not null]
+  products products [not null]
+  branch branches [not null]
+}
+
 Table wards {
   code Int [pk]
   name String [not null]
@@ -506,8 +527,13 @@ Table RoleToUser {
   usersId String [ref: > users.id]
 }
 
-Table ProductToStockLocation {
-  stocklocationsId String [ref: > stock_locations.id]
+Table ProductToProductLocation {
+  productlocationsId String [ref: > stock_locations.id]
+  productsId String [ref: > products.id]
+}
+
+Table FileToProduct {
+  photosId String [ref: > files.id]
   productsId String [ref: > products.id]
 }
 
@@ -529,6 +555,8 @@ Ref: product_groups.parentId - product_groups.id
 
 Ref: products.branchId > branches.id
 
+Ref: products.manufacturerId > manufacturers.id
+
 Ref: products.productGroupId > product_groups.id
 
 Ref: suppliers.supplierGroupId > supplier_groups.id
@@ -537,13 +565,15 @@ Ref: suppliers.branchId > branches.id
 
 Ref: supplier_groups.branchId > branches.id
 
-Ref: product_weights.productId - products.id
+Ref: stock_locations.branchId > branches.id
 
-Ref: medicine_infos.countryCode > countries.code
+Ref: product_weights.productId - products.id
 
 Ref: medicine_infos.productId - products.id
 
-Ref: medicine_infos.manufacturerId > manufacturers.id
+Ref: medicine_infos.routeId > medicine_routes.id
+
+Ref: medicine_routes.branchId > branches.id
 
 Ref: product_units.productId > products.id
 
@@ -578,5 +608,7 @@ Ref: stock_transactions.branchId > branches.id
 Ref: stock_items.productId > products.id
 
 Ref: stock_items.transId > stock_transactions.id [delete: Cascade]
+
+Ref: manufacturers.branchId > branches.id
 
 Ref: wards.provinceCode > provinces.code

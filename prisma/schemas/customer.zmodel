@@ -6,7 +6,7 @@ import 'file'
 
 model Customer extends BaseModel {
   name                String               @db.VarChar(255)
-  code                String               @db.VarChar(50)
+  code                String               @db.VarChar(100)
   storeCode           String               @db.VarChar(50)
   email               String?              @db.VarChar(255)
   phone               String?              @db.VarChar(50)

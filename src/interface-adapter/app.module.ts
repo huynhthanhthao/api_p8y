@@ -3,11 +3,20 @@ import { ConfigModule } from '@nestjs/config'
 import { Module } from '@nestjs/common'
 import { AppService } from './app.service'
 import { PrismaModule, PrismaService } from '@infrastructure/prisma'
-import { ProvinceController } from './controllers/province.controller'
-import { AuthController } from './controllers/auth.controller'
-import { AppController } from './controllers/app.controller'
 import { GetAllProvinceUseCase, GetOneProvinceUseCase } from '@usecases/provinces'
-import { CustomerController, CustomerGroupController, FileController } from './controllers'
+import {
+  AppController,
+  AuthController,
+  CustomerController,
+  CustomerGroupController,
+  FileController,
+  ManufacturerController,
+  ProductGroupController,
+  ProductLocationController,
+  ProvinceController,
+  SupplierController,
+  SupplierGroupController
+} from './controllers'
 import {
   SignInUseCase,
   SignUpUseCase,
@@ -40,8 +49,6 @@ import {
   GetOneSupplierGroupUseCase,
   UpdateSupplierGroupUseCase
 } from '@usecases/supplier-groups'
-import { SupplierGroupController } from './controllers/supplier-group.controller'
-import { SupplierController } from './controllers/supplier.controller'
 import {
   CreateSupplierUseCase,
   DeleteSupplierUseCase,
@@ -58,7 +65,31 @@ import {
   GetOneProductGroupUseCase,
   UpdateProductGroupUseCase
 } from '@usecases/product-groups'
-import { ProductGroupController } from './controllers/product-group.controller'
+import {
+  CreateManufacturerUseCase,
+  DeleteManufacturerUseCase,
+  DeleteManyManufacturerUseCase,
+  GetAllManufacturerUseCase,
+  GetOneManufacturerUseCase,
+  UpdateManufacturerUseCase
+} from '@usecases/manufacturers'
+import {
+  CreateProductLocationUseCase,
+  DeleteProductLocationUseCase,
+  DeleteManyProductLocationUseCase,
+  GetAllProductLocationUseCase,
+  GetOneProductLocationUseCase,
+  UpdateProductLocationUseCase
+} from '@usecases/product-locations'
+import { MedicineRouteController } from './controllers/medicine-route.controller'
+import {
+  CreateMedicineRouteUseCase,
+  DeleteMedicineRouteUseCase,
+  DeleteManyMedicineRouteUseCase,
+  GetAllMedicineRouteUseCase,
+  GetOneMedicineRouteUseCase,
+  UpdateMedicineRouteUseCase
+} from '@usecases/medicine-routes'
 
 const controllers = [
   AuthController,
@@ -68,7 +99,10 @@ const controllers = [
   FileController,
   SupplierGroupController,
   SupplierController,
-  ProductGroupController
+  ProductGroupController,
+  ManufacturerController,
+  ProductLocationController,
+  MedicineRouteController
 ]
 
 const useCases = [
@@ -124,7 +158,31 @@ const useCases = [
   DeleteManyProductGroupUseCase,
   GetAllProductGroupUseCase,
   GetOneProductGroupUseCase,
-  UpdateProductGroupUseCase
+  UpdateProductGroupUseCase,
+
+  // Manufacturer
+  CreateManufacturerUseCase,
+  DeleteManufacturerUseCase,
+  DeleteManyManufacturerUseCase,
+  GetAllManufacturerUseCase,
+  GetOneManufacturerUseCase,
+  UpdateManufacturerUseCase,
+
+  // ProductLocation
+  CreateProductLocationUseCase,
+  DeleteProductLocationUseCase,
+  DeleteManyProductLocationUseCase,
+  GetAllProductLocationUseCase,
+  GetOneProductLocationUseCase,
+  UpdateProductLocationUseCase,
+
+  // MedicineRoute
+  CreateMedicineRouteUseCase,
+  DeleteMedicineRouteUseCase,
+  DeleteManyMedicineRouteUseCase,
+  GetAllMedicineRouteUseCase,
+  GetOneMedicineRouteUseCase,
+  UpdateMedicineRouteUseCase
 ]
 
 @Module({

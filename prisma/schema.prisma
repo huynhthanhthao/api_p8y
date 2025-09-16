@@ -59,6 +59,9 @@ model Branch {
   products          Product[]
   suppliers         Supplier[]
   supplierGroups    SupplierGroup[]
+  manufacturers     Manufacturer[]
+  productLocations  ProductLocation[]
+  medicineRoutes    MedicineRoute[]
 
   @@map("branches")
 }
@@ -146,35 +149,45 @@ model ProductGroup {
 }
 
 model Product {
-  id             String          @id() @default(uuid()) @db.Uuid()
-  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
-  createdBy      String?         @map("created_by") @db.Uuid()
-  updatedAt      DateTime        @updatedAt() @map("updated_at") @db.Timestamptz(6)
-  updatedBy      String?         @map("updated_by") @db.Uuid()
-  deletedAt      DateTime?       @map("deleted_at") @db.Timestamptz(6)
-  deletedBy      String?         @map("deleted_by") @db.Uuid()
-  name           String          @db.VarChar(255)
-  code           String          @db.VarChar(50)
-  productGroupId String          @map("group_id") @db.Uuid()
-  branchId       String          @map("branch_id") @db.Uuid()
-  barcode        String?         @default("") @db.VarChar(100)
-  shortName      String?         @default("") @map("short_name") @db.VarChar(100)
-  description    String?         @default("") @db.Text()
-  salePrice      Float?          @default(0) @map("sale_price")
-  costPrice      Float?          @default(0) @map("cost_price")
-  type           String?         @default("PRODUCT") @db.VarChar(50)
-  minStock       Float?          @default(0) @map("min_stock")
-  maxStock       Float?          @default(999999999) @map("max_stock")
-  branch         Branch          @relation(fields: [branchId], references: [id])
-  productGroup   ProductGroup?   @relation(fields: [productGroupId], references: [id])
-  productWeight  ProductWeight?
-  medicineInfo   MedicineInfo?
-  productUnits   ProductUnit[]
-  stockLocations StockLocation[]
-  invoiceItems   InvoiceItem[]
-  stockCards     StockCard[]
-  stockItems     StockItem[]
+  id               String            @id() @default(uuid()) @db.Uuid()
+  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdBy        String?           @map("created_by") @db.Uuid()
+  updatedAt        DateTime          @updatedAt() @map("updated_at") @db.Timestamptz(6)
+  updatedBy        String?           @map("updated_by") @db.Uuid()
+  deletedAt        DateTime?         @map("deleted_at") @db.Timestamptz(6)
+  deletedBy        String?           @map("deleted_by") @db.Uuid()
+  name             String            @db.VarChar(255)
+  code             String            @db.VarChar(100)
+  productGroupId   String            @map("group_id") @db.Uuid()
+  branchId         String            @map("branch_id") @db.Uuid()
+  type             String            @default("PRODUCT") @db.VarChar(50)
+  barcode          String?           @default("") @db.VarChar(100)
+  shortName        String?           @default("") @map("short_name") @db.VarChar(100)
+  description      String?           @default("") @db.Text()
+  isDirectSale     Boolean           @default(true) @map("is_direct_sale") @db.Boolean()
+  salePrice        Float?            @default(0) @map("sale_price")
+  costPrice        Float?            @default(0) @map("cost_price")
+  isStockEnabled   Boolean           @default(false) @map("is_stock_enabled") @db.Boolean()
+  stockQuantity    Float?
+  minStock         Float?            @default(0) @map("min_stock")
+  maxStock         Float?            @default(999999999) @map("max_stock")
+  package          String?           @db.VarChar(100)
+  country          String?           @db.VarChar(100)
+  manufacturerId   String?           @map("manufacturer_id") @db.Uuid()
+  branch           Branch            @relation(fields: [branchId], references: [id])
+  manufacturer     Manufacturer?     @relation(fields: [manufacturerId], references: [id])
+  productGroup     ProductGroup?     @relation(fields: [productGroupId], references: [id])
+  productWeight    ProductWeight?
+  medicineInfo     MedicineInfo?
+  productUnits     ProductUnit[]
+  productLocations ProductLocation[]
+  invoiceItems     InvoiceItem[]
+  stockCards       StockCard[]
+  stockItems       StockItem[]
+  photos           File[]
 
+  @@unique([code, branchId])
+  @@unique([barcode, branchId])
   @@map("products")
 }
 
@@ -187,7 +200,7 @@ model Supplier {
   deletedAt       DateTime?      @map("deleted_at") @db.Timestamptz(6)
   deletedBy       String?        @map("deleted_by") @db.Uuid()
   name            String         @db.VarChar(255)
-  code            String         @db.VarChar(50)
+  code            String         @db.VarChar(100)
   phone           String?        @db.VarChar(50)
   email           String?        @db.VarChar(255)
   tax             String?        @default("") @db.VarChar(50)
@@ -218,7 +231,7 @@ model SupplierGroup {
   @@map("supplier_groups")
 }
 
-model StockLocation {
+model ProductLocation {
   id        String    @id() @default(uuid()) @db.Uuid()
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   createdBy String?   @map("created_by") @db.Uuid()
@@ -227,6 +240,8 @@ model StockLocation {
   deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
   deletedBy String?   @map("deleted_by") @db.Uuid()
   name      String    @db.VarChar(255)
+  branchId  String    @map("branch_id") @db.Uuid()
+  branch    Branch    @relation(fields: [branchId], references: [id])
   products  Product[]
 
   @@map("stock_locations")
@@ -242,30 +257,18 @@ model ProductWeight {
 }
 
 model MedicineInfo {
-  id             String       @id() @default(uuid()) @db.Uuid()
-  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
-  createdBy      String?      @map("created_by") @db.Uuid()
-  updatedAt      DateTime     @updatedAt() @map("updated_at") @db.Timestamptz(6)
-  updatedBy      String?      @map("updated_by") @db.Uuid()
-  deletedAt      DateTime?    @map("deleted_at") @db.Timestamptz(6)
-  deletedBy      String?      @map("deleted_by") @db.Uuid()
-  regNumber      String       @db.VarChar(100)
-  ingredient     String       @db.VarChar(255)
-  dosage         String       @db.VarChar(100)
-  route          String       @db.VarChar(100)
-  package        String       @db.VarChar(255)
-  origin         String       @db.VarChar(100)
-  countryCode    String?      @map("country_code") @db.VarChar(10)
-  manufacturerId String       @map("manufacturer_id") @db.Uuid()
-  productId      String       @unique() @db.Uuid()
-  country        Country?     @relation(fields: [countryCode], references: [code])
-  product        Product      @relation(fields: [productId], references: [id])
-  manufacturer   Manufacturer @relation(fields: [manufacturerId], references: [id])
+  regNumber  String        @db.VarChar(100)
+  ingredient String        @db.VarChar(100)
+  dosage     String        @db.VarChar(100)
+  productId  String        @unique() @db.Uuid()
+  routeId    String        @db.Uuid()
+  product    Product       @relation(fields: [productId], references: [id])
+  route      MedicineRoute @relation(fields: [routeId], references: [id])
 
   @@map("medicine_infos")
 }
 
-model Manufacturer {
+model MedicineRoute {
   id        String         @id() @default(uuid()) @db.Uuid()
   createdAt DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
   createdBy String?        @map("created_by") @db.Uuid()
@@ -273,40 +276,35 @@ model Manufacturer {
   updatedBy String?        @map("updated_by") @db.Uuid()
   deletedAt DateTime?      @map("deleted_at") @db.Timestamptz(6)
   deletedBy String?        @map("deleted_by") @db.Uuid()
-  name      String         @db.VarChar(255)
-  country   String?        @db.VarChar(100)
+  name      String         @db.VarChar(100)
+  branchId  String         @map("branch_id") @db.Uuid()
   medicines MedicineInfo[]
+  branch    Branch         @relation(fields: [branchId], references: [id])
 
-  @@map("manufacturers")
-}
-
-model Country {
-  code          String         @unique() @db.VarChar(10)
-  name          String         @db.VarChar(100)
-  medicineInfos MedicineInfo[]
-
-  @@map("countries")
+  @@map("medicine_routes")
 }
 
 model ProductUnit {
-  id         String    @id() @default(uuid()) @db.Uuid()
-  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  createdBy  String?   @map("created_by") @db.Uuid()
-  updatedAt  DateTime  @updatedAt() @map("updated_at") @db.Timestamptz(6)
-  updatedBy  String?   @map("updated_by") @db.Uuid()
-  deletedAt  DateTime? @map("deleted_at") @db.Timestamptz(6)
-  deletedBy  String?   @map("deleted_by") @db.Uuid()
-  name       String    @db.VarChar(50)
-  isBase     Boolean   @default(false)
-  conversion Float     @default(1)
-  sku        String?   @db.VarChar(100)
-  barcode    String?   @db.VarChar(100)
-  costPrice  Float?    @default(0)
-  salePrice  Float?    @default(0)
-  isSale     Boolean   @default(true) @map("is_sale")
-  productId  String    @map("product_id") @db.Uuid()
-  product    Product   @relation(fields: [productId], references: [id])
+  id           String    @id() @default(uuid()) @db.Uuid()
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdBy    String?   @map("created_by") @db.Uuid()
+  updatedAt    DateTime  @updatedAt() @map("updated_at") @db.Timestamptz(6)
+  updatedBy    String?   @map("updated_by") @db.Uuid()
+  deletedAt    DateTime? @map("deleted_at") @db.Timestamptz(6)
+  deletedBy    String?   @map("deleted_by") @db.Uuid()
+  name         String    @db.VarChar(50)
+  isBase       Boolean   @default(false)
+  conversion   Float     @default(1)
+  code         String?   @db.VarChar(100)
+  barcode      String?   @db.VarChar(100)
+  costPrice    Float?    @default(0)
+  salePrice    Float?    @default(0)
+  isDirectSale Boolean   @default(true) @map("is_direct_sale")
+  productId    String    @map("product_id") @db.Uuid()
+  product      Product   @relation(fields: [productId], references: [id])
 
+  @@unique([code, productId])
+  @@unique([barcode, productId])
   @@map("product_units")
 }
 
@@ -393,7 +391,7 @@ model Customer {
   deletedAt           DateTime?            @map("deleted_at") @db.Timestamptz(6)
   deletedBy           String?              @map("deleted_by") @db.Uuid()
   name                String               @db.VarChar(255)
-  code                String               @db.VarChar(50)
+  code                String               @db.VarChar(100)
   storeCode           String               @db.VarChar(50)
   email               String?              @db.VarChar(255)
   phone               String?              @db.VarChar(50)
@@ -465,6 +463,7 @@ model File {
   path         String     @db.Text()
   type         String     @map("type") @db.VarChar(255)
   customers    Customer[]
+  products     Product[]
 
   @@map("files")
 }
@@ -530,6 +529,22 @@ model StockItem {
   stockTransactions StockTransaction @relation(fields: [transId], references: [id], onDelete: Cascade)
 
   @@map("stock_items")
+}
+
+model Manufacturer {
+  id        String    @id() @default(uuid()) @db.Uuid()
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdBy String?   @map("created_by") @db.Uuid()
+  updatedAt DateTime  @updatedAt() @map("updated_at") @db.Timestamptz(6)
+  updatedBy String?   @map("updated_by") @db.Uuid()
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
+  deletedBy String?   @map("deleted_by") @db.Uuid()
+  name      String    @db.VarChar(255)
+  branchId  String    @map("branch_id") @db.Uuid()
+  products  Product[]
+  branch    Branch    @relation(fields: [branchId], references: [id])
+
+  @@map("manufacturers")
 }
 
 model Ward {

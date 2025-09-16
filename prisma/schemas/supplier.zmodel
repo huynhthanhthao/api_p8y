@@ -5,7 +5,7 @@ import 'branch'
 
 model Supplier extends BaseModel {
   name            String         @db.VarChar(255)
-  code            String         @db.VarChar(50)
+  code            String         @db.VarChar(100)
   phone           String?        @db.VarChar(50)
   email           String?        @db.VarChar(255)
   tax             String?        @db.VarChar(50) @default("")

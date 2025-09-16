@@ -78,11 +78,11 @@ export class CreateSupplierUseCase {
 
     if (existingSupplier) {
       if (data.phone && existingSupplier.phone === data.phone) {
-        throw new HttpException(HttpStatus.BAD_REQUEST, SUPPLIER_ERROR.PHONE_ALREADY_EXISTS)
+        throw new HttpException(HttpStatus.CONFLICT, SUPPLIER_ERROR.PHONE_ALREADY_EXISTS)
       }
 
       if (data.code && existingSupplier.code === data.code) {
-        throw new HttpException(HttpStatus.BAD_REQUEST, SUPPLIER_ERROR.CODE_ALREADY_EXISTS)
+        throw new HttpException(HttpStatus.CONFLICT, SUPPLIER_ERROR.CODE_ALREADY_EXISTS)
       }
     }
   }

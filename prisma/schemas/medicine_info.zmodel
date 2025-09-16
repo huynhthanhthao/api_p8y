@@ -1,33 +1,19 @@
 import 'base'
-import 'user'
-import 'permission'
 import 'product'
-import 'country'
+import 'medicine_route'
 
-model MedicineInfo  extends BaseModel {
-  regNumber      String       @db.VarChar(100)  // Số đăng ký
-  ingredient     String       @db.VarChar(255)  // Hoạt chất
-  dosage         String       @db.VarChar(100)  // Hàm lượng
-  route          String       @db.VarChar(100)  // Đường dùng
-  package        String       @db.VarChar(255)  // Quy cách đóng gói
-  origin         String       @db.VarChar(100)  // Nước sản xuất
-  countryCode    String?      @map("country_code") @db.VarChar(10)   // Mã quốc gia (nếu cần)
-  manufacturerId String       @map("manufacturer_id") @db.Uuid // Hãng sản xuất
-  productId      String       @unique @db.Uuid // Id sản phẩm
+model MedicineInfo {
+  regNumber  String        @db.VarChar(100)  // Số đăng ký
+  ingredient String        @db.VarChar(100)  // Hoạt chất
+  dosage     String        @db.VarChar(100)  // Hàm lượng
+
+  productId  String        @unique @db.Uuid
+  routeId    String        @db.Uuid          // FK tới MedicineRoute
 
   // Relations
-  country        Country?     @relation(fields: [countryCode], references: [code])
-  product        Product      @relation(fields: [productId], references: [id])
-  manufacturer   Manufacturer @relation(fields: [manufacturerId], references: [id])
+  product    Product       @relation(fields: [productId], references: [id])
+  route      MedicineRoute @relation(fields: [routeId], references: [id])
 
   @@map("medicine_infos")
 }
 
-model Manufacturer extends BaseModel {
-  name      String         @db.VarChar(255)   // Hãng sản xuất
-  country   String?        @db.VarChar(100)   // Quốc gia (nếu cần)
-
-  medicines MedicineInfo[]
-
-  @@map("manufacturers")
-}

@@ -9,6 +9,9 @@ import 'ward'
 import 'province'
 import 'supplier'
 import 'supplier_group'
+import 'manufacturer'
+import 'product_location'
+import 'medicine_route'
 
 // Branch model
 model Branch extends BaseModel {
@@ -30,6 +33,9 @@ model Branch extends BaseModel {
   products          Product[]
   suppliers         Supplier[]
   supplierGroups    SupplierGroup[]
+  manufacturers     Manufacturer[]
+  productLocations  ProductLocation[]
+  medicineRoutes    MedicineRoute[]
 
   @@map("branches")
 }

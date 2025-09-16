@@ -110,15 +110,15 @@ export class CreateCustomerUseCase {
 
     if (existingCustomer) {
       if (data.phone && existingCustomer.phone === data.phone) {
-        throw new HttpException(HttpStatus.BAD_REQUEST, CUSTOMER_ERROR.PHONE_ALREADY_EXISTS)
+        throw new HttpException(HttpStatus.CONFLICT, CUSTOMER_ERROR.PHONE_ALREADY_EXISTS)
       }
 
       if (data.email && existingCustomer.email === data.email) {
-        throw new HttpException(HttpStatus.BAD_REQUEST, CUSTOMER_ERROR.EMAIL_ALREADY_EXISTS)
+        throw new HttpException(HttpStatus.CONFLICT, CUSTOMER_ERROR.EMAIL_ALREADY_EXISTS)
       }
 
       if (data.code && existingCustomer.code === data.code) {
-        throw new HttpException(HttpStatus.BAD_REQUEST, CUSTOMER_ERROR.CODE_ALREADY_EXISTS)
+        throw new HttpException(HttpStatus.CONFLICT, CUSTOMER_ERROR.CODE_ALREADY_EXISTS)
       }
     }
   }

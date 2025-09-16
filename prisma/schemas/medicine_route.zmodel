@@ -1,0 +1,14 @@
+import 'medicine_info'
+import 'branch'
+import 'base'
+
+model MedicineRoute extends BaseModel {
+  name      String         @db.VarChar(100)
+  branchId  String         @map("branch_id") @db.Uuid
+
+  // Relations
+  medicines MedicineInfo[]
+  branch    Branch         @relation(fields: [branchId], references: [id])
+
+  @@map("medicine_routes")
+}

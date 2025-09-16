@@ -81,7 +81,7 @@ export class CreateCustomerRequestDto {
 
   @IsOptional()
   @IsString({ message: 'Mã khách hàng phải là chuỗi ký tự' })
-  @MaxLength(20, { message: 'Mã khách hàng không được vượt quá 20 ký tự' })
+  @MaxLength(50, { message: 'Mã khách hàng không được vượt quá 50 ký tự' })
   code: string
 
   @IsOptional()
@@ -101,7 +101,9 @@ export class CreateCustomerRequestDto {
   birthday: Date
 
   @IsOptional()
-  @IsEnum(GenderEnum)
+  @IsEnum(GenderEnum, {
+    message: `Giới tính phải là một trong: ${Object.values(GenderEnum).join(', ')}`
+  })
   gender: GenderEnum
 
   @IsOptional()

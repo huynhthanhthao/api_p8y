@@ -18,7 +18,7 @@ export class CreateSupplierRequestDto {
 
   @IsOptional()
   @IsString({ message: 'Mã nhà cung cấp phải là chuỗi ký tự' })
-  @MaxLength(20, { message: 'Mã nhà cung cấp không được vượt quá 20 ký tự' })
+  @MaxLength(50, { message: 'Mã nhà cung cấp không được vượt quá 50 ký tự' })
   code: string
 
   @IsOptional()

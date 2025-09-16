@@ -126,11 +126,11 @@ export class UpdateSupplierUseCase {
 
     if (existingSupplier) {
       if (data.phone && existingSupplier.phone === data.phone) {
-        throw new HttpException(HttpStatus.BAD_REQUEST, CUSTOMER_ERROR.PHONE_ALREADY_EXISTS)
+        throw new HttpException(HttpStatus.CONFLICT, CUSTOMER_ERROR.PHONE_ALREADY_EXISTS)
       }
 
       if (data.code && existingSupplier.code === data.code) {
-        throw new HttpException(HttpStatus.BAD_REQUEST, CUSTOMER_ERROR.CODE_ALREADY_EXISTS)
+        throw new HttpException(HttpStatus.CONFLICT, CUSTOMER_ERROR.CODE_ALREADY_EXISTS)
       }
     }
   }

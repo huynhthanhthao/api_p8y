@@ -6,7 +6,7 @@ import { IsOptional, IsBoolean } from 'class-validator'
 
 export class GetAllProductGroupRequestDto extends PaginationQueryDto {
   @IsOptional()
-  @IsBoolean()
+  @IsBoolean({ message: 'isParent là giá trị boolean' })
   @Transform(({ value }: TransformFnParams) => value === 'true' || value === true)
   isParent: boolean
 }

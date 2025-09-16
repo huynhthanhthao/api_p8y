@@ -22,11 +22,15 @@ export class PaginationQueryDto {
 
   @IsOptional()
   @Transform(({ value }: TransformFnParams) => value?.trim())
-  @IsEnum(SortByEnum)
+  @IsEnum(SortByEnum, {
+    message: `Trường sắp xếp phải là một trong: ${Object.values(SortByEnum).join(', ')}`
+  })
   sortBy: SortByEnum = SortByEnum.CREATED_AT
 
   @IsOptional()
   @Transform(({ value }: TransformFnParams) => value?.trim())
-  @IsEnum(SortOrderEnum)
+  @IsEnum(SortOrderEnum, {
+    message: `Kiểu sắp xếp phải là một trong: ${Object.values(SortOrderEnum).join(', ')}`
+  })
   orderBy: SortOrderEnum = SortOrderEnum.DESC
 }
