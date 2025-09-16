@@ -4,7 +4,6 @@ import 'product'
 
 model ProductGroup extends BaseModel {
   name     String         @db.VarChar(255)
-  code     String         @db.VarChar(50)
   parentId String?        @map("parent_id") @db.Uuid
   branchId String         @map("branch_id") @db.Uuid
   

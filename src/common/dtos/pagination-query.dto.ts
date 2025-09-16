@@ -1,6 +1,6 @@
 import { SortByEnum, SortOrderEnum } from '@common/enums/sort.enum'
 import { Transform, TransformFnParams } from 'class-transformer'
-import { IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator'
+import { IsBoolean, IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator'
 
 export class PaginationQueryDto {
   @IsOptional()
