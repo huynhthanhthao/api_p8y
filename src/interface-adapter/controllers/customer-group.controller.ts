@@ -28,7 +28,7 @@ import {
 } from '@interface-adapter/dtos/customer-groups'
 import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
-import { DeleteManyRequestDto } from '@common/dtos'
+import { DeleteManyRequestDto, UUIDParamDto } from '@common/dtos'
 import { CustomerGroup } from '@common/types'
 
 @Controller('customer-groups')
@@ -53,16 +53,16 @@ export class CustomerGroupController {
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param() params: UUIDParamDto,
     @Body() data: CreateCustomerGroupRequestDto,
     @Req() req: RequestAccessBranchJWT
   ): Promise<UpdateCustomerGroupResponseDto> {
-    return this._updateCustomerGroupUseCase.execute(id, data, req.userId, req.storeCode)
+    return this._updateCustomerGroupUseCase.execute(params.id, data, req.userId, req.storeCode)
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string, @Req() req: RequestAccessBranchJWT): Promise<string> {
-    return this._deleteCustomerGroupUseCase.execute(id, req.userId, req.storeCode)
+  delete(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<string> {
+    return this._deleteCustomerGroupUseCase.execute(params.id, req.userId, req.storeCode)
   }
 
   @Delete('')
@@ -74,8 +74,11 @@ export class CustomerGroupController {
   }
 
   @Get(':id')
-  getOne(@Param('id') id: string, @Req() req: RequestAccessBranchJWT): Promise<CustomerGroup> {
-    return this._getOneCustomerGroupUseCase.execute(id, req.storeCode)
+  getOne(
+    @Param() params: UUIDParamDto,
+    @Req() req: RequestAccessBranchJWT
+  ): Promise<CustomerGroup> {
+    return this._getOneCustomerGroupUseCase.execute(params.id, req.storeCode)
   }
 
   @Get()

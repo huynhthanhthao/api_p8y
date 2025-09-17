@@ -28,7 +28,7 @@ import {
 } from '@interface-adapter/dtos/products'
 import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
-import { DeleteManyRequestDto } from '@common/dtos'
+import { DeleteManyRequestDto, UUIDParamDto } from '@common/dtos'
 import { Product } from '@common/types'
 
 @Controller('products')
@@ -53,16 +53,16 @@ export class ProductController {
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param() params: UUIDParamDto,
     @Body() data: CreateProductRequestDto,
     @Req() req: RequestAccessBranchJWT
   ): Promise<UpdateProductResponseDto> {
-    return this._updateProductUseCase.execute(id, data, req.userId, req.branchId)
+    return this._updateProductUseCase.execute(params.id, data, req.userId, req.branchId)
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string, @Req() req: RequestAccessBranchJWT): Promise<string> {
-    return this._deleteProductUseCase.execute(id, req.userId, req.branchId)
+  delete(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<string> {
+    return this._deleteProductUseCase.execute(params.id, req.userId, req.branchId)
   }
 
   @Delete('')
@@ -74,8 +74,8 @@ export class ProductController {
   }
 
   @Get(':id')
-  getOne(@Param('id') id: string, @Req() req: RequestAccessBranchJWT): Promise<Product> {
-    return this._getOneProductUseCase.execute(id, req.branchId)
+  getOne(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<Product> {
+    return this._getOneProductUseCase.execute(params.id, req.branchId)
   }
 
   @Get()

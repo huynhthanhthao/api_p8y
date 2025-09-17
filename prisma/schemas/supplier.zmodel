@@ -18,6 +18,7 @@ model Supplier extends BaseModel {
   branch           Branch             @relation(fields: [branchId], references: [id])
   stockTransaction StockTransaction[]
 
+  @@index([branchId, deletedAt])
   @@unique([code, branchId, deletedAt])
   @@unique([phone, branchId, deletedAt])
   @@map("suppliers")

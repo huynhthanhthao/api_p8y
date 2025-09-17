@@ -28,7 +28,7 @@ import {
 } from '@interface-adapter/dtos/manufacturers'
 import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
-import { DeleteManyRequestDto } from '@common/dtos'
+import { DeleteManyRequestDto, UUIDParamDto } from '@common/dtos'
 import { Manufacturer } from '@common/types'
 
 @Controller('manufacturers')
@@ -53,16 +53,16 @@ export class ManufacturerController {
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param() params: UUIDParamDto,
     @Body() data: CreateManufacturerRequestDto,
     @Req() req: RequestAccessBranchJWT
   ): Promise<UpdateManufacturerResponseDto> {
-    return this._updateManufacturerUseCase.execute(id, data, req.userId, req.branchId)
+    return this._updateManufacturerUseCase.execute(params.id, data, req.userId, req.branchId)
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string, @Req() req: RequestAccessBranchJWT): Promise<string> {
-    return this._deleteManufacturerUseCase.execute(id, req.userId, req.branchId)
+  delete(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<string> {
+    return this._deleteManufacturerUseCase.execute(params.id, req.userId, req.branchId)
   }
 
   @Delete('')
@@ -74,8 +74,8 @@ export class ManufacturerController {
   }
 
   @Get(':id')
-  getOne(@Param('id') id: string, @Req() req: RequestAccessBranchJWT): Promise<Manufacturer> {
-    return this._getOneManufacturerUseCase.execute(id, req.branchId)
+  getOne(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<Manufacturer> {
+    return this._getOneManufacturerUseCase.execute(params.id, req.branchId)
   }
 
   @Get()

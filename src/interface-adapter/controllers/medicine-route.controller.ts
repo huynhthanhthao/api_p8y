@@ -28,7 +28,7 @@ import {
 } from '@interface-adapter/dtos/medicine-routes'
 import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
-import { DeleteManyRequestDto } from '@common/dtos'
+import { DeleteManyRequestDto, UUIDParamDto } from '@common/dtos'
 import { MedicineRoute } from '@common/types'
 
 @Controller('medicine-routes')
@@ -53,16 +53,16 @@ export class MedicineRouteController {
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param() params: UUIDParamDto,
     @Body() data: CreateMedicineRouteRequestDto,
     @Req() req: RequestAccessBranchJWT
   ): Promise<UpdateMedicineRouteResponseDto> {
-    return this._updateMedicineRouteUseCase.execute(id, data, req.userId, req.branchId)
+    return this._updateMedicineRouteUseCase.execute(params.id, data, req.userId, req.branchId)
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string, @Req() req: RequestAccessBranchJWT): Promise<string> {
-    return this._deleteMedicineRouteUseCase.execute(id, req.userId, req.branchId)
+  delete(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<string> {
+    return this._deleteMedicineRouteUseCase.execute(params.id, req.userId, req.branchId)
   }
 
   @Delete('')
@@ -74,8 +74,11 @@ export class MedicineRouteController {
   }
 
   @Get(':id')
-  getOne(@Param('id') id: string, @Req() req: RequestAccessBranchJWT): Promise<MedicineRoute> {
-    return this._getOneMedicineRouteUseCase.execute(id, req.branchId)
+  getOne(
+    @Param() params: UUIDParamDto,
+    @Req() req: RequestAccessBranchJWT
+  ): Promise<MedicineRoute> {
+    return this._getOneMedicineRouteUseCase.execute(params.id, req.branchId)
   }
 
   @Get()

@@ -10,5 +10,6 @@ model SupplierGroup extends BaseModel {
   suppliers Supplier[]
   branch    Branch     @relation(fields: [branchId], references: [id])
 
+  @@index([branchId, deletedAt])
   @@map("supplier_groups")
 }

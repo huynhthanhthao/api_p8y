@@ -27,6 +27,7 @@ model Invoice extends BaseModel {
   customer          Customer?      @relation(fields: [customerId], references: [id])
   invoiceItems      InvoiceItem[]
 
-  @@unique([code, branchId])
+  @@index([branchId, deletedAt])
+  @@unique([code, branchId, deletedAt])
   @@map("invoices")
 }

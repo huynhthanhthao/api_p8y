@@ -12,5 +12,6 @@ model CustomerGroup extends BaseModel {
   store         Store?     @relation(fields: [storeCode], references: [code], onDelete: SetNull)
   customers     Customer[]
 
+  @@index([storeCode, deletedAt])
   @@map("customer_groups")
 }

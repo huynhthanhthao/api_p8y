@@ -151,7 +151,7 @@ Table invoices {
   invoiceItems invoice_items [not null]
 
   indexes {
-    (code, branchId) [unique]
+    (code, branchId, deletedAt) [unique]
   }
 }
 
@@ -165,7 +165,7 @@ Table invoice_items {
   deletedBy String
   quantity Float [not null, default: 1]
   salePrice Float [not null, default: 0]
-  productName String
+  costPrice Float [not null, default: 0]
   discountValue Float [default: 0]
   discountType String [default: 'VALUE']
   note String

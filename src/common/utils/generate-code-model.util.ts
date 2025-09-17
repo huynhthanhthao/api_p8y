@@ -33,6 +33,11 @@ const MODEL_CONFIGS: Partial<Record<Prisma.ModelName, ModelConfig>> = {
     prefix: 'NCC',
     prismaMethod: 'supplier',
     codeLength: 6
+  },
+  Invoice: {
+    prefix: 'HD',
+    prismaMethod: 'invoice',
+    codeLength: 6
   }
 }
 

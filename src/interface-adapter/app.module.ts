@@ -105,6 +105,14 @@ import {
   GetOnePaymentMethodUseCase,
   UpsertPaymentMethodUseCase
 } from '@usecases/payment-methods'
+import { InvoiceController } from './controllers/invoice.controller'
+import {
+  CreateInvoiceUseCase,
+  DeleteInvoiceUseCase,
+  DeleteManyInvoiceUseCase,
+  GetAllInvoiceUseCase,
+  GetOneInvoiceUseCase
+} from '@usecases/invoices'
 
 const controllers = [
   AuthController,
@@ -119,7 +127,8 @@ const controllers = [
   ProductLocationController,
   MedicineRouteController,
   ProductController,
-  PaymentMethodController
+  PaymentMethodController,
+  InvoiceController
 ]
 
 const useCases = [
@@ -212,7 +221,14 @@ const useCases = [
   // PaymentMethod
   GetAllPaymentMethodUseCase,
   GetOnePaymentMethodUseCase,
-  UpsertPaymentMethodUseCase
+  UpsertPaymentMethodUseCase,
+
+  // Invoice
+  CreateInvoiceUseCase,
+  DeleteInvoiceUseCase,
+  DeleteManyInvoiceUseCase,
+  GetAllInvoiceUseCase,
+  GetOneInvoiceUseCase
 ]
 
 @Module({

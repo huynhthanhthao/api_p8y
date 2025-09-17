@@ -21,7 +21,7 @@ import {
 
 import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
-import { DeleteManyRequestDto } from '@common/dtos'
+import { DeleteManyRequestDto, UUIDParamDto } from '@common/dtos'
 import {
   CreateSupplierRequestDto,
   GetAllSupplierRequestDto
@@ -46,16 +46,16 @@ export class SupplierController {
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param() params: UUIDParamDto,
     @Body() data: CreateSupplierRequestDto,
     @Req() req: RequestAccessBranchJWT
   ) {
-    return this._updateSupplierUseCase.execute(id, data, req.userId, req.branchId)
+    return this._updateSupplierUseCase.execute(params.id, data, req.userId, req.branchId)
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string, @Req() req: RequestAccessBranchJWT) {
-    return this._deleteSupplierUseCase.execute(id, req.userId, req.branchId)
+  delete(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT) {
+    return this._deleteSupplierUseCase.execute(params.id, req.userId, req.branchId)
   }
 
   @Delete('')
@@ -64,8 +64,8 @@ export class SupplierController {
   }
 
   @Get(':id')
-  getOne(@Param('id') id: string, @Req() req: RequestAccessBranchJWT) {
-    return this._getOneSupplierUseCase.execute(id, req.branchId)
+  getOne(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT) {
+    return this._getOneSupplierUseCase.execute(params.id, req.branchId)
   }
 
   @Get()

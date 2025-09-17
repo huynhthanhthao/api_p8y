@@ -10,5 +10,6 @@ model MedicineRoute extends BaseModel {
   medicines MedicineInfo[]
   branch    Branch         @relation(fields: [branchId], references: [id])
 
+  @@index([branchId, deletedAt])
   @@map("medicine_routes")
 }

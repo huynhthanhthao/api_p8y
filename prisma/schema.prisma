@@ -99,6 +99,7 @@ model User {
   @@index([createdAt])
   @@index([deletedAt])
   @@index([id, deletedAt])
+  @@index([phone, storeCode, deletedAt])
   @@map("users")
 }
 
@@ -155,6 +156,7 @@ model PaymentMethod {
   updatedAt         DateTime  @updatedAt() @map("updated_at") @db.Timestamptz(6)
 
   @@unique([code, branchId])
+  @@index([branchId])
   @@map("payment_methods")
 }
 
@@ -182,10 +184,11 @@ model Invoice {
   customer          Customer?      @relation(fields: [customerId], references: [id])
   invoiceItems      InvoiceItem[]
 
-  @@unique([code, branchId])
+  @@unique([code, branchId, deletedAt])
   @@index([createdAt])
   @@index([deletedAt])
   @@index([id, deletedAt])
+  @@index([branchId, deletedAt])
   @@map("invoices")
 }
 
@@ -199,7 +202,7 @@ model InvoiceItem {
   deletedBy     String?     @map("deleted_by") @db.Uuid()
   quantity      Float       @default(1) @map("quantity")
   salePrice     Float       @default(0) @map("sale_price")
-  productName   String?     @map("product_name") @db.VarChar(255)
+  costPrice     Float       @default(0) @map("cost_price")
   discountValue Float?      @default(0) @map("discount_value")
   discountType  String?     @default("VALUE") @map("discount_type") @db.VarChar(10)
   note          String?     @map("note") @db.VarChar(500)
@@ -213,6 +216,7 @@ model InvoiceItem {
   @@index([createdAt])
   @@index([deletedAt])
   @@index([id, deletedAt])
+  @@index([invoiceId, deletedAt])
   @@map("invoice_items")
 }
 
@@ -264,6 +268,9 @@ model Product {
   @@index([createdAt])
   @@index([deletedAt])
   @@index([id, deletedAt])
+  @@index([branchId, deletedAt])
+  @@index([code, branchId, deletedAt])
+  @@index([barcode, branchId, deletedAt])
   @@map("products")
 }
 
@@ -286,6 +293,7 @@ model ProductGroup {
   @@index([createdAt])
   @@index([deletedAt])
   @@index([id, deletedAt])
+  @@index([branchId, deletedAt])
   @@map("product_groups")
 }
 
@@ -313,6 +321,7 @@ model Supplier {
   @@index([createdAt])
   @@index([deletedAt])
   @@index([id, deletedAt])
+  @@index([branchId, deletedAt])
   @@map("suppliers")
 }
 
@@ -333,6 +342,7 @@ model SupplierGroup {
   @@index([createdAt])
   @@index([deletedAt])
   @@index([id, deletedAt])
+  @@index([branchId, deletedAt])
   @@map("supplier_groups")
 }
 
@@ -432,6 +442,7 @@ model ProductLocation {
   @@index([createdAt])
   @@index([deletedAt])
   @@index([id, deletedAt])
+  @@index([branchId, deletedAt])
   @@map("stock_locations")
 }
 
@@ -547,6 +558,7 @@ model Customer {
   @@index([createdAt])
   @@index([deletedAt])
   @@index([id, deletedAt])
+  @@index([storeCode])
   @@map("customers")
 }
 
@@ -586,6 +598,7 @@ model CustomerGroup {
   @@index([createdAt])
   @@index([deletedAt])
   @@index([id, deletedAt])
+  @@index([storeCode, deletedAt])
   @@map("customer_groups")
 }
 
@@ -607,6 +620,7 @@ model ProductLot {
   @@index([createdAt])
   @@index([deletedAt])
   @@index([id, deletedAt])
+  @@index([productId, deletedAt])
   @@map("product_lots")
 }
 

@@ -28,7 +28,7 @@ import {
 } from '@interface-adapter/dtos/product-locations'
 import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
-import { DeleteManyRequestDto } from '@common/dtos'
+import { DeleteManyRequestDto, UUIDParamDto } from '@common/dtos'
 import { ProductLocation } from '@common/types'
 
 @Controller('product-locations')
@@ -53,16 +53,16 @@ export class ProductLocationController {
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param() params: UUIDParamDto,
     @Body() data: CreateProductLocationRequestDto,
     @Req() req: RequestAccessBranchJWT
   ): Promise<UpdateProductLocationResponseDto> {
-    return this._updateProductLocationUseCase.execute(id, data, req.userId, req.branchId)
+    return this._updateProductLocationUseCase.execute(params.id, data, req.userId, req.branchId)
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string, @Req() req: RequestAccessBranchJWT): Promise<string> {
-    return this._deleteProductLocationUseCase.execute(id, req.userId, req.branchId)
+  delete(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<string> {
+    return this._deleteProductLocationUseCase.execute(params.id, req.userId, req.branchId)
   }
 
   @Delete('')
@@ -74,8 +74,11 @@ export class ProductLocationController {
   }
 
   @Get(':id')
-  getOne(@Param('id') id: string, @Req() req: RequestAccessBranchJWT): Promise<ProductLocation> {
-    return this._getOneProductLocationUseCase.execute(id, req.branchId)
+  getOne(
+    @Param() params: UUIDParamDto,
+    @Req() req: RequestAccessBranchJWT
+  ): Promise<ProductLocation> {
+    return this._getOneProductLocationUseCase.execute(params.id, req.branchId)
   }
 
   @Get()

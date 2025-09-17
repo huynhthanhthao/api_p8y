@@ -10,5 +10,6 @@ model ProductLocation extends BaseModel {
   branch   Branch    @relation(fields: [branchId], references: [id])
   products Product[]
 
+  @@index([branchId, deletedAt])
   @@map("stock_locations")
 }

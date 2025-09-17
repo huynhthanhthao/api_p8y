@@ -13,5 +13,6 @@ model ProductGroup extends BaseModel {
   children ProductGroup[] @relation("ProductGroupToParent")
   products Product[]
 
+  @@index([branchId, deletedAt])
   @@map("product_groups")
 }
