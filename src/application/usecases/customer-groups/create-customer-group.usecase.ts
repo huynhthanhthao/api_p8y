@@ -35,9 +35,7 @@ export class CreateCustomerGroupUseCase {
 
     return await this.prismaClient.customerGroup.create({
       data: {
-        name: data.name,
-        discountValue: data.discountValue,
-        discountType: data.discountType,
+        ...data,
         createdBy: userId,
         storeCode
       },

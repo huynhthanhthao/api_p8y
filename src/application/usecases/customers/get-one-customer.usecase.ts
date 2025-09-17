@@ -3,6 +3,7 @@ import { PrismaService } from '@infrastructure/prisma'
 import { Customer } from '@common/types'
 import { HttpException } from '@common/exceptions'
 import { CUSTOMER_ERROR } from '@common/errors'
+import { CUSTOMER_INCLUDE_FIELDS } from '@common/constants'
 
 @Injectable()
 export class GetOneCustomerUseCase {
@@ -15,31 +16,7 @@ export class GetOneCustomerUseCase {
   async execute(id: string, storeCode: string): Promise<Customer> {
     const customer = await this.prismaClient.customer.findUnique({
       where: { id, storeCode },
-      omit: {
-        deletedAt: true,
-        deletedBy: true,
-        createdBy: true,
-        updatedBy: true
-      },
-      include: {
-        customerInvoiceInfo: true,
-        customerGroup: {
-          omit: {
-            deletedAt: true,
-            deletedBy: true,
-            createdBy: true,
-            updatedBy: true
-          }
-        },
-        avatar: {
-          omit: {
-            deletedAt: true,
-            deletedBy: true,
-            createdBy: true,
-            updatedBy: true
-          }
-        }
-      }
+      ...CUSTOMER_INCLUDE_FIELDS
     })
 
     if (!customer) {

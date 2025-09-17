@@ -4,25 +4,28 @@ import 'transport_info'
 import 'delivery_info'
 import 'customer'
 import 'branch'
+import 'payment_method'
 
 
 model Invoice extends BaseModel {
-  code          String         @map("code") @db.VarChar(50)     // Mã hóa đơn
-  status        String         @map("status") @db.VarChar(20)           // Trạng thái: NEW, PAID, CANCELLED
-  discountValue Float?         @map("discount_value") @default(0)              // Giảm giá (VND hoặc %)
-  discountType  String?        @map("discount_type") @db.VarChar(10) @default("VALUE")   // PERCENT or VALUE
-  note          String?        @map("note") @db.Text                    // Ghi chú đơn hàng
+  code              String         @map("code") @db.VarChar(50)     // Mã hóa đơn
+  status            String         @map("status") @db.VarChar(20)           // Trạng thái: NEW, PAID
+  discountValue     Float?         @map("discount_value") @default(0)              // Giảm giá (VND hoặc %)
+  discountType      String?        @map("discount_type") @db.VarChar(10) @default("VALUE")   // PERCENT or VALUE
+  note              String?        @map("note") @db.Text                    // Ghi chú đơn hàng
 
-  customerId    String?        @map("customer_id") @db.Uuid
-  transportId   String?        @unique @map("transport_id") @db.Uuid    // Khóa ngoại tới TransportInfo
-  branchId      String         @map("branch_id") @db.Uuid
+  paymentMethodCode String?        @map("payment_method_code") @db.VarChar(50)
+  customerId        String?        @map("customer_id") @db.Uuid
+  transportId       String?        @unique @map("transport_id") @db.Uuid    // Khóa ngoại tới TransportInfo
+  branchId          String         @map("branch_id") @db.Uuid
 
   // Relations
-  branch        Branch         @relation(fields: [branchId], references: [id])
-  transport     TransportInfo?
-  deliveryInfo  DeliveryInfo?
-  customer      Customer?      @relation(fields: [customerId], references: [id])
-  invoiceItems  InvoiceItem[]
+  paymentMethod     PaymentMethod? @relation(fields: [paymentMethodCode, branchId], references: [code, branchId])
+  branch            Branch         @relation(fields: [branchId], references: [id])
+  transport         TransportInfo?
+  deliveryInfo      DeliveryInfo?
+  customer          Customer?      @relation(fields: [customerId], references: [id])
+  invoiceItems      InvoiceItem[]
 
   @@unique([code, branchId])
   @@map("invoices")

@@ -9,5 +9,8 @@ abstract model BaseModel {
   deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
   deletedBy String?   @map("deleted_by") @db.Uuid
 
+  @@index([createdAt])
+  @@index([deletedAt])
+  @@index([id, deletedAt])
   @@allow('all', true)
 }

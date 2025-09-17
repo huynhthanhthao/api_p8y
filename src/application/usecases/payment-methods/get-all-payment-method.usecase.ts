@@ -1,10 +1,13 @@
 import { Prisma } from '@prisma/client'
 import { PrismaService } from '@infrastructure/prisma'
 import { Injectable } from '@nestjs/common'
-import { GetAllProductRequestDto, GetAllProductResponseDto } from '@interface-adapter/dtos/products'
+import {
+  GetAllProductGroupRequestDto,
+  GetAllProductGroupResponseDto
+} from '@interface-adapter/dtos/product-groups'
 
 @Injectable()
-export class GetAllProductUseCase {
+export class GetAllProductGroupUseCase {
   constructor(private readonly prismaService: PrismaService) {}
 
   private get prismaClient(): PrismaService {
@@ -12,12 +15,12 @@ export class GetAllProductUseCase {
   }
 
   async execute(
-    data: GetAllProductRequestDto,
+    data: GetAllProductGroupRequestDto,
     branchId: string
-  ): Promise<GetAllProductResponseDto> {
+  ): Promise<GetAllProductGroupResponseDto> {
     const { page, perPage, keyword, orderBy, sortBy, isParent } = data
 
-    const where: Prisma.ProductWhereInput = {
+    const where: Prisma.ProductGroupWhereInput = {
       branchId,
       ...(isParent !== undefined &&
         isParent && {
@@ -26,18 +29,11 @@ export class GetAllProductUseCase {
     }
 
     if (keyword) {
-      const searchKeys = ['name', 'code', 'barcode', 'shortName']
-
-      where.OR = searchKeys.map(key => ({
-        [key]: {
-          contains: keyword,
-          mode: 'insensitive'
-        }
-      }))
+      where.OR = [{ name: { contains: keyword, mode: 'insensitive' } }]
     }
 
     return await this.prismaClient.findManyWithPagination(
-      'product',
+      'productGroup',
       {
         where,
         orderBy: { [sortBy]: orderBy },
@@ -48,32 +44,22 @@ export class GetAllProductUseCase {
           updatedBy: true
         },
         include: {
-          photos: {
+          children: {
             omit: {
               deletedAt: true,
               deletedBy: true,
               createdBy: true,
               updatedBy: true
-            }
-          },
-          variants: {
-            select: {
-              id: true,
-              salePrice: true,
-              costPrice: true,
-              isDirectSale: true,
-              barcode: true,
-              code: true,
-              unitName: true,
-              conversion: true
-            }
-          },
-          productGroup: {
-            omit: {
-              deletedAt: true,
-              deletedBy: true,
-              createdBy: true,
-              updatedBy: true
+            },
+            include: {
+              children: {
+                omit: {
+                  deletedAt: true,
+                  deletedBy: true,
+                  createdBy: true,
+                  updatedBy: true
+                }
+              }
             }
           }
         }

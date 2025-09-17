@@ -2,6 +2,7 @@ import 'base'
 import 'role'
 import 'branch'
 import 'store'
+import 'payment_method'
 
 // User model
 model User extends BaseModel {

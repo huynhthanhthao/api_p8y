@@ -21,6 +21,8 @@ export class CreateSupplierGroupUseCase {
     userId: string,
     branchId: string
   ): Promise<CreateSupplierGroupResponseDto> {
+    console.log(data)
+
     const existingGroup = await this.prismaClient.supplierGroup.findFirst({
       where: {
         name: {

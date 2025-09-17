@@ -1,11 +1,12 @@
 import * as cookieParser from 'cookie-parser'
-import { HttpAdapterHost, NestFactory } from '@nestjs/core'
+import { NestFactory } from '@nestjs/core'
 import { ConfigService } from '@nestjs/config'
 import { AppModule } from './interface-adapter/app.module'
 import { json, static as static_ } from 'express'
 import { BadRequestException, HttpStatus, ValidationPipe } from '@nestjs/common'
 import { ValidationError } from 'class-validator'
 import { GlobalExceptionFilter } from './common/exceptions/global.exception'
+import { extractErrorMessages } from '@common/utils'
 
 async function bootstrap() {
   try {
@@ -33,10 +34,10 @@ async function bootstrap() {
         transform: true,
         skipMissingProperties: false,
         disableErrorMessages: false,
+        whitelist: true,
         skipNullProperties: false,
         exceptionFactory: (errors: ValidationError[]) => {
-          const messages = errors.flatMap(error => Object.values(error.constraints || {}))
-
+          const messages = extractErrorMessages(errors)
           return new BadRequestException({
             statusCode: HttpStatus.BAD_REQUEST,
             message: 'Dữ liệu không hợp lệ',

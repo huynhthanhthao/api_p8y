@@ -56,6 +56,6 @@ model Product extends BaseModel {
   parent           Product?          @relation("ProductVariants", fields: [parentId], references: [id])
   variants         Product[]         @relation("ProductVariants")
 
-  @@unique([code, branchId])
+  @@unique([code, branchId, deletedAt])
   @@map("products")
 }

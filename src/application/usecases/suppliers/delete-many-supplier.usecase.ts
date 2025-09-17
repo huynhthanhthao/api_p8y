@@ -3,7 +3,6 @@ import { PrismaService } from '@infrastructure/prisma'
 import { DeleteManyRequestDto } from '@common/dtos'
 import { Prisma } from '@prisma/client'
 import { HttpException } from '@common/exceptions'
-import { generateTimesTamp } from '@common/helpers'
 import { SUPPLIER_ERROR } from '@common/errors'
 
 @Injectable()
@@ -35,19 +34,15 @@ export class DeleteManySupplierUseCase {
       throw new HttpException(HttpStatus.NOT_FOUND, SUPPLIER_ERROR.SOME_SUPPLIERS_NOT_FOUND)
     }
 
-    // Cập nhật thông tin trước khi xóa (đánh dấu đã xóa và thay đổi các trường duy nhất)
-    const updatePromises = suppliers.map(supplier =>
-      this.prismaClient.supplier.update({
-        where: { id: supplier.id, branchId },
-        data: {
-          deletedBy: userId,
-          code: `del_${supplier.code}_${generateTimesTamp()}`,
-          phone: supplier.phone ? `del_${supplier.phone}_${generateTimesTamp()}` : null
-        }
-      })
-    )
-
-    await Promise.all(updatePromises)
+    await this.prismaClient.supplier.updateMany({
+      where: {
+        id: { in: data.ids },
+        branchId
+      },
+      data: {
+        deletedBy: userId
+      }
+    })
 
     return await this.prismaClient.supplier.deleteMany({
       where: {

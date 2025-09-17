@@ -58,9 +58,7 @@ export class UpdateCustomerGroupUseCase {
         storeCode
       },
       data: {
-        name: data.name,
-        discountValue: data.discountValue,
-        discountType: data.discountType,
+        ...data,
         updatedBy: userId
       },
       omit: {

@@ -8,6 +8,7 @@ import {
 import { CUSTOMER_ERROR, CUSTOMER_GROUP_ERROR } from '@common/errors'
 import { generateCodeModel } from '@common/utils'
 import { id } from 'zod/v4/locales/index.cjs'
+import { CUSTOMER_INCLUDE_FIELDS } from '@common/constants'
 
 @Injectable()
 export class UpdateCustomerUseCase {
@@ -89,31 +90,7 @@ export class UpdateCustomerUseCase {
         }),
         updatedBy: userId
       },
-      omit: {
-        deletedAt: true,
-        deletedBy: true,
-        createdBy: true,
-        updatedBy: true
-      },
-      include: {
-        customerInvoiceInfo: true,
-        customerGroup: {
-          omit: {
-            deletedAt: true,
-            deletedBy: true,
-            createdBy: true,
-            updatedBy: true
-          }
-        },
-        avatar: {
-          omit: {
-            deletedAt: true,
-            deletedBy: true,
-            createdBy: true,
-            updatedBy: true
-          }
-        }
-      }
+      ...CUSTOMER_INCLUDE_FIELDS
     })
   }
 

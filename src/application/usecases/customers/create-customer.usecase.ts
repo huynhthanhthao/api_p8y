@@ -7,6 +7,7 @@ import {
   CreateCustomerResponseDto
 } from '@interface-adapter/dtos/customers'
 import { generateCodeModel } from '@common/utils'
+import { CUSTOMER_INCLUDE_FIELDS } from '@common/constants'
 
 @Injectable()
 export class CreateCustomerUseCase {
@@ -25,15 +26,8 @@ export class CreateCustomerUseCase {
 
     return await this.prismaClient.customer.create({
       data: {
-        name: data.name,
+        ...data,
         code: data.code || (await generateCodeModel({ model: 'Customer', storeCode })),
-        avatarId: data.avatarId,
-        birthday: data.birthday,
-        customerGroupId: data.customerGroupId,
-        gender: data.gender,
-        email: data.email,
-        phone: data.phone,
-        note: data.note,
         ...(data.customerInvoiceInfo && {
           customerInvoiceInfo: {
             create: {
@@ -54,31 +48,7 @@ export class CreateCustomerUseCase {
         }),
         storeCode
       },
-      omit: {
-        deletedAt: true,
-        deletedBy: true,
-        createdBy: true,
-        updatedBy: true
-      },
-      include: {
-        customerInvoiceInfo: true,
-        customerGroup: {
-          omit: {
-            deletedAt: true,
-            deletedBy: true,
-            createdBy: true,
-            updatedBy: true
-          }
-        },
-        avatar: {
-          omit: {
-            deletedAt: true,
-            deletedBy: true,
-            createdBy: true,
-            updatedBy: true
-          }
-        }
-      }
+      ...CUSTOMER_INCLUDE_FIELDS
     })
   }
 

@@ -34,7 +34,6 @@ export class CreateProductUseCase {
       const newProduct = await tx.product.create({
         data: {
           name: data.name,
-          code: productCode,
           productGroupId: data.productGroupId,
           type: data.type,
           barcode: data.barcode,
@@ -51,6 +50,7 @@ export class CreateProductUseCase {
           country: data.country,
           manufacturerId: data.manufacturerId,
           unitName: data.unitName,
+          code: productCode,
           createdBy: userId,
           branchId,
           ...(data.photoIds && {
