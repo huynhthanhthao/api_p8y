@@ -161,6 +161,7 @@ Table products {
   invoiceItems invoice_items [not null]
   stockCards stock_cards [not null]
   stockItems stock_items [not null]
+  productLots product_lots [not null]
   photos files [not null]
   parent products
   variants products [not null]
@@ -187,6 +188,7 @@ Table suppliers {
   branchId String [not null]
   supplierGroup supplier_groups
   branch branches [not null]
+  stockTransaction stock_transactions [not null]
 
   indexes {
     (code, branchId) [unique]
@@ -207,6 +209,74 @@ Table supplier_groups {
   branchId String [not null]
   suppliers suppliers [not null]
   branch branches [not null]
+}
+
+Table stock_transactions {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  branchId String [not null]
+  status String [not null, default: 'PENDING']
+  code String [not null]
+  type String [not null]
+  discountType String [default: 'VALUE']
+  discountValue Float [default: 0]
+  supplierId String
+  supplier suppliers
+  note String
+  transactedAt DateTime [default: `now()`]
+  branch branches [not null]
+  items stock_items [not null]
+  stockCards stock_cards [not null]
+
+  indexes {
+    (code, branchId) [unique]
+  }
+}
+
+Table stock_items {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  transId String [not null]
+  productId String [not null]
+  quantity Float [not null, default: 0]
+  unitPrice Float [not null, default: 0]
+  total Float [not null, default: 0]
+  batchCode String
+  discountType String [default: 'VALUE']
+  discountValue Float [default: 0]
+  supplierId String
+  product products [not null]
+  stockTransactions stock_transactions [not null]
+}
+
+Table stock_cards {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  productId String [not null]
+  transId String
+  orderId String
+  type String [not null]
+  inQty Float [not null, default: 0]
+  outQty Float [not null, default: 0]
+  balance Float [not null, default: 0]
+  note String
+  product products [not null]
+  stockTransaction stock_transactions
 }
 
 Table stock_locations {
@@ -404,63 +474,6 @@ Table files {
   products products [not null]
 }
 
-Table stock_cards {
-  id String [pk]
-  createdAt DateTime [default: `now()`, not null]
-  createdBy String
-  updatedAt DateTime [not null]
-  updatedBy String
-  deletedAt DateTime
-  deletedBy String
-  productId String [not null]
-  transId String
-  orderId String
-  type String [not null]
-  inQty Float [not null, default: 0]
-  outQty Float [not null, default: 0]
-  balance Float [not null, default: 0]
-  note String
-  product products [not null]
-  stockTransaction stock_transactions
-}
-
-Table stock_transactions {
-  id String [pk]
-  createdAt DateTime [default: `now()`, not null]
-  createdBy String
-  updatedAt DateTime [not null]
-  updatedBy String
-  deletedAt DateTime
-  deletedBy String
-  code String [unique, not null]
-  type String [not null]
-  status String [not null, default: 'DRAFT']
-  transDate DateTime [default: `now()`, not null]
-  note String
-  branchId String [not null]
-  branch branches [not null]
-  items stock_items [not null]
-  stockCards stock_cards [not null]
-}
-
-Table stock_items {
-  id String [pk]
-  createdAt DateTime [default: `now()`, not null]
-  createdBy String
-  updatedAt DateTime [not null]
-  updatedBy String
-  deletedAt DateTime
-  deletedBy String
-  transId String [not null]
-  productId String [not null]
-  quantity Float [not null, default: 0]
-  unitPrice Float [not null, default: 0]
-  total Float [not null, default: 0]
-  batchCode String
-  product products [not null]
-  stockTransactions stock_transactions [not null]
-}
-
 Table manufacturers {
   id String [pk]
   createdAt DateTime [default: `now()`, not null]
@@ -473,6 +486,21 @@ Table manufacturers {
   branchId String [not null]
   products products [not null]
   branch branches [not null]
+}
+
+Table product_lots {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  createdBy String
+  updatedAt DateTime [not null]
+  updatedBy String
+  deletedAt DateTime
+  deletedBy String
+  productId String [not null]
+  name String [not null]
+  expiryDate DateTime [not null]
+  quantity Float [not null, default: 0]
+  product products [not null]
 }
 
 Table wards {
@@ -546,6 +574,18 @@ Ref: suppliers.branchId > branches.id
 
 Ref: supplier_groups.branchId > branches.id
 
+Ref: stock_transactions.supplierId > suppliers.id
+
+Ref: stock_transactions.branchId > branches.id
+
+Ref: stock_items.productId > products.id
+
+Ref: stock_items.transId > stock_transactions.id [delete: Cascade]
+
+Ref: stock_cards.productId > products.id
+
+Ref: stock_cards.transId > stock_transactions.id
+
 Ref: stock_locations.branchId > branches.id
 
 Ref: product_weights.productId - products.id
@@ -578,16 +618,8 @@ Ref: customer_invoice_info.customerId - customers.id [delete: Cascade]
 
 Ref: customer_groups.storeCode > stores.code [delete: Set Null]
 
-Ref: stock_cards.productId > products.id
-
-Ref: stock_cards.transId > stock_transactions.id
-
-Ref: stock_transactions.branchId > branches.id
-
-Ref: stock_items.productId > products.id
-
-Ref: stock_items.transId > stock_transactions.id [delete: Cascade]
-
 Ref: manufacturers.branchId > branches.id
+
+Ref: product_lots.productId > products.id
 
 Ref: wards.provinceCode > provinces.code

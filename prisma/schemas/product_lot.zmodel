@@ -1,0 +1,14 @@
+import "base"
+import "product"
+
+model ProductLot extends BaseModel {
+  productId  String   @map("product_id") @db.Uuid
+  name       String   @db.VarChar(100)
+  expiryDate DateTime @map("expiry_date")
+  quantity   Float    @default(0)             
+
+  // Relations
+  product    Product  @relation(fields: [productId], references: [id])
+
+  @@map("product_lots")
+}

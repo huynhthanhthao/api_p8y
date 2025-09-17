@@ -11,6 +11,7 @@ import 'stock_item'
 import 'manufacturer'
 import 'file'
 import 'product_location'
+import 'product_lot'
 
 model Product extends BaseModel {
   branchId         String            @map("branch_id") @db.Uuid
@@ -50,6 +51,7 @@ model Product extends BaseModel {
   invoiceItems     InvoiceItem[]
   stockCards       StockCard[]
   stockItems       StockItem[]
+  productLots      ProductLot[]
   photos           File[]
   parent           Product?          @relation("ProductVariants", fields: [parentId], references: [id])
   variants         Product[]         @relation("ProductVariants")

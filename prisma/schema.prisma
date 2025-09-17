@@ -187,6 +187,7 @@ model Product {
   invoiceItems     InvoiceItem[]
   stockCards       StockCard[]
   stockItems       StockItem[]
+  productLots      ProductLot[]
   photos           File[]
   parent           Product?          @relation("ProductVariants", fields: [parentId], references: [id])
   variants         Product[]         @relation("ProductVariants")
@@ -196,22 +197,23 @@ model Product {
 }
 
 model Supplier {
-  id              String         @id() @default(uuid()) @db.Uuid()
-  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
-  createdBy       String?        @map("created_by") @db.Uuid()
-  updatedAt       DateTime       @updatedAt() @map("updated_at") @db.Timestamptz(6)
-  updatedBy       String?        @map("updated_by") @db.Uuid()
-  deletedAt       DateTime?      @map("deleted_at") @db.Timestamptz(6)
-  deletedBy       String?        @map("deleted_by") @db.Uuid()
-  name            String         @db.VarChar(255)
-  code            String         @db.VarChar(100)
-  phone           String?        @db.VarChar(50)
-  email           String?        @db.VarChar(255)
-  tax             String?        @default("") @db.VarChar(50)
-  supplierGroupId String?        @map("supplier_group_id") @db.Uuid()
-  branchId        String         @map("branch_id") @db.Uuid()
-  supplierGroup   SupplierGroup? @relation(fields: [supplierGroupId], references: [id])
-  branch          Branch         @relation(fields: [branchId], references: [id])
+  id               String             @id() @default(uuid()) @db.Uuid()
+  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdBy        String?            @map("created_by") @db.Uuid()
+  updatedAt        DateTime           @updatedAt() @map("updated_at") @db.Timestamptz(6)
+  updatedBy        String?            @map("updated_by") @db.Uuid()
+  deletedAt        DateTime?          @map("deleted_at") @db.Timestamptz(6)
+  deletedBy        String?            @map("deleted_by") @db.Uuid()
+  name             String             @db.VarChar(255)
+  code             String             @db.VarChar(100)
+  phone            String?            @db.VarChar(50)
+  email            String?            @db.VarChar(255)
+  tax              String?            @default("") @db.VarChar(50)
+  supplierGroupId  String?            @map("supplier_group_id") @db.Uuid()
+  branchId         String             @map("branch_id") @db.Uuid()
+  supplierGroup    SupplierGroup?     @relation(fields: [supplierGroupId], references: [id])
+  branch           Branch             @relation(fields: [branchId], references: [id])
+  stockTransaction StockTransaction[]
 
   @@unique([code, branchId])
   @@unique([phone, branchId])
@@ -233,6 +235,77 @@ model SupplierGroup {
   branch    Branch     @relation(fields: [branchId], references: [id])
 
   @@map("supplier_groups")
+}
+
+model StockTransaction {
+  id            String      @id() @default(uuid()) @db.Uuid()
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdBy     String?     @map("created_by") @db.Uuid()
+  updatedAt     DateTime    @updatedAt() @map("updated_at") @db.Timestamptz(6)
+  updatedBy     String?     @map("updated_by") @db.Uuid()
+  deletedAt     DateTime?   @map("deleted_at") @db.Timestamptz(6)
+  deletedBy     String?     @map("deleted_by") @db.Uuid()
+  branchId      String      @db.Uuid()
+  status        String      @default("PENDING")
+  code          String
+  type          String
+  discountType  String?     @default("VALUE")
+  discountValue Float?      @default(0)
+  supplierId    String?     @db.Uuid()
+  supplier      Supplier?   @relation(fields: [supplierId], references: [id])
+  note          String?     @db.Text()
+  transactedAt  DateTime?   @default(now())
+  branch        Branch      @relation(fields: [branchId], references: [id])
+  items         StockItem[]
+  stockCards    StockCard[]
+
+  @@unique([code, branchId])
+  @@map("stock_transactions")
+}
+
+model StockItem {
+  id                String           @id() @default(uuid()) @db.Uuid()
+  createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdBy         String?          @map("created_by") @db.Uuid()
+  updatedAt         DateTime         @updatedAt() @map("updated_at") @db.Timestamptz(6)
+  updatedBy         String?          @map("updated_by") @db.Uuid()
+  deletedAt         DateTime?        @map("deleted_at") @db.Timestamptz(6)
+  deletedBy         String?          @map("deleted_by") @db.Uuid()
+  transId           String           @db.Uuid()
+  productId         String           @db.Uuid()
+  quantity          Float            @default(0)
+  unitPrice         Float            @default(0)
+  total             Float            @default(0)
+  batchCode         String?          @db.VarChar(50)
+  discountType      String?          @default("VALUE")
+  discountValue     Float?           @default(0)
+  supplierId        String?
+  product           Product          @relation(fields: [productId], references: [id])
+  stockTransactions StockTransaction @relation(fields: [transId], references: [id], onDelete: Cascade)
+
+  @@map("stock_items")
+}
+
+model StockCard {
+  id               String            @id() @default(uuid()) @db.Uuid()
+  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdBy        String?           @map("created_by") @db.Uuid()
+  updatedAt        DateTime          @updatedAt() @map("updated_at") @db.Timestamptz(6)
+  updatedBy        String?           @map("updated_by") @db.Uuid()
+  deletedAt        DateTime?         @map("deleted_at") @db.Timestamptz(6)
+  deletedBy        String?           @map("deleted_by") @db.Uuid()
+  productId        String            @db.Uuid()
+  transId          String?           @db.Uuid()
+  orderId          String?           @db.Uuid()
+  type             String            @db.VarChar(20)
+  inQty            Float             @default(0)
+  outQty           Float             @default(0)
+  balance          Float             @default(0)
+  note             String?           @db.Text()
+  product          Product           @relation(fields: [productId], references: [id])
+  stockTransaction StockTransaction? @relation(fields: [transId], references: [id])
+
+  @@map("stock_cards")
 }
 
 model ProductLocation {
@@ -448,69 +521,6 @@ model File {
   @@map("files")
 }
 
-model StockCard {
-  id               String            @id() @default(uuid()) @db.Uuid()
-  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
-  createdBy        String?           @map("created_by") @db.Uuid()
-  updatedAt        DateTime          @updatedAt() @map("updated_at") @db.Timestamptz(6)
-  updatedBy        String?           @map("updated_by") @db.Uuid()
-  deletedAt        DateTime?         @map("deleted_at") @db.Timestamptz(6)
-  deletedBy        String?           @map("deleted_by") @db.Uuid()
-  productId        String            @db.Uuid()
-  transId          String?           @db.Uuid()
-  orderId          String?           @db.Uuid()
-  type             String            @db.VarChar(20)
-  inQty            Float             @default(0)
-  outQty           Float             @default(0)
-  balance          Float             @default(0)
-  note             String?           @db.Text()
-  product          Product           @relation(fields: [productId], references: [id])
-  stockTransaction StockTransaction? @relation(fields: [transId], references: [id])
-
-  @@map("stock_cards")
-}
-
-model StockTransaction {
-  id         String      @id() @default(uuid()) @db.Uuid()
-  createdAt  DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-  createdBy  String?     @map("created_by") @db.Uuid()
-  updatedAt  DateTime    @updatedAt() @map("updated_at") @db.Timestamptz(6)
-  updatedBy  String?     @map("updated_by") @db.Uuid()
-  deletedAt  DateTime?   @map("deleted_at") @db.Timestamptz(6)
-  deletedBy  String?     @map("deleted_by") @db.Uuid()
-  code       String      @unique() @db.VarChar(50)
-  type       String      @db.VarChar(20)
-  status     String      @default("DRAFT") @db.VarChar(20)
-  transDate  DateTime    @default(now())
-  note       String?     @db.Text()
-  branchId   String      @map("branch_id") @db.Uuid()
-  branch     Branch      @relation(fields: [branchId], references: [id])
-  items      StockItem[]
-  stockCards StockCard[]
-
-  @@map("stock_transactions")
-}
-
-model StockItem {
-  id                String           @id() @default(uuid()) @db.Uuid()
-  createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
-  createdBy         String?          @map("created_by") @db.Uuid()
-  updatedAt         DateTime         @updatedAt() @map("updated_at") @db.Timestamptz(6)
-  updatedBy         String?          @map("updated_by") @db.Uuid()
-  deletedAt         DateTime?        @map("deleted_at") @db.Timestamptz(6)
-  deletedBy         String?          @map("deleted_by") @db.Uuid()
-  transId           String           @db.Uuid()
-  productId         String           @db.Uuid()
-  quantity          Float            @default(0)
-  unitPrice         Float            @default(0)
-  total             Float            @default(0)
-  batchCode         String?          @db.VarChar(50)
-  product           Product          @relation(fields: [productId], references: [id])
-  stockTransactions StockTransaction @relation(fields: [transId], references: [id], onDelete: Cascade)
-
-  @@map("stock_items")
-}
-
 model Manufacturer {
   id        String    @id() @default(uuid()) @db.Uuid()
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
@@ -525,6 +535,23 @@ model Manufacturer {
   branch    Branch    @relation(fields: [branchId], references: [id])
 
   @@map("manufacturers")
+}
+
+model ProductLot {
+  id         String    @id() @default(uuid()) @db.Uuid()
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdBy  String?   @map("created_by") @db.Uuid()
+  updatedAt  DateTime  @updatedAt() @map("updated_at") @db.Timestamptz(6)
+  updatedBy  String?   @map("updated_by") @db.Uuid()
+  deletedAt  DateTime? @map("deleted_at") @db.Timestamptz(6)
+  deletedBy  String?   @map("deleted_by") @db.Uuid()
+  productId  String    @map("product_id") @db.Uuid()
+  name       String    @db.VarChar(100)
+  expiryDate DateTime  @map("expiry_date")
+  quantity   Float     @default(0)
+  product    Product   @relation(fields: [productId], references: [id])
+
+  @@map("product_lots")
 }
 
 model Ward {

@@ -12,6 +12,7 @@ import 'supplier_group'
 import 'manufacturer'
 import 'product_location'
 import 'medicine_route'
+import 'stock_transaction'
 
 // Branch model
 model Branch extends BaseModel {

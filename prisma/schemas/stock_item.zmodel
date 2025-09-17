@@ -9,7 +9,10 @@ model StockItem  extends BaseModel {
   unitPrice         Float            @default(0)    // Unit price
   total             Float            @default(0)    // Total amount
   batchCode         String?          @db.VarChar(50)  // Batch number
-
+  discountType      String?          @default("VALUE")
+  discountValue     Float?           @default(0)
+  supplierId        String?
+  
   // relations
   product           Product          @relation(fields: [productId], references: [id])
   stockTransactions StockTransaction @relation(fields: [transId], references: [id], onDelete: Cascade)
