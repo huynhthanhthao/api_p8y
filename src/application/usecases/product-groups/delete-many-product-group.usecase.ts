@@ -18,18 +18,33 @@ export class DeleteManyProductGroupUseCase {
     userId: string,
     branchId: string
   ): Promise<Prisma.BatchPayload> {
-    const existingCount = await this.prismaClient.productGroup.count({
+    const existingGroups = await this.prismaClient.productGroup.findMany({
       where: {
         id: { in: data.ids },
         branchId
+      },
+      select: {
+        id: true,
+        _count: {
+          select: {
+            children: true
+          }
+        }
       }
     })
 
-    if (existingCount !== data.ids.length) {
+    if (existingGroups.length !== data.ids.length) {
       throw new HttpException(
         HttpStatus.NOT_FOUND,
         PRODUCT_GROUP_ERROR.SOME_PRODUCT_GROUPS_NOT_FOUND
       )
+    }
+
+    // 2. Kiểm tra có nhóm nào là cha (có children > 0)
+    const hasChildren = existingGroups.some(g => g._count.children > 0)
+
+    if (hasChildren) {
+      throw new HttpException(HttpStatus.BAD_REQUEST, PRODUCT_GROUP_ERROR.CANNOT_DELETE_PARENT)
     }
 
     await this.prismaClient.productGroup.updateMany({

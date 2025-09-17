@@ -50,18 +50,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
       if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
         const responseObj = exceptionResponse as any
+        errors = responseObj.errors
+        message = responseObj.message
 
-        if (Array.isArray(responseObj.errors)) {
-          errors = responseObj.errors
-        } else if (Array.isArray(responseObj.message)) {
-          errors = responseObj.message
-        } else if (responseObj.message) {
-          message = responseObj.message
-        }
-
-        if (responseObj.errorCode) {
-          errorCode = responseObj.errorCode
-        }
+        if (responseObj.errorCode) errorCode = responseObj.errorCode
       }
     }
 

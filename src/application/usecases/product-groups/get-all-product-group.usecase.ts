@@ -50,6 +50,16 @@ export class GetAllProductGroupUseCase {
               deletedBy: true,
               createdBy: true,
               updatedBy: true
+            },
+            include: {
+              children: {
+                omit: {
+                  deletedAt: true,
+                  deletedBy: true,
+                  createdBy: true,
+                  updatedBy: true
+                }
+              }
             }
           }
         }

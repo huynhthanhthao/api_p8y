@@ -1,11 +1,12 @@
 import { IsString, IsNotEmpty, MaxLength } from 'class-validator'
-
 import { MedicineRoute } from '@common/types'
+import { Transform, TransformFnParams } from 'class-transformer'
 
 export class CreateMedicineRouteRequestDto {
   @IsNotEmpty({ message: 'Đường dùng không được để trống' })
   @IsString({ message: 'Đường dùng phải là chuỗi ký tự' })
   @MaxLength(255, { message: 'Đường dùng không được vượt quá 255 ký tự' })
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   name: string
 }
 

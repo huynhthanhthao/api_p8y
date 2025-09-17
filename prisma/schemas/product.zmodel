@@ -2,42 +2,58 @@ import 'base'
 import 'branch'
 import 'product_group'
 import 'supplier'
-import 'stock_location'
+import 'product_location'
 import 'product_weight'
 import 'medicine_info'
-import 'product_unit'
 import 'invoice_item'
 import 'stock_card'
 import 'stock_item'
+import 'manufacturer'
+import 'file'
+import 'product_location'
 
 model Product extends BaseModel {
-  name           String          @db.VarChar(255)
-  code           String          @db.VarChar(50)
-  productGroupId String          @map("group_id") @db.Uuid
-  branchId       String          @map("branch_id") @db.Uuid
-  barcode        String?         @db.VarChar(100) @default("")
-  shortName      String?         @map("short_name") @db.VarChar(100) @default("")
-  description    String?         @db.Text @default("")
+  branchId         String            @map("branch_id") @db.Uuid
+  name             String            @db.VarChar(255)
+  code             String            @db.VarChar(100)
+  productGroupId   String            @map("group_id") @db.Uuid
+  type             String            @db.VarChar(50) @default("PRODUCT") // PRODUCT, SERVICE, COMBO, MEDICINE
+  barcode          String?           @db.VarChar(100) @default("")
+  shortName        String?           @map("short_name") @db.VarChar(100) @default("")
+  description      String?           @db.Text @default("")
+  isDirectSale     Boolean           @map("is_direct_sale") @db.Boolean @default(true)
 
-  salePrice      Float?          @map("sale_price") @default(0)
-  costPrice      Float?          @map("cost_price") @default(0)
+  salePrice        Float?            @map("sale_price") @default(0)
+  costPrice        Float?            @map("cost_price") @default(0)
 
-  type           String?         @db.VarChar(50) @default("PRODUCT") // PRODUCT, SERVICE, COMBO, MEDICINE
+  isLotEnabled     Boolean           @map("is_lot_enabled") @db.Boolean @default(false)
+  isStockEnabled   Boolean           @map("is_stock_enabled") @db.Boolean @default(false)
+  stockQuantity    Float?
+  minStock         Float?            @map("min_stock") @default(0)
+  maxStock         Float?            @map("max_stock") @default(999999999)
 
-  minStock       Float?          @map("min_stock") @default(0)
-  maxStock       Float?          @map("max_stock") @default(999999999)
+  package          String?           @db.VarChar(100)  // Quy cách đóng gói
+  country          String?           @db.VarChar(100)   // Quốc gia (nếu cần)
+  manufacturerId   String?           @map("manufacturer_id") @db.Uuid // Hãng sản xuất
 
+  parentId         String?           @map("parent_id") @db.Uuid // Liên kết đến sản phẩm chính
+  unitName         String?           @db.VarChar(50) // Tên đơn vị: viên, chai, lốc
+  conversion       Float?            @default(1) // Quy đổi: 1 chai = 10 viên
 
   // Relations
-  branch         Branch          @relation(fields: [branchId], references: [id])
-  productGroup   ProductGroup?   @relation(fields: [productGroupId], references: [id])
-  productWeight  ProductWeight?
-  medicineInfo   MedicineInfo?
-  productUnits   ProductUnit[]
-  stockLocations StockLocation[]
-  invoiceItems   InvoiceItem[]
-  stockCards     StockCard[]
-  stockItems     StockItem[]
+  branch           Branch            @relation(fields: [branchId], references: [id])
+  manufacturer     Manufacturer?     @relation(fields: [manufacturerId], references: [id])
+  productGroup     ProductGroup?     @relation(fields: [productGroupId], references: [id])
+  productWeight    ProductWeight?
+  medicineInfo     MedicineInfo?
+  productLocations ProductLocation[]
+  invoiceItems     InvoiceItem[]
+  stockCards       StockCard[]
+  stockItems       StockItem[]
+  photos           File[]
+  parent           Product?          @relation("ProductVariants", fields: [parentId], references: [id])
+  variants         Product[]         @relation("ProductVariants")
 
+  @@unique([code, branchId])
   @@map("products")
 }

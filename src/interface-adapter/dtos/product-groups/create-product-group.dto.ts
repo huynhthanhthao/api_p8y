@@ -1,11 +1,13 @@
 import { IsString, IsNotEmpty, IsOptional, MaxLength, IsUUID } from 'class-validator'
 
 import { ProductGroup } from '@common/types'
+import { Transform, TransformFnParams } from 'class-transformer'
 
 export class CreateProductGroupRequestDto {
   @IsNotEmpty({ message: 'Tên sản phẩm không được để trống' })
   @IsString({ message: 'Tên sản phẩm phải là chuỗi ký tự' })
   @MaxLength(255, { message: 'Tên sản phẩm không được vượt quá 255 ký tự' })
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   name: string
 
   @IsOptional()

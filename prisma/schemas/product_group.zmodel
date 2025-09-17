@@ -9,7 +9,7 @@ model ProductGroup extends BaseModel {
   
   // Relations
   branch   Branch         @relation(fields: [branchId], references: [id])
-  parent   ProductGroup?  @relation("ProductGroupToParent", fields: [parentId], references: [id])
+  parent   ProductGroup?  @relation("ProductGroupToParent", fields: [parentId], references: [id], onDelete: SetNull)
   children ProductGroup[] @relation("ProductGroupToParent")
   products Product[]
 

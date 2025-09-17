@@ -45,9 +45,30 @@ function getModelConfig(model: Prisma.ModelName): ModelConfig {
   return config
 }
 
-// Cache for the latest codes to reduce database queries in high-frequency scenarios
-const codeCache = new Map<string, { code: string; timestamp: number }>()
-const CACHE_TTL = 5000
+export function generateCodeIncrease(baseCode: string, increment: number = 1): string {
+  const match = baseCode.match(/^(\D*)(\d+)$/)
+
+  if (!match) {
+    throw new Error('Invalid code format. Code must end with numbers')
+  }
+
+  const prefix = match[1] // Phần chữ cái
+  const numberStr = match[2] // Phần số
+  const numberLength = numberStr.length // Độ dài phần số
+
+  const currentNumber = parseInt(numberStr, 10)
+  const newNumber = currentNumber + increment
+
+  // Format lại phần số với đúng số lượng chữ số ban đầu
+  const newNumberStr = newNumber.toString().padStart(numberLength, '0')
+
+  // Nếu phần số mới dài hơn phần số ban đầu, giữ nguyên độ dài mới
+  if (newNumberStr.length > numberLength) {
+    return prefix + newNumberStr
+  }
+
+  return prefix + newNumberStr
+}
 
 export async function generateCodeModel<T extends Prisma.ModelName>(
   options: GenerateCodeOptions<T>
@@ -57,24 +78,6 @@ export async function generateCodeModel<T extends Prisma.ModelName>(
   const config = getModelConfig(model)
   const prefix = customPrefix || config.prefix
   const codeLength = config.codeLength || 6
-
-  // Create a unique cache key for this combination
-  const cacheKey = `${model}-${storeCode || 'no-store'}-${branchId || 'no-branch'}-${prefix}`
-
-  // Try to get from cache first
-  const cached = codeCache.get(cacheKey)
-  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-    const latestCode = cached.code
-    const numberPart = latestCode.replace(prefix, '')
-    const currentNumber = parseInt(numberPart, 10)
-    const nextNumber = !isNaN(currentNumber) ? currentNumber + 1 : 1
-    const newCode = formatCode(prefix, nextNumber, codeLength)
-
-    // Update cache with new code
-    codeCache.set(cacheKey, { code: newCode, timestamp: Date.now() })
-
-    return newCode
-  }
 
   // Use a transaction to ensure atomicity and prevent race conditions
   return await prisma.$transaction(
@@ -111,17 +114,10 @@ export async function generateCodeModel<T extends Prisma.ModelName>(
       }
 
       // Format the code with prefix and padded number
-      const newCode = formatCode(prefix, nextNumber, codeLength)
-
-      // Update cache
-      codeCache.set(cacheKey, { code: newCode, timestamp: Date.now() })
-
-      return newCode
+      return formatCode(prefix, nextNumber, codeLength)
     },
     {
-      // Increase timeout if needed for high concurrency
       timeout: 10000,
-      // Use serializable isolation level for maximum safety
       isolationLevel: Prisma.TransactionIsolationLevel.Serializable
     }
   )
@@ -131,9 +127,4 @@ export async function generateCodeModel<T extends Prisma.ModelName>(
 function formatCode(prefix: string, number: number, length: number = 6): string {
   const numberPart = number.toString().padStart(length, '0')
   return `${prefix}${numberPart}`
-}
-
-// Optional: Function to reset cache (useful for testing)
-export function resetCodeCache(): void {
-  codeCache.clear()
 }

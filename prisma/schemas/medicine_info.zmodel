@@ -3,16 +3,15 @@ import 'product'
 import 'medicine_route'
 
 model MedicineInfo {
-  regNumber  String        @db.VarChar(100)  // Số đăng ký
-  ingredient String        @db.VarChar(100)  // Hoạt chất
-  dosage     String        @db.VarChar(100)  // Hàm lượng
-
-  productId  String        @unique @db.Uuid
-  routeId    String        @db.Uuid          // FK tới MedicineRoute
+  productId  String         @unique @db.Uuid
+  regNumber  String?        @db.VarChar(100)  // Số đăng ký
+  ingredient String?        @db.VarChar(100)  // Hoạt chất
+  dosage     String?        @db.VarChar(100)  // Hàm lượng
+  routeId    String?        @db.Uuid        // FK tới MedicineRoute
 
   // Relations
-  product    Product       @relation(fields: [productId], references: [id])
-  route      MedicineRoute @relation(fields: [routeId], references: [id])
+  product    Product?       @relation(fields: [productId], references: [id])
+  route      MedicineRoute? @relation(fields: [routeId], references: [id], onDelete: SetNull)
 
   @@map("medicine_infos")
 }

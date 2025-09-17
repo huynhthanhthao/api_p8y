@@ -10,5 +10,9 @@ export const PRODUCT_GROUP_ERROR = {
   NAME_ALREADY_EXISTS: {
     code: 'PRODUCT_GROUP_03',
     message: 'Tên nhóm sản phẩm đã tồn tại'
+  },
+  CANNOT_DELETE_PARENT: {
+    code: 'PRODUCT_GROUP_04',
+    message: 'Không thể xóa nhóm cha vì đang có nhóm con'
   }
 }

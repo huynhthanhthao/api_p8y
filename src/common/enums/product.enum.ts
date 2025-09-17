@@ -1,6 +1,10 @@
 export enum ProductTypeEnum {
   PRODUCT = 'PRODUCT',
   SERVICE = 'SERVICE',
-  COMBO = 'COMBO',
   MEDICINE = 'MEDICINE'
+}
+
+export enum ProductWeightUnitEnum {
+  KG = 'kg',
+  G = 'g'
 }

@@ -13,11 +13,23 @@ export class DeleteProductGroupUseCase {
 
   async execute(id: string, userId: string, branchId: string): Promise<string> {
     const productGroup = await this.prismaClient.productGroup.findUnique({
-      where: { id, branchId }
+      where: { id, branchId },
+      select: {
+        _count: {
+          select: {
+            children: true
+          }
+        }
+      }
     })
 
     if (!productGroup) {
       throw new HttpException(HttpStatus.NOT_FOUND, PRODUCT_GROUP_ERROR.PRODUCT_GROUP_NOT_FOUND)
+    }
+    console.log(productGroup._count.children)
+
+    if (productGroup._count.children) {
+      throw new HttpException(HttpStatus.NOT_FOUND, PRODUCT_GROUP_ERROR.CANNOT_DELETE_PARENT)
     }
 
     await this.prismaClient.productGroup.update({

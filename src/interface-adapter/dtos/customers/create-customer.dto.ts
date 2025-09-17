@@ -11,7 +11,7 @@ import {
   IsEnum,
   IsDate
 } from 'class-validator'
-import { Type } from 'class-transformer'
+import { Transform, TransformFnParams, Type } from 'class-transformer'
 import { GenderEnum } from '@common/enums/common.enum'
 import { Customer } from '@common/types'
 
@@ -19,11 +19,13 @@ export class CustomerInvoiceInfoRequestDto {
   @IsNotEmpty({ message: 'Tên người mua hàng không được để trống' })
   @IsString({ message: 'Tên người mua hàng phải là chuỗi ký tự' })
   @MaxLength(255, { message: 'Tên người mua hàng không được vượt quá 255 ký tự' })
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   buyerName: string
 
   @IsOptional()
   @IsString({ message: 'Mã số thuế phải là chuỗi ký tự' })
   @MaxLength(50, { message: 'Mã số thuế không được vượt quá 50 ký tự' })
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   taxCode: string
 
   @IsOptional()
@@ -34,42 +36,50 @@ export class CustomerInvoiceInfoRequestDto {
   @IsOptional()
   @IsString({ message: 'Tỉnh/Thành phố phải là chuỗi ký tự' })
   @MaxLength(100, { message: 'Tỉnh/Thành phố không được vượt quá 100 ký tự' })
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   province: string
 
   @IsOptional()
   @IsString({ message: 'Phường/Xã phải là chuỗi ký tự' })
   @MaxLength(100, { message: 'Phường/Xã không được vượt quá 100 ký tự' })
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   ward: string
 
   @IsOptional()
   @IsString({ message: 'Số CMND/CCCD phải là chuỗi ký tự' })
   @MaxLength(50, { message: 'Số CMND/CCCD không được vượt quá 50 ký tự' })
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   identityNumber: string
 
   @IsOptional()
   @IsEmail({}, { message: 'Email không hợp lệ' })
-  @MaxLength(255, { message: 'Email không được vượt quá 255 ký tự' })
+  @MaxLength(100, { message: 'Email không được vượt quá 100 ký tự' })
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   email: string
 
   @IsOptional()
   @IsString({ message: 'Số điện thoại phải là chuỗi ký tự' })
   @MaxLength(20, { message: 'Số điện thoại không được vượt quá 20 ký tự' })
   @Matches(/^[0-9]+$/, { message: 'Số điện thoại chỉ được chứa ký tự số' })
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   phone: string
 
   @IsOptional()
   @IsString({ message: 'Tên ngân hàng phải là chuỗi ký tự' })
   @MaxLength(255, { message: 'Tên ngân hàng không được vượt quá 255 ký tự' })
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   bankName: string
 
   @IsOptional()
   @IsString({ message: 'Số tài khoản ngân hàng phải là chuỗi ký tự' })
   @MaxLength(50, { message: 'Số tài khoản ngân hàng không được vượt quá 50 ký tự' })
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   bankAccount: string
 
   @IsOptional()
   @IsString({ message: 'Mã đơn vị ngân sách phải là chuỗi ký tự' })
   @MaxLength(50, { message: 'Mã đơn vị ngân sách không được vượt quá 50 ký tự' })
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   budgetUnitCode: string
 }
 
@@ -101,6 +111,7 @@ export class CreateCustomerRequestDto {
   birthday: Date
 
   @IsOptional()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   @IsEnum(GenderEnum, {
     message: `Giới tính phải là một trong: ${Object.values(GenderEnum).join(', ')}`
   })

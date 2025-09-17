@@ -15,6 +15,7 @@ export class CreateCustomerGroupRequestDto {
   discountValue: number
 
   @IsOptional()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   @IsEnum(DiscountTypeEnum, {
     message: `Loại giảm giá phải là một trong: ${Object.values(DiscountTypeEnum).join(', ')}`
   })

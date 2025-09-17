@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client'
 
-export const productUnitSelect = Prisma.validator<Prisma.ProductUnitFindFirstArgs>()({
+export const productSelect = Prisma.validator<Prisma.ProductFindFirstArgs>()({
   omit: {
     deletedAt: true,
     deletedBy: true,
@@ -11,4 +11,4 @@ export const productUnitSelect = Prisma.validator<Prisma.ProductUnitFindFirstArg
   }
 })
 
-export type ProductUnit = Prisma.ProductUnitGetPayload<typeof productUnitSelect>
+export type Product = Prisma.ProductGetPayload<typeof productSelect>

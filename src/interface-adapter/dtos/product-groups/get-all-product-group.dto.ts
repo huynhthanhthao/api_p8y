@@ -2,7 +2,7 @@ import { PaginationQueryDto } from '@common/dtos/pagination-query.dto'
 import { PaginationResponseDto } from '@common/dtos/pagination-response.dto'
 import { ProductGroup } from '@common/types'
 import { Transform, TransformFnParams } from 'class-transformer'
-import { IsOptional, IsBoolean } from 'class-validator'
+import { IsOptional, IsBoolean, IsNumber } from 'class-validator'
 
 export class GetAllProductGroupRequestDto extends PaginationQueryDto {
   @IsOptional()

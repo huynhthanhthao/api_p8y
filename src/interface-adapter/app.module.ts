@@ -90,6 +90,15 @@ import {
   GetOneMedicineRouteUseCase,
   UpdateMedicineRouteUseCase
 } from '@usecases/medicine-routes'
+import { ProductController } from './controllers/product.controller'
+import {
+  CreateProductUseCase,
+  DeleteProductUseCase,
+  DeleteManyProductUseCase,
+  GetAllProductUseCase,
+  GetOneProductUseCase,
+  UpdateProductUseCase
+} from '@usecases/products'
 
 const controllers = [
   AuthController,
@@ -102,7 +111,8 @@ const controllers = [
   ProductGroupController,
   ManufacturerController,
   ProductLocationController,
-  MedicineRouteController
+  MedicineRouteController,
+  ProductController
 ]
 
 const useCases = [
@@ -182,7 +192,15 @@ const useCases = [
   DeleteManyMedicineRouteUseCase,
   GetAllMedicineRouteUseCase,
   GetOneMedicineRouteUseCase,
-  UpdateMedicineRouteUseCase
+  UpdateMedicineRouteUseCase,
+
+  // Product
+  CreateProductUseCase,
+  DeleteProductUseCase,
+  DeleteManyProductUseCase,
+  GetAllProductUseCase,
+  GetOneProductUseCase,
+  UpdateProductUseCase
 ]
 
 @Module({

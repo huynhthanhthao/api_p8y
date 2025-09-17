@@ -1,13 +1,10 @@
-import { PrismaService } from '@infrastructure/prisma'
-import {
-  GetAllCustomerRequestDto,
-  GetAllCustomerResponseDto
-} from '@interface-adapter/dtos/customers'
-import { Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
+import { PrismaService } from '@infrastructure/prisma'
+import { Injectable } from '@nestjs/common'
+import { GetAllProductRequestDto, GetAllProductResponseDto } from '@interface-adapter/dtos/products'
 
 @Injectable()
-export class GetAllCustomerUseCase {
+export class GetAllProductUseCase {
   constructor(private readonly prismaService: PrismaService) {}
 
   private get prismaClient(): PrismaService {
@@ -15,22 +12,21 @@ export class GetAllCustomerUseCase {
   }
 
   async execute(
-    params: GetAllCustomerRequestDto,
-    storeCode: string
-  ): Promise<GetAllCustomerResponseDto> {
-    const { page, perPage, keyword, orderBy, sortBy, customerGroupIds } = params
+    data: GetAllProductRequestDto,
+    branchId: string
+  ): Promise<GetAllProductResponseDto> {
+    const { page, perPage, keyword, orderBy, sortBy, isParent } = data
 
-    const where: Prisma.CustomerWhereInput = {
-      storeCode,
-      ...(!!customerGroupIds?.length && {
-        customerGroupId: {
-          in: customerGroupIds
-        }
-      })
+    const where: Prisma.ProductWhereInput = {
+      branchId,
+      ...(isParent !== undefined &&
+        isParent && {
+          parentId: null
+        })
     }
 
     if (keyword) {
-      const searchKeys = ['name', 'phone', 'email']
+      const searchKeys = ['name', 'code', 'barcode', 'shortName']
 
       where.OR = searchKeys.map(key => ({
         [key]: {
@@ -41,7 +37,7 @@ export class GetAllCustomerUseCase {
     }
 
     return await this.prismaClient.findManyWithPagination(
-      'customer',
+      'product',
       {
         where,
         orderBy: { [sortBy]: orderBy },
@@ -52,7 +48,7 @@ export class GetAllCustomerUseCase {
           updatedBy: true
         },
         include: {
-          customerGroup: {
+          photos: {
             omit: {
               deletedAt: true,
               deletedBy: true,
@@ -60,12 +56,16 @@ export class GetAllCustomerUseCase {
               updatedBy: true
             }
           },
-          avatar: {
-            omit: {
-              deletedAt: true,
-              deletedBy: true,
-              createdBy: true,
-              updatedBy: true
+          variants: {
+            select: {
+              id: true,
+              salePrice: true,
+              costPrice: true,
+              isDirectSale: true,
+              barcode: true,
+              code: true,
+              unitName: true,
+              conversion: true
             }
           }
         }

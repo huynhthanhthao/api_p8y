@@ -141,7 +141,7 @@ model ProductGroup {
   parentId  String?        @map("parent_id") @db.Uuid()
   branchId  String         @map("branch_id") @db.Uuid()
   branch    Branch         @relation(fields: [branchId], references: [id])
-  parent    ProductGroup?  @relation("ProductGroupToParent", fields: [parentId], references: [id])
+  parent    ProductGroup?  @relation("ProductGroupToParent", fields: [parentId], references: [id], onDelete: SetNull)
   children  ProductGroup[] @relation("ProductGroupToParent")
   products  Product[]
 
@@ -156,10 +156,10 @@ model Product {
   updatedBy        String?           @map("updated_by") @db.Uuid()
   deletedAt        DateTime?         @map("deleted_at") @db.Timestamptz(6)
   deletedBy        String?           @map("deleted_by") @db.Uuid()
+  branchId         String            @map("branch_id") @db.Uuid()
   name             String            @db.VarChar(255)
   code             String            @db.VarChar(100)
   productGroupId   String            @map("group_id") @db.Uuid()
-  branchId         String            @map("branch_id") @db.Uuid()
   type             String            @default("PRODUCT") @db.VarChar(50)
   barcode          String?           @default("") @db.VarChar(100)
   shortName        String?           @default("") @map("short_name") @db.VarChar(100)
@@ -167,6 +167,7 @@ model Product {
   isDirectSale     Boolean           @default(true) @map("is_direct_sale") @db.Boolean()
   salePrice        Float?            @default(0) @map("sale_price")
   costPrice        Float?            @default(0) @map("cost_price")
+  isLotEnabled     Boolean           @default(false) @map("is_lot_enabled") @db.Boolean()
   isStockEnabled   Boolean           @default(false) @map("is_stock_enabled") @db.Boolean()
   stockQuantity    Float?
   minStock         Float?            @default(0) @map("min_stock")
@@ -174,20 +175,23 @@ model Product {
   package          String?           @db.VarChar(100)
   country          String?           @db.VarChar(100)
   manufacturerId   String?           @map("manufacturer_id") @db.Uuid()
+  parentId         String?           @map("parent_id") @db.Uuid()
+  unitName         String?           @db.VarChar(50)
+  conversion       Float?            @default(1)
   branch           Branch            @relation(fields: [branchId], references: [id])
   manufacturer     Manufacturer?     @relation(fields: [manufacturerId], references: [id])
   productGroup     ProductGroup?     @relation(fields: [productGroupId], references: [id])
   productWeight    ProductWeight?
   medicineInfo     MedicineInfo?
-  productUnits     ProductUnit[]
   productLocations ProductLocation[]
   invoiceItems     InvoiceItem[]
   stockCards       StockCard[]
   stockItems       StockItem[]
   photos           File[]
+  parent           Product?          @relation("ProductVariants", fields: [parentId], references: [id])
+  variants         Product[]         @relation("ProductVariants")
 
   @@unique([code, branchId])
-  @@unique([barcode, branchId])
   @@map("products")
 }
 
@@ -257,13 +261,13 @@ model ProductWeight {
 }
 
 model MedicineInfo {
-  regNumber  String        @db.VarChar(100)
-  ingredient String        @db.VarChar(100)
-  dosage     String        @db.VarChar(100)
-  productId  String        @unique() @db.Uuid()
-  routeId    String        @db.Uuid()
-  product    Product       @relation(fields: [productId], references: [id])
-  route      MedicineRoute @relation(fields: [routeId], references: [id])
+  productId  String         @unique() @db.Uuid()
+  regNumber  String?        @db.VarChar(100)
+  ingredient String?        @db.VarChar(100)
+  dosage     String?        @db.VarChar(100)
+  routeId    String?        @db.Uuid()
+  product    Product?       @relation(fields: [productId], references: [id])
+  route      MedicineRoute? @relation(fields: [routeId], references: [id], onDelete: SetNull)
 
   @@map("medicine_infos")
 }
@@ -282,30 +286,6 @@ model MedicineRoute {
   branch    Branch         @relation(fields: [branchId], references: [id])
 
   @@map("medicine_routes")
-}
-
-model ProductUnit {
-  id           String    @id() @default(uuid()) @db.Uuid()
-  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  createdBy    String?   @map("created_by") @db.Uuid()
-  updatedAt    DateTime  @updatedAt() @map("updated_at") @db.Timestamptz(6)
-  updatedBy    String?   @map("updated_by") @db.Uuid()
-  deletedAt    DateTime? @map("deleted_at") @db.Timestamptz(6)
-  deletedBy    String?   @map("deleted_by") @db.Uuid()
-  name         String    @db.VarChar(50)
-  isBase       Boolean   @default(false)
-  conversion   Float     @default(1)
-  code         String?   @db.VarChar(100)
-  barcode      String?   @db.VarChar(100)
-  costPrice    Float?    @default(0)
-  salePrice    Float?    @default(0)
-  isDirectSale Boolean   @default(true) @map("is_direct_sale")
-  productId    String    @map("product_id") @db.Uuid()
-  product      Product   @relation(fields: [productId], references: [id])
-
-  @@unique([code, productId])
-  @@unique([barcode, productId])
-  @@map("product_units")
 }
 
 model InvoiceItem {
