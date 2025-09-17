@@ -4,7 +4,6 @@ import { Product } from '@common/types'
 import { getProductById } from '@common/utils/get-product-by-id.util'
 
 @Injectable()
-@Injectable()
 export class GetOneProductUseCase {
   constructor(private readonly prismaService: PrismaService) {}
 

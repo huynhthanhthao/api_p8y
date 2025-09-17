@@ -2,12 +2,12 @@ import { Prisma } from '@prisma/client'
 import { PrismaService } from '@infrastructure/prisma'
 import { Injectable } from '@nestjs/common'
 import {
-  GetAllProductGroupRequestDto,
-  GetAllProductGroupResponseDto
-} from '@interface-adapter/dtos/product-groups'
+  GetAllPaymentMethodRequestDto,
+  GetAllPaymentMethodResponseDto
+} from '@interface-adapter/dtos/payment-methods'
 
 @Injectable()
-export class GetAllProductGroupUseCase {
+export class GetAllPaymentMethodUseCase {
   constructor(private readonly prismaService: PrismaService) {}
 
   private get prismaClient(): PrismaService {
@@ -15,54 +15,24 @@ export class GetAllProductGroupUseCase {
   }
 
   async execute(
-    data: GetAllProductGroupRequestDto,
+    data: GetAllPaymentMethodRequestDto,
     branchId: string
-  ): Promise<GetAllProductGroupResponseDto> {
-    const { page, perPage, keyword, orderBy, sortBy, isParent } = data
+  ): Promise<GetAllPaymentMethodResponseDto> {
+    const { page, perPage, orderBy, sortBy, isActive } = data
 
-    const where: Prisma.ProductGroupWhereInput = {
+    const where: Prisma.PaymentMethodWhereInput = {
       branchId,
-      ...(isParent !== undefined &&
-        isParent && {
-          parentId: null
+      ...(isActive !== undefined &&
+        isActive && {
+          isActive
         })
     }
 
-    if (keyword) {
-      where.OR = [{ name: { contains: keyword, mode: 'insensitive' } }]
-    }
-
     return await this.prismaClient.findManyWithPagination(
-      'productGroup',
+      'paymentMethod',
       {
         where,
-        orderBy: { [sortBy]: orderBy },
-        omit: {
-          deletedAt: true,
-          deletedBy: true,
-          createdBy: true,
-          updatedBy: true
-        },
-        include: {
-          children: {
-            omit: {
-              deletedAt: true,
-              deletedBy: true,
-              createdBy: true,
-              updatedBy: true
-            },
-            include: {
-              children: {
-                omit: {
-                  deletedAt: true,
-                  deletedBy: true,
-                  createdBy: true,
-                  updatedBy: true
-                }
-              }
-            }
-          }
-        }
+        orderBy: { [sortBy]: orderBy }
       },
       { page, perPage }
     )

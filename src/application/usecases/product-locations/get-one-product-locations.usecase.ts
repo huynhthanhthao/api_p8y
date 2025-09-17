@@ -5,7 +5,6 @@ import { HttpException } from '@common/exceptions'
 import { PRODUCT_LOCATION_ERROR } from '@common/errors'
 
 @Injectable()
-@Injectable()
 export class GetOneProductLocationUseCase {
   constructor(private readonly prismaService: PrismaService) {}
 

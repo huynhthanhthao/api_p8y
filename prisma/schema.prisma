@@ -141,7 +141,6 @@ model PermissionGroup {
 
 model PaymentMethod {
   code              String    @db.VarChar(50)
-  name              String    @db.VarChar(100)
   branchId          String    @map("branch_id") @db.Uuid()
   isActive          Boolean   @default(false)
   bankAccountHolder String?   @db.VarChar(255)
@@ -152,6 +151,7 @@ model PaymentMethod {
   branch            Branch?   @relation(fields: [branchId], references: [id])
   createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   createdBy         String?   @map("created_by") @db.Uuid()
+  updatedBy         String?   @map("updated_by") @db.Uuid()
   updatedAt         DateTime  @updatedAt() @map("updated_at") @db.Timestamptz(6)
 
   @@unique([code, branchId])

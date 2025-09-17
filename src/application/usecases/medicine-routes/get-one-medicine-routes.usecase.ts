@@ -5,7 +5,6 @@ import { HttpException } from '@common/exceptions'
 import { MEDICINE_ROUTE_ERROR } from '@common/errors'
 
 @Injectable()
-@Injectable()
 export class GetOneMedicineRouteUseCase {
   constructor(private readonly prismaService: PrismaService) {}
 

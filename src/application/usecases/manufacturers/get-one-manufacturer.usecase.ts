@@ -5,7 +5,6 @@ import { HttpException } from '@common/exceptions'
 import { MANUFACTURER_ERROR } from '@common/errors'
 
 @Injectable()
-@Injectable()
 export class GetOneManufacturerUseCase {
   constructor(private readonly prismaService: PrismaService) {}
 

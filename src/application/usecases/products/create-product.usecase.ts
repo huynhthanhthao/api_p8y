@@ -1,7 +1,5 @@
 import { PrismaService } from '@infrastructure/prisma'
-import { HttpStatus, Injectable } from '@nestjs/common'
-import { PRODUCT_ERROR } from '@common/errors'
-import { HttpException } from '@common/exceptions'
+import { Injectable } from '@nestjs/common'
 import { generateCodeIncrease, generateCodeModel, validateUniqueFields } from '@common/utils'
 import { CreateProductRequestDto, CreateProductResponseDto } from '@interface-adapter/dtos/products'
 import { validateStockRange } from '@common/utils/validate-stock-range'

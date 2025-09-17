@@ -108,7 +108,6 @@ Table permission_groups {
 
 Table payment_methods {
   code String [not null]
-  name String [not null]
   branchId String [not null]
   isActive Boolean [not null, default: false]
   bankAccountHolder String
@@ -119,6 +118,7 @@ Table payment_methods {
   branch branches
   createdAt DateTime [default: `now()`, not null]
   createdBy String
+  updatedBy String
   updatedAt DateTime [not null]
 
   indexes {

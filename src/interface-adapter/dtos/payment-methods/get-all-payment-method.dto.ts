@@ -1,18 +1,18 @@
 import { PaginationQueryDto } from '@common/dtos/pagination-query.dto'
 import { PaginationResponseDto } from '@common/dtos/pagination-response.dto'
-import { ProductGroup } from '@common/types'
+import { PaymentMethod } from '@common/types'
 import { Transform, TransformFnParams } from 'class-transformer'
-import { IsOptional, IsBoolean, IsNumber } from 'class-validator'
+import { IsOptional, IsBoolean } from 'class-validator'
 
-export class GetAllProductGroupRequestDto extends PaginationQueryDto {
+export class GetAllPaymentMethodRequestDto extends PaginationQueryDto {
   @IsOptional()
-  @IsBoolean({ message: 'isParent là giá trị boolean' })
+  @IsBoolean({ message: 'isActive là giá trị boolean' })
   @Transform(({ value }: TransformFnParams) => value === 'true' || value === true)
-  isParent: boolean
+  isActive: boolean
 }
 
-export class GetAllProductGroupResponseDto extends PaginationResponseDto<ProductGroup> {
-  constructor(partial: Partial<GetAllProductGroupResponseDto>) {
+export class GetAllPaymentMethodResponseDto extends PaginationResponseDto<PaymentMethod> {
+  constructor(partial: Partial<GetAllPaymentMethodResponseDto>) {
     super(partial)
   }
 }

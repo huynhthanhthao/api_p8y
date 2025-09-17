@@ -11,6 +11,7 @@ import {
   CustomerGroupController,
   FileController,
   ManufacturerController,
+  PaymentMethodController,
   ProductGroupController,
   ProductLocationController,
   ProvinceController,
@@ -99,6 +100,11 @@ import {
   GetOneProductUseCase,
   UpdateProductUseCase
 } from '@usecases/products'
+import {
+  GetAllPaymentMethodUseCase,
+  GetOnePaymentMethodUseCase,
+  UpsertPaymentMethodUseCase
+} from '@usecases/payment-methods'
 
 const controllers = [
   AuthController,
@@ -112,7 +118,8 @@ const controllers = [
   ManufacturerController,
   ProductLocationController,
   MedicineRouteController,
-  ProductController
+  ProductController,
+  PaymentMethodController
 ]
 
 const useCases = [
@@ -200,7 +207,12 @@ const useCases = [
   DeleteManyProductUseCase,
   GetAllProductUseCase,
   GetOneProductUseCase,
-  UpdateProductUseCase
+  UpdateProductUseCase,
+
+  // PaymentMethod
+  GetAllPaymentMethodUseCase,
+  GetOnePaymentMethodUseCase,
+  UpsertPaymentMethodUseCase
 ]
 
 @Module({

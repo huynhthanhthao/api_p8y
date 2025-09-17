@@ -4,7 +4,6 @@ import "user"
 
 model PaymentMethod {
   code              String    @db.VarChar(50) // Ví dụ: CASH, BANK_TRANSFER
-  name              String    @db.VarChar(100)   // Tên hiển thị: "Tiền mặt", "Chuyển khoản", "Thẻ"
   branchId          String    @map("branch_id") @db.Uuid
   isActive          Boolean   @default(false)
   bankAccountHolder String?   @db.VarChar(255)   // Chủ tài khoản
@@ -18,6 +17,7 @@ model PaymentMethod {
 
   createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   createdBy         String?   @map("created_by") @db.Uuid
+  updatedBy         String?   @map("updated_by") @db.Uuid
   updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@unique([code, branchId])

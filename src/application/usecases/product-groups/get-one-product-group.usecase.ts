@@ -5,7 +5,6 @@ import { HttpException } from '@common/exceptions'
 import { PRODUCT_GROUP_ERROR } from '@common/errors'
 
 @Injectable()
-@Injectable()
 export class GetOneProductGroupUseCase {
   constructor(private readonly prismaService: PrismaService) {}
 

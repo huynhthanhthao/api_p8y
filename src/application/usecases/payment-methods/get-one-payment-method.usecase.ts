@@ -1,63 +1,31 @@
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { PrismaService } from '@infrastructure/prisma'
-import { ProductGroup } from '@common/types'
+import { PaymentMethod } from '@common/types'
 import { HttpException } from '@common/exceptions'
-import { PRODUCT_GROUP_ERROR } from '@common/errors'
+import { PAYMENT_METHOD_ERROR } from '@common/errors/payment-method.error'
 
 @Injectable()
-@Injectable()
-export class GetOneProductGroupUseCase {
+export class GetOnePaymentMethodUseCase {
   constructor(private readonly prismaService: PrismaService) {}
 
   private get prismaClient(): PrismaService {
     return this.prismaService.client
   }
 
-  async execute(id: string, branchId: string): Promise<ProductGroup> {
-    const productGroup = await this.prismaClient.productGroup.findUnique({
-      where: { id, branchId },
-      omit: {
-        deletedAt: true,
-        deletedBy: true,
-        createdBy: true,
-        updatedBy: true
-      },
-      include: {
-        children: {
-          omit: {
-            deletedAt: true,
-            deletedBy: true,
-            createdBy: true,
-            updatedBy: true
-          },
-          include: {
-            children: {
-              omit: {
-                deletedAt: true,
-                deletedBy: true,
-                createdBy: true,
-                updatedBy: true
-              },
-              include: {
-                children: {
-                  omit: {
-                    deletedAt: true,
-                    deletedBy: true,
-                    createdBy: true,
-                    updatedBy: true
-                  }
-                }
-              }
-            }
-          }
+  async execute(code: string, branchId: string): Promise<PaymentMethod> {
+    const paymentMethod = await this.prismaClient.paymentMethod.findUnique({
+      where: {
+        code_branchId: {
+          code,
+          branchId
         }
       }
     })
 
-    if (!productGroup) {
-      throw new HttpException(HttpStatus.NOT_FOUND, PRODUCT_GROUP_ERROR.PRODUCT_GROUP_NOT_FOUND)
+    if (!paymentMethod) {
+      throw new HttpException(HttpStatus.NOT_FOUND, PAYMENT_METHOD_ERROR.PAYMENT_METHOD_NOT_FOUND)
     }
 
-    return productGroup
+    return paymentMethod
   }
 }
