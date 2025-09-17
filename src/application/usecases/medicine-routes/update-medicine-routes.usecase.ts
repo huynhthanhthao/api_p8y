@@ -1,11 +1,9 @@
 import { PrismaService } from '@infrastructure/prisma'
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { HttpException } from '@common/exceptions'
-import {
-  UpdateMedicineRouteRequestDto,
-  UpdateMedicineRouteResponseDto
-} from '@interface-adapter/dtos/medicine-routes'
+import { UpdateMedicineRouteRequestDto } from '@interface-adapter/dtos/medicine-routes'
 import { MEDICINE_ROUTE_ERROR } from '@common/errors'
+import { MedicineRoute } from '@common/types'
 
 @Injectable()
 export class UpdateMedicineRouteUseCase {
@@ -20,7 +18,7 @@ export class UpdateMedicineRouteUseCase {
     data: UpdateMedicineRouteRequestDto,
     userId: string,
     branchId: string
-  ): Promise<UpdateMedicineRouteResponseDto> {
+  ): Promise<MedicineRoute> {
     const medicineRoute = await this.prismaClient.medicineRoute.findUnique({
       where: {
         id: id,

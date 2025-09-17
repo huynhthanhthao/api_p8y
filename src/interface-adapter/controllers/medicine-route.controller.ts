@@ -22,8 +22,7 @@ import {
 import {
   CreateMedicineRouteRequestDto,
   GetAllMedicineRouteRequestDto,
-  GetAllMedicineRouteResponseDto,
-  UpdateMedicineRouteResponseDto
+  GetAllMedicineRouteResponseDto
 } from '@interface-adapter/dtos/medicine-routes'
 import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
@@ -55,7 +54,7 @@ export class MedicineRouteController {
     @Param() params: UUIDParamDto,
     @Body() data: CreateMedicineRouteRequestDto,
     @Req() req: RequestAccessBranchJWT
-  ): Promise<UpdateMedicineRouteResponseDto> {
+  ): Promise<MedicineRoute> {
     return this._updateMedicineRouteUseCase.execute(params.id, data, req.userId, req.branchId)
   }
 
