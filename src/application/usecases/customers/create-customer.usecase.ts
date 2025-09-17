@@ -25,23 +25,13 @@ export class CreateCustomerUseCase {
     return await this.prismaClient.customer.create({
       data: {
         ...data,
-        code: data.code || (await generateCodeModel({ model: 'Customer', storeCode })),
         ...(data.customerInvoiceInfo && {
           customerInvoiceInfo: {
             create: {
-              buyerName: data.customerInvoiceInfo.buyerName,
-              address: data.customerInvoiceInfo.address,
-              bankName: data.customerInvoiceInfo.bankName,
-              bankAccount: data.customerInvoiceInfo.bankAccount,
-              email: data.customerInvoiceInfo.email,
-              identityNumber: data.customerInvoiceInfo.identityNumber,
-              phone: data.customerInvoiceInfo.phone,
-              taxCode: data.customerInvoiceInfo.taxCode,
-              ward: data.customerInvoiceInfo.ward,
-              province: data.customerInvoiceInfo.province,
-              budgetUnitCode: data.customerInvoiceInfo.budgetUnitCode
+              ...data.customerInvoiceInfo
             }
           },
+          code: data.code || (await generateCodeModel({ model: 'Customer', storeCode })),
           createdBy: userId
         }),
         storeCode
