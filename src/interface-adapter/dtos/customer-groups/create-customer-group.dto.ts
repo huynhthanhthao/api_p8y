@@ -1,7 +1,6 @@
 import { IsString, IsNotEmpty, MaxLength, IsNumber, IsOptional, IsEnum } from 'class-validator'
 import { Transform, TransformFnParams } from 'class-transformer'
 import { DiscountTypeEnum } from '@common/enums'
-import { CustomerGroup } from '@common/types'
 
 export class CreateCustomerGroupRequestDto {
   @IsNotEmpty({ message: 'Tên không được để trống' })
@@ -20,12 +19,4 @@ export class CreateCustomerGroupRequestDto {
     message: `Loại giảm giá phải là một trong: ${Object.values(DiscountTypeEnum).join(', ')}`
   })
   discountType: DiscountTypeEnum
-}
-
-export class CreateCustomerGroupResponseDto {
-  constructor(entity: CustomerGroup) {
-    Object.assign(this, {
-      entity
-    })
-  }
 }

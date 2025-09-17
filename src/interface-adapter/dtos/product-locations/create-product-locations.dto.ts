@@ -1,6 +1,4 @@
 import { IsString, IsNotEmpty, MaxLength } from 'class-validator'
-
-import { ProductLocation } from '@common/types'
 import { Transform, TransformFnParams } from 'class-transformer'
 
 export class CreateProductLocationRequestDto {
@@ -9,12 +7,4 @@ export class CreateProductLocationRequestDto {
   @MaxLength(255, { message: 'Vị trí không được vượt quá 255 ký tự' })
   @Transform(({ value }: TransformFnParams) => value?.trim())
   name: string
-}
-
-export class CreateProductLocationResponseDto {
-  constructor(entity: ProductLocation) {
-    Object.assign(this, {
-      entity
-    })
-  }
 }

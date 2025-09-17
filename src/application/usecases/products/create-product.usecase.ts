@@ -1,9 +1,10 @@
 import { PrismaService } from '@infrastructure/prisma'
 import { Injectable } from '@nestjs/common'
 import { generateCodeIncrease, generateCodeModel, validateUniqueFields } from '@common/utils'
-import { CreateProductRequestDto, CreateProductResponseDto } from '@interface-adapter/dtos/products'
+import { CreateProductRequestDto } from '@interface-adapter/dtos/products'
 import { validateStockRange } from '@common/utils/validate-stock-range'
 import { getProductById } from '@common/utils/get-product-by-id.util'
+import { Product } from '@common/types'
 
 @Injectable()
 export class CreateProductUseCase {
@@ -13,11 +14,7 @@ export class CreateProductUseCase {
     return this.prismaService.client
   }
 
-  async execute(
-    data: CreateProductRequestDto,
-    userId: string,
-    branchId: string
-  ): Promise<CreateProductResponseDto> {
+  async execute(data: CreateProductRequestDto, userId: string, branchId: string): Promise<Product> {
     // Kiểm tra thông tin tồn kho
     validateStockRange(data.minStock, data.maxStock)
 

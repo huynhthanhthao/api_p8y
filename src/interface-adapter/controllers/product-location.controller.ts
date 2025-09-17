@@ -21,10 +21,8 @@ import {
 } from '@usecases/product-locations'
 import {
   CreateProductLocationRequestDto,
-  CreateProductLocationResponseDto,
   GetAllProductLocationRequestDto,
-  GetAllProductLocationResponseDto,
-  UpdateProductLocationResponseDto
+  GetAllProductLocationResponseDto
 } from '@interface-adapter/dtos/product-locations'
 import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
@@ -47,7 +45,7 @@ export class ProductLocationController {
   create(
     @Body() data: CreateProductLocationRequestDto,
     @Req() req: RequestAccessBranchJWT
-  ): Promise<CreateProductLocationResponseDto> {
+  ): Promise<ProductLocation> {
     return this._createProductLocationUseCase.execute(data, req.userId, req.branchId)
   }
 
@@ -56,7 +54,7 @@ export class ProductLocationController {
     @Param() params: UUIDParamDto,
     @Body() data: CreateProductLocationRequestDto,
     @Req() req: RequestAccessBranchJWT
-  ): Promise<UpdateProductLocationResponseDto> {
+  ): Promise<ProductLocation> {
     return this._updateProductLocationUseCase.execute(params.id, data, req.userId, req.branchId)
   }
 

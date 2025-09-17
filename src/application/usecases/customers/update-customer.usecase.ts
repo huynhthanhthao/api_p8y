@@ -1,14 +1,12 @@
 import { PrismaService } from '@infrastructure/prisma'
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { HttpException } from '@common/exceptions'
-import {
-  UpdateCustomerRequestDto,
-  UpdateCustomerResponseDto
-} from '@interface-adapter/dtos/customers'
+import { UpdateCustomerRequestDto } from '@interface-adapter/dtos/customers'
 import { CUSTOMER_ERROR, CUSTOMER_GROUP_ERROR } from '@common/errors'
 import { generateCodeModel } from '@common/utils'
 import { id } from 'zod/v4/locales/index.cjs'
 import { CUSTOMER_INCLUDE_FIELDS } from '@common/constants'
+import { Customer } from '@common/types'
 
 @Injectable()
 export class UpdateCustomerUseCase {
@@ -23,7 +21,7 @@ export class UpdateCustomerUseCase {
     data: UpdateCustomerRequestDto,
     userId: string,
     storeCode: string
-  ): Promise<UpdateCustomerResponseDto> {
+  ): Promise<Customer> {
     const customer = await this.prismaClient.customer.findUnique({
       where: {
         id: id,

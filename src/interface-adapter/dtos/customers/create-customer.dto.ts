@@ -12,7 +12,6 @@ import {
 } from 'class-validator'
 import { Transform, TransformFnParams, Type } from 'class-transformer'
 import { GenderEnum } from '@common/enums/common.enum'
-import { Customer } from '@common/types'
 
 export class CustomerInvoiceInfoRequestDto {
   @IsNotEmpty({ message: 'Tên người mua hàng không được để trống' })
@@ -133,12 +132,4 @@ export class CreateCustomerRequestDto {
   @ValidateNested()
   @Type(() => CustomerInvoiceInfoRequestDto)
   customerInvoiceInfo: CustomerInvoiceInfoRequestDto
-}
-
-export class CreateCustomerResponseDto {
-  constructor(entity: Customer) {
-    Object.assign(this, {
-      entity
-    })
-  }
 }

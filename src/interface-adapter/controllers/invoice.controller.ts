@@ -24,7 +24,6 @@ import { DeleteManyRequestDto, UUIDParamDto } from '@common/dtos'
 import { Invoice } from '@common/types'
 import {
   CreateInvoiceRequestDto,
-  CreateInvoiceResponseDto,
   GetAllInvoiceRequestDto,
   GetAllInvoiceResponseDto
 } from '@interface-adapter/dtos/invoinces'
@@ -44,7 +43,7 @@ export class InvoiceController {
   create(
     @Body() data: CreateInvoiceRequestDto,
     @Req() req: RequestAccessBranchJWT
-  ): Promise<CreateInvoiceResponseDto> {
+  ): Promise<Invoice> {
     return this._createInvoiceUseCase.execute(data, req.userId, req.branchId)
   }
 

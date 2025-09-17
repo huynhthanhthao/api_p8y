@@ -1,6 +1,4 @@
 import { IsString, IsNotEmpty, MaxLength } from 'class-validator'
-
-import { Manufacturer } from '@common/types'
 import { Transform, TransformFnParams } from 'class-transformer'
 
 export class CreateManufacturerRequestDto {
@@ -9,12 +7,4 @@ export class CreateManufacturerRequestDto {
   @MaxLength(255, { message: 'Tên hãng sản xuất không được vượt quá 255 ký tự' })
   @Transform(({ value }: TransformFnParams) => value?.trim())
   name: string
-}
-
-export class CreateManufacturerResponseDto {
-  constructor(entity: Manufacturer) {
-    Object.assign(this, {
-      entity
-    })
-  }
 }

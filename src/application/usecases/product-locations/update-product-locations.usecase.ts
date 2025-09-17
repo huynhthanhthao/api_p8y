@@ -1,11 +1,9 @@
 import { PrismaService } from '@infrastructure/prisma'
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { HttpException } from '@common/exceptions'
-import {
-  UpdateProductLocationRequestDto,
-  UpdateProductLocationResponseDto
-} from '@interface-adapter/dtos/product-locations'
+import { UpdateProductLocationRequestDto } from '@interface-adapter/dtos/product-locations'
 import { PRODUCT_LOCATION_ERROR } from '@common/errors'
+import { ProductLocation } from '@common/types'
 
 @Injectable()
 export class UpdateProductLocationUseCase {
@@ -20,7 +18,7 @@ export class UpdateProductLocationUseCase {
     data: UpdateProductLocationRequestDto,
     userId: string,
     branchId: string
-  ): Promise<UpdateProductLocationResponseDto> {
+  ): Promise<ProductLocation> {
     const productLocation = await this.prismaClient.productLocation.findUnique({
       where: {
         id: id,

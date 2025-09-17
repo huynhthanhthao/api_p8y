@@ -2,11 +2,9 @@ import { PrismaService } from '@infrastructure/prisma'
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { HttpException } from '@common/exceptions'
 import { SUPPLIER_ERROR } from '@common/errors'
-import {
-  CreateSupplierRequestDto,
-  CreateSupplierResponseDto
-} from '@interface-adapter/dtos/suppliers'
+import { CreateSupplierRequestDto } from '@interface-adapter/dtos/suppliers'
 import { generateCodeModel } from '@common/utils'
+import { Supplier } from '@common/types'
 
 @Injectable()
 export class CreateSupplierUseCase {
@@ -20,7 +18,7 @@ export class CreateSupplierUseCase {
     data: CreateSupplierRequestDto,
     userId: string,
     branchId: string
-  ): Promise<CreateSupplierResponseDto> {
+  ): Promise<Supplier> {
     await this.validateUniqueFields(data, branchId)
 
     return await this.prismaClient.supplier.create({

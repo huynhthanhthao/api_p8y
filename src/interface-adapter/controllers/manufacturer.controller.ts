@@ -21,10 +21,8 @@ import {
 } from '@usecases/manufacturers'
 import {
   CreateManufacturerRequestDto,
-  CreateManufacturerResponseDto,
   GetAllManufacturerRequestDto,
-  GetAllManufacturerResponseDto,
-  UpdateManufacturerResponseDto
+  GetAllManufacturerResponseDto
 } from '@interface-adapter/dtos/manufacturers'
 import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
@@ -47,7 +45,7 @@ export class ManufacturerController {
   create(
     @Body() data: CreateManufacturerRequestDto,
     @Req() req: RequestAccessBranchJWT
-  ): Promise<CreateManufacturerResponseDto> {
+  ): Promise<Manufacturer> {
     return this._createManufacturerUseCase.execute(data, req.userId, req.branchId)
   }
 
@@ -56,7 +54,7 @@ export class ManufacturerController {
     @Param() params: UUIDParamDto,
     @Body() data: CreateManufacturerRequestDto,
     @Req() req: RequestAccessBranchJWT
-  ): Promise<UpdateManufacturerResponseDto> {
+  ): Promise<Manufacturer> {
     return this._updateManufacturerUseCase.execute(params.id, data, req.userId, req.branchId)
   }
 

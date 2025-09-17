@@ -1,12 +1,13 @@
 import { PrismaService } from '@infrastructure/prisma'
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { HttpException } from '@common/exceptions'
-import { UpdateProductRequestDto, UpdateProductResponseDto } from '@interface-adapter/dtos/products'
+import { UpdateProductRequestDto } from '@interface-adapter/dtos/products'
 import { PRODUCT_ERROR } from '@common/errors'
 import { generateCodeIncrease, generateCodeModel, validateUniqueFields } from '@common/utils'
 import { validateStockRange } from '@common/utils/validate-stock-range'
 import { PRODUCT_INCLUDE_FIELDS } from '@common/constants'
 import { Prisma } from '@prisma/client'
+import { Product } from '@common/types'
 
 @Injectable()
 export class UpdateProductUseCase {
@@ -21,7 +22,7 @@ export class UpdateProductUseCase {
     data: UpdateProductRequestDto,
     userId: string,
     branchId: string
-  ): Promise<UpdateProductResponseDto> {
+  ): Promise<Product> {
     const existingProduct = await this.prismaClient.product.findUnique({
       where: {
         id: id,

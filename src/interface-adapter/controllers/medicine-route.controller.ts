@@ -21,7 +21,6 @@ import {
 } from '@usecases/medicine-routes'
 import {
   CreateMedicineRouteRequestDto,
-  CreateMedicineRouteResponseDto,
   GetAllMedicineRouteRequestDto,
   GetAllMedicineRouteResponseDto,
   UpdateMedicineRouteResponseDto
@@ -47,7 +46,7 @@ export class MedicineRouteController {
   create(
     @Body() data: CreateMedicineRouteRequestDto,
     @Req() req: RequestAccessBranchJWT
-  ): Promise<CreateMedicineRouteResponseDto> {
+  ): Promise<MedicineRoute> {
     return this._createMedicineRouteUseCase.execute(data, req.userId, req.branchId)
   }
 

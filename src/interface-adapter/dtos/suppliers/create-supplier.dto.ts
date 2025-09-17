@@ -7,8 +7,6 @@ import {
   IsUUID,
   Matches
 } from 'class-validator'
-
-import { Supplier } from '@common/types'
 import { Transform, TransformFnParams } from 'class-transformer'
 
 export class CreateSupplierRequestDto {
@@ -45,12 +43,4 @@ export class CreateSupplierRequestDto {
   @IsOptional()
   @IsUUID('4', { message: 'ID file là UUID hợp lệ' })
   supplierGroupId: string
-}
-
-export class CreateSupplierResponseDto {
-  constructor(entity: Supplier) {
-    Object.assign(this, {
-      entity
-    })
-  }
 }

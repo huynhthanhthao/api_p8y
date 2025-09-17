@@ -2,12 +2,10 @@ import { PrismaService } from '@infrastructure/prisma'
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { HttpException } from '@common/exceptions'
 import { CUSTOMER_ERROR } from '@common/errors'
-import {
-  CreateCustomerRequestDto,
-  CreateCustomerResponseDto
-} from '@interface-adapter/dtos/customers'
+import { CreateCustomerRequestDto } from '@interface-adapter/dtos/customers'
 import { generateCodeModel } from '@common/utils'
 import { CUSTOMER_INCLUDE_FIELDS } from '@common/constants'
+import { Customer } from '@common/types'
 
 @Injectable()
 export class CreateCustomerUseCase {
@@ -21,7 +19,7 @@ export class CreateCustomerUseCase {
     data: CreateCustomerRequestDto,
     userId: string,
     storeCode: string
-  ): Promise<CreateCustomerResponseDto> {
+  ): Promise<Customer> {
     await this.validateUniqueFields(data, storeCode)
 
     return await this.prismaClient.customer.create({

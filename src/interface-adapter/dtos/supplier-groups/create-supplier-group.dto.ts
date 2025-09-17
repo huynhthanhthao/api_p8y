@@ -1,6 +1,4 @@
 import { IsString, IsNotEmpty, IsOptional, MaxLength } from 'class-validator'
-
-import { SupplierGroup } from '@common/types'
 import { Transform, TransformFnParams } from 'class-transformer'
 
 export class CreateSupplierGroupRequestDto {
@@ -14,12 +12,4 @@ export class CreateSupplierGroupRequestDto {
   @IsString({ message: 'Ghi chú phải là chuỗi ký tự' })
   @MaxLength(500, { message: 'Tên nhóm nhà cung cấp không được vượt quá 500 ký tự' })
   note: string
-}
-
-export class CreateSupplierGroupResponseDto {
-  constructor(entity: SupplierGroup) {
-    Object.assign(this, {
-      entity
-    })
-  }
 }

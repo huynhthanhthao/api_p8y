@@ -21,10 +21,8 @@ import {
 } from '@usecases/products'
 import {
   CreateProductRequestDto,
-  CreateProductResponseDto,
   GetAllProductRequestDto,
-  GetAllProductResponseDto,
-  UpdateProductResponseDto
+  GetAllProductResponseDto
 } from '@interface-adapter/dtos/products'
 import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
@@ -47,7 +45,7 @@ export class ProductController {
   create(
     @Body() data: CreateProductRequestDto,
     @Req() req: RequestAccessBranchJWT
-  ): Promise<CreateProductResponseDto> {
+  ): Promise<Product> {
     return this._createProductUseCase.execute(data, req.userId, req.branchId)
   }
 
@@ -56,7 +54,7 @@ export class ProductController {
     @Param() params: UUIDParamDto,
     @Body() data: CreateProductRequestDto,
     @Req() req: RequestAccessBranchJWT
-  ): Promise<UpdateProductResponseDto> {
+  ): Promise<Product> {
     return this._updateProductUseCase.execute(params.id, data, req.userId, req.branchId)
   }
 

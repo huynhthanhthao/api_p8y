@@ -1,12 +1,10 @@
 import { PrismaService } from '@infrastructure/prisma'
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { HttpException } from '@common/exceptions'
-import {
-  UpdateSupplierRequestDto,
-  UpdateSupplierResponseDto
-} from '@interface-adapter/dtos/suppliers'
+import { UpdateSupplierRequestDto } from '@interface-adapter/dtos/suppliers'
 import { CUSTOMER_ERROR, CUSTOMER_GROUP_ERROR, SUPPLIER_ERROR } from '@common/errors'
 import { generateCodeModel } from '@common/utils'
+import { Supplier } from '@common/types'
 
 @Injectable()
 export class UpdateSupplierUseCase {
@@ -21,7 +19,7 @@ export class UpdateSupplierUseCase {
     data: UpdateSupplierRequestDto,
     userId: string,
     branchId: string
-  ): Promise<UpdateSupplierResponseDto> {
+  ): Promise<Supplier> {
     const supplier = await this.prismaClient.supplier.findUnique({
       where: {
         id: id,

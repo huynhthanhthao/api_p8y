@@ -1,11 +1,9 @@
 import { PrismaService } from '@infrastructure/prisma'
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { HttpException } from '@common/exceptions'
-import {
-  UpdateProductGroupRequestDto,
-  UpdateProductGroupResponseDto
-} from '@interface-adapter/dtos/product-groups'
+import { UpdateProductGroupRequestDto } from '@interface-adapter/dtos/product-groups'
 import { PRODUCT_GROUP_ERROR } from '@common/errors'
+import { ProductGroup } from '@common/types'
 
 @Injectable()
 export class UpdateProductGroupUseCase {
@@ -20,7 +18,7 @@ export class UpdateProductGroupUseCase {
     data: UpdateProductGroupRequestDto,
     userId: string,
     branchId: string
-  ): Promise<UpdateProductGroupResponseDto> {
+  ): Promise<ProductGroup> {
     const productGroup = await this.prismaClient.productGroup.findUnique({
       where: {
         id: id,

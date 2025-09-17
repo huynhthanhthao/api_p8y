@@ -2,7 +2,6 @@ import { IsString, IsNotEmpty, MaxLength, IsEnum, IsBoolean, ValidateIf } from '
 
 import { Transform, TransformFnParams } from 'class-transformer'
 import { PaymentMethodCodeEnum } from '@common/enums'
-import { PaymentMethod } from '@common/types'
 
 export class UpsertPaymentMethodRequestDto {
   @IsNotEmpty({ message: 'Mã phương thức không được để trống' })
@@ -44,12 +43,4 @@ export class UpsertPaymentMethodRequestDto {
   @IsNotEmpty({ message: 'Trạng thái sử dụng không được để trống' })
   @IsBoolean({ message: 'Trạng thái sử dụng' })
   isActive: boolean
-}
-
-export class UpsertPaymentMethodResponseDto {
-  constructor(entity: PaymentMethod) {
-    Object.assign(this, {
-      entity
-    })
-  }
 }

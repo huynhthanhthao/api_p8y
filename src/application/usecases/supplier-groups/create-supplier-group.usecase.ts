@@ -1,12 +1,9 @@
 import { PrismaService } from '@infrastructure/prisma'
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { HttpException } from '@common/exceptions'
-
-import {
-  CreateSupplierGroupRequestDto,
-  CreateSupplierGroupResponseDto
-} from '@interface-adapter/dtos/supplier-groups'
+import { CreateSupplierGroupRequestDto } from '@interface-adapter/dtos/supplier-groups'
 import { SUPPLIER_GROUP_ERROR } from '@common/errors'
+import { SupplierGroup } from '@common/types'
 
 @Injectable()
 export class CreateSupplierGroupUseCase {
@@ -20,7 +17,7 @@ export class CreateSupplierGroupUseCase {
     data: CreateSupplierGroupRequestDto,
     userId: string,
     branchId: string
-  ): Promise<CreateSupplierGroupResponseDto> {
+  ): Promise<SupplierGroup> {
     console.log(data)
 
     const existingGroup = await this.prismaClient.supplierGroup.findFirst({

@@ -1,11 +1,9 @@
 import { PrismaService } from '@infrastructure/prisma'
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { HttpException } from '@common/exceptions'
-import {
-  CreateCustomerGroupRequestDto,
-  CreateCustomerGroupResponseDto
-} from '@interface-adapter/dtos/customer-groups'
+import { CreateCustomerGroupRequestDto } from '@interface-adapter/dtos/customer-groups'
 import { CUSTOMER_GROUP_ERROR } from '@common/errors'
+import { CustomerGroup } from '@common/types'
 
 @Injectable()
 export class CreateCustomerGroupUseCase {
@@ -19,7 +17,7 @@ export class CreateCustomerGroupUseCase {
     data: CreateCustomerGroupRequestDto,
     userId: string,
     storeCode: string
-  ): Promise<CreateCustomerGroupResponseDto> {
+  ): Promise<CustomerGroup> {
     const existingGroup = await this.prismaClient.customerGroup.findFirst({
       where: {
         name: {

@@ -1,11 +1,9 @@
 import { PrismaService } from '@infrastructure/prisma'
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { HttpException } from '@common/exceptions'
-import {
-  UpdateManufacturerRequestDto,
-  UpdateManufacturerResponseDto
-} from '@interface-adapter/dtos/manufacturers'
+import { UpdateManufacturerRequestDto } from '@interface-adapter/dtos/manufacturers'
 import { MANUFACTURER_ERROR } from '@common/errors'
+import { Manufacturer } from '@common/types'
 
 @Injectable()
 export class UpdateManufacturerUseCase {
@@ -20,7 +18,7 @@ export class UpdateManufacturerUseCase {
     data: UpdateManufacturerRequestDto,
     userId: string,
     branchId: string
-  ): Promise<UpdateManufacturerResponseDto> {
+  ): Promise<Manufacturer> {
     const manufacturer = await this.prismaClient.manufacturer.findUnique({
       where: {
         id: id,

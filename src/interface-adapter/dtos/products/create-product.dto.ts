@@ -14,7 +14,6 @@ import {
   ValidateIf
 } from 'class-validator'
 import { Transform, TransformFnParams, Type } from 'class-transformer'
-import { Product } from '@common/types'
 import { ProductTypeEnum, ProductWeightUnitEnum } from '@common/enums/product.enum'
 
 class ProductWeightRequestDto {
@@ -215,12 +214,4 @@ export class CreateProductRequestDto {
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @MaxLength(50, { message: 'Tên đơn vị không được vượt quá 50 ký tự' })
   unitName: string
-}
-
-export class CreateProductResponseDto {
-  constructor(entity: Product) {
-    Object.assign(this, {
-      entity
-    })
-  }
 }

@@ -1,13 +1,11 @@
 import { PrismaService } from '@infrastructure/prisma'
 import { HttpStatus, Injectable } from '@nestjs/common'
-import {
-  CreateInvoiceRequestDto,
-  CreateInvoiceResponseDto
-} from '@interface-adapter/dtos/invoinces'
+import { CreateInvoiceRequestDto } from '@interface-adapter/dtos/invoinces'
 import { generateCodeModel } from '@common/utils'
 import { INVOICE_INCLUDE_FIELDS } from '@common/constants'
 import { HttpException } from '@common/exceptions'
 import { INVOICE_ERROR } from '@common/errors'
+import { Invoice } from '@common/types'
 
 @Injectable()
 export class CreateInvoiceUseCase {
@@ -17,11 +15,7 @@ export class CreateInvoiceUseCase {
     return this.prismaService.client
   }
 
-  async execute(
-    data: CreateInvoiceRequestDto,
-    userId: string,
-    branchId: string
-  ): Promise<CreateInvoiceResponseDto> {
+  async execute(data: CreateInvoiceRequestDto, userId: string, branchId: string): Promise<Invoice> {
     const productIds = data.invoiceItems.map(item => item.productId)
 
     const productList = await this.prismaClient.product.findMany({

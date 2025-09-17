@@ -1,6 +1,4 @@
 import { IsString, IsNotEmpty, IsOptional, MaxLength, IsUUID } from 'class-validator'
-
-import { ProductGroup } from '@common/types'
 import { Transform, TransformFnParams } from 'class-transformer'
 
 export class CreateProductGroupRequestDto {
@@ -13,12 +11,4 @@ export class CreateProductGroupRequestDto {
   @IsOptional()
   @IsUUID('4', { message: 'ID nhóm cha phải là UUID hợp lệ' })
   parentId: string
-}
-
-export class CreateProductGroupResponseDto {
-  constructor(entity: ProductGroup) {
-    Object.assign(this, {
-      entity
-    })
-  }
 }

@@ -1,11 +1,9 @@
 import { PrismaService } from '@infrastructure/prisma'
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { HttpException } from '@common/exceptions'
-import {
-  CreateManufacturerRequestDto,
-  CreateManufacturerResponseDto
-} from '@interface-adapter/dtos/manufacturers'
+import { CreateManufacturerRequestDto } from '@interface-adapter/dtos/manufacturers'
 import { MANUFACTURER_ERROR } from '@common/errors'
+import { Manufacturer } from '@common/types'
 
 @Injectable()
 export class CreateManufacturerUseCase {
@@ -19,7 +17,7 @@ export class CreateManufacturerUseCase {
     data: CreateManufacturerRequestDto,
     userId: string,
     branchId: string
-  ): Promise<CreateManufacturerResponseDto> {
+  ): Promise<Manufacturer> {
     const existingRecord = await this.prismaClient.manufacturer.findFirst({
       where: {
         name: {

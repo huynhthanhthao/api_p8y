@@ -88,11 +88,3 @@ export class CreateInvoiceRequestDto {
   @Type(() => CreateInvoiceItemRequestDto)
   invoiceItems: CreateInvoiceItemRequestDto[]
 }
-
-export class CreateInvoiceResponseDto {
-  constructor(entity: Invoice) {
-    Object.assign(this, {
-      entity
-    })
-  }
-}
