@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client'
+import { USER_INCLUDE_FIELDS } from './user.constants'
 
 export const INVOICE_INCLUDE_FIELDS = {
   omit: {
@@ -14,6 +15,9 @@ export const INVOICE_INCLUDE_FIELDS = {
         deletedBy: true,
         createdBy: true,
         updatedBy: true
+      },
+      include: {
+        invoiceItemLots: true
       }
     },
     customer: {
@@ -31,6 +35,9 @@ export const INVOICE_INCLUDE_FIELDS = {
         phone: true,
         email: true
       }
+    },
+    creator: {
+      ...USER_INCLUDE_FIELDS
     }
   }
 } as const satisfies Partial<Prisma.InvoiceFindUniqueArgs>

@@ -9,7 +9,8 @@ import {
   Min,
   ValidateNested,
   IsArray,
-  IsBoolean
+  IsBoolean,
+  IsInt
 } from 'class-validator'
 import { Transform, TransformFnParams, Type } from 'class-transformer'
 import { ProductTypeEnum, ProductWeightUnitEnum } from '@common/enums/product.enum'
@@ -62,6 +63,7 @@ export class ProductVariantRequestDto {
   @IsNotEmpty({ message: 'Tỷ lệ quy đổi không được để trống' })
   @IsNumber({}, { message: 'Tỷ lệ quy đổi phải là số' })
   @Min(1, { message: 'Tỷ lệ quy đổi phải lớn hơn hoặc bằng 1' })
+  @IsInt({ message: 'Tỷ lệ quy đổi phải là số nguyên' })
   conversion: number
 
   @IsOptional()
@@ -79,6 +81,7 @@ export class ProductVariantRequestDto {
   @IsOptional()
   @IsNumber({}, { message: 'Giá bán phải là số' })
   @Min(0, { message: 'Giá bán không được nhỏ hơn 0' })
+  @IsInt({ message: 'Giá bán phải là số nguyên' })
   salePrice: number
 
   @IsOptional()
@@ -130,11 +133,13 @@ export class CreateProductRequestDto {
   @IsOptional()
   @IsNumber({}, { message: 'Giá bán phải là số' })
   @Min(0, { message: 'Giá bán không được nhỏ hơn 0' })
+  @IsInt({ message: 'Giá bán phải là số nguyên' })
   salePrice: number
 
   @IsOptional()
   @IsNumber({}, { message: 'Giá vốn phải là số' })
   @Min(0, { message: 'Giá vốn không được nhỏ hơn 0' })
+  @IsInt({ message: 'Giá vốn phải là số nguyên' })
   costPrice: number = 0
 
   @IsOptional()

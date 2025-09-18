@@ -10,5 +10,13 @@ export const INVOICE_ERROR = {
   MISSING_PRODUCT_LOT_ID: {
     code: 'INVOICE_03',
     message: 'Sản phẩm yêu cầu lô nhưng không được cung cấp'
+  },
+  INVALID_QUANTITY_FOR_LOT: {
+    code: 'INVOICE_04',
+    message: 'Sản phẩm quản lý theo lô không được phép có số lượng khác 0'
+  },
+  UNEXPECTED_PRODUCT_LOT: {
+    code: 'INVOICE_05',
+    message: 'Không thể khai báo lô cho sản phẩm không quản lý theo lô'
   }
 }

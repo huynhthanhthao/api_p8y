@@ -71,31 +71,35 @@ model Branch {
 }
 
 model User {
-  id        String    @id() @default(uuid()) @db.Uuid()
-  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  createdBy String?   @map("created_by") @db.Uuid()
-  updatedAt DateTime  @updatedAt() @map("updated_at") @db.Timestamptz(6)
-  updatedBy String?   @map("updated_by") @db.Uuid()
-  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
-  deletedBy String?   @map("deleted_by") @db.Uuid()
-  firstName String    @map("first_name") @db.VarChar(100)
-  lastName  String?   @default("") @map("last_name") @db.VarChar(100)
-  phone     String    @db.VarChar(20)
-  storeCode String    @map("store_code")
-  status    String    @db.VarChar(50)
-  type      String    @db.VarChar(50)
-  password  String    @db.VarChar(255)
-  email     String?   @default("") @db.VarChar(255)
-  lastLogin DateTime? @map("last_login") @db.Timestamptz(6)
-  wareCode  String?   @map("ware_code") @db.VarChar(50)
-  address   String?   @default("") @db.VarChar(500)
-  avatarUrl String?   @default("") @db.VarChar(255)
-  roles     Role[]
-  branches  Branch[]
-  store     Store     @relation(fields: [storeCode], references: [code])
+  id                       String             @id() @default(uuid()) @db.Uuid()
+  createdAt                DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdBy                String?            @map("created_by") @db.Uuid()
+  updatedAt                DateTime           @updatedAt() @map("updated_at") @db.Timestamptz(6)
+  updatedBy                String?            @map("updated_by") @db.Uuid()
+  deletedAt                DateTime?          @map("deleted_at") @db.Timestamptz(6)
+  deletedBy                String?            @map("deleted_by") @db.Uuid()
+  firstName                String             @map("first_name") @db.VarChar(100)
+  lastName                 String?            @default("") @map("last_name") @db.VarChar(100)
+  phone                    String             @db.VarChar(20)
+  storeCode                String             @map("store_code")
+  status                   String             @db.VarChar(50)
+  type                     String             @db.VarChar(50)
+  password                 String             @db.VarChar(255)
+  email                    String?            @default("") @db.VarChar(255)
+  lastLogin                DateTime?          @map("last_login") @db.Timestamptz(6)
+  wareCode                 String?            @map("ware_code") @db.VarChar(50)
+  address                  String?            @default("") @db.VarChar(500)
+  avatarUrl                String?            @default("") @db.VarChar(255)
+  store                    Store              @relation(fields: [storeCode], references: [code])
+  roles                    Role[]
+  branches                 Branch[]
+  createdInvoices          Invoice[]          @relation("InvoiceCreator")
+  updatedInvoices          Invoice[]          @relation("InvoiceUpdater")
+  createdStockTransactions StockTransaction[] @relation("StockTransactionCreator")
+  updatedStockTransactions StockTransaction[] @relation("StockTransactionUpdater")
 
-  @@unique([storeCode, phone], name: "idx_store_phone")
-  @@unique([storeCode, email], name: "idx_store_email")
+  @@unique([storeCode, phone])
+  @@unique([storeCode, email])
   @@index([createdAt])
   @@index([deletedAt])
   @@index([id, deletedAt])
@@ -183,8 +187,10 @@ model Invoice {
   deliveryInfo      DeliveryInfo?
   customer          Customer?      @relation(fields: [customerId], references: [id])
   invoiceItems      InvoiceItem[]
+  creator           User?          @relation("InvoiceCreator", fields: [createdBy], references: [id])
+  updater           User?          @relation("InvoiceUpdater", fields: [updatedBy], references: [id])
 
-  @@unique([code, branchId, deletedAt])
+  @@unique([code, branchId])
   @@index([createdAt])
   @@index([deletedAt])
   @@index([id, deletedAt])
@@ -193,31 +199,42 @@ model Invoice {
 }
 
 model InvoiceItem {
-  id            String      @id() @default(uuid()) @db.Uuid()
-  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-  createdBy     String?     @map("created_by") @db.Uuid()
-  updatedAt     DateTime    @updatedAt() @map("updated_at") @db.Timestamptz(6)
-  updatedBy     String?     @map("updated_by") @db.Uuid()
-  deletedAt     DateTime?   @map("deleted_at") @db.Timestamptz(6)
-  deletedBy     String?     @map("deleted_by") @db.Uuid()
-  quantity      Float       @default(1) @map("quantity")
-  salePrice     Float       @default(0) @map("sale_price")
-  costPrice     Float       @default(0) @map("cost_price")
-  discountValue Float?      @default(0) @map("discount_value")
-  discountType  String?     @default("VALUE") @map("discount_type") @db.VarChar(10)
-  note          String?     @map("note") @db.VarChar(500)
-  productId     String      @map("product_id") @db.Uuid()
-  invoiceId     String      @map("invoice_id") @db.Uuid()
-  productLotId  String?     @map("product_lot_id") @db.Uuid()
-  productLot    ProductLot? @relation(fields: [productLotId], references: [id], onDelete: SetNull)
-  product       Product     @relation(fields: [productId], references: [id], onDelete: SetNull)
-  invoice       Invoice     @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  id              String           @id() @default(uuid()) @db.Uuid()
+  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdBy       String?          @map("created_by") @db.Uuid()
+  updatedAt       DateTime         @updatedAt() @map("updated_at") @db.Timestamptz(6)
+  updatedBy       String?          @map("updated_by") @db.Uuid()
+  deletedAt       DateTime?        @map("deleted_at") @db.Timestamptz(6)
+  deletedBy       String?          @map("deleted_by") @db.Uuid()
+  salePrice       Float            @default(0) @map("sale_price")
+  costPrice       Float            @default(0) @map("cost_price")
+  discountValue   Float?           @default(0) @map("discount_value")
+  discountType    String?          @default("VALUE") @map("discount_type") @db.VarChar(10)
+  note            String?          @map("note") @db.VarChar(500)
+  productId       String           @map("product_id") @db.Uuid()
+  invoiceId       String           @map("invoice_id") @db.Uuid()
+  product         Product          @relation(fields: [productId], references: [id], onDelete: SetNull)
+  invoice         Invoice          @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  invoiceItemLots InvoiceItemLot[]
 
   @@index([createdAt])
   @@index([deletedAt])
   @@index([id, deletedAt])
   @@index([invoiceId, deletedAt])
   @@map("invoice_items")
+}
+
+model InvoiceItemLot {
+  id            String       @id() @default(uuid()) @db.Uuid()
+  invoiceItemId String       @map("invoice_item_id") @db.Uuid()
+  productLotId  String       @map("product_lot_id") @db.Uuid()
+  quantity      Float        @default(1) @map("quantity")
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt()
+  invoiceItem   InvoiceItem? @relation(fields: [invoiceItemId], references: [id], onDelete: Cascade)
+  productLot    ProductLot?  @relation(fields: [productLotId], references: [id], onDelete: Cascade)
+
+  @@map("invoice_item_lots")
 }
 
 model Product {
@@ -264,13 +281,13 @@ model Product {
   parent           Product?          @relation("ProductVariants", fields: [parentId], references: [id])
   variants         Product[]         @relation("ProductVariants")
 
-  @@unique([code, branchId, deletedAt])
+  @@unique([branchId, code])
   @@index([createdAt])
   @@index([deletedAt])
   @@index([id, deletedAt])
   @@index([branchId, deletedAt])
-  @@index([code, branchId, deletedAt])
-  @@index([barcode, branchId, deletedAt])
+  @@index([branchId, deletedAt, code])
+  @@index([branchId, deletedAt, barcode])
   @@map("products")
 }
 
@@ -316,8 +333,8 @@ model Supplier {
   branch           Branch             @relation(fields: [branchId], references: [id])
   stockTransaction StockTransaction[]
 
-  @@unique([code, branchId, deletedAt])
-  @@unique([phone, branchId, deletedAt])
+  @@unique([code, branchId])
+  @@unique([phone, branchId])
   @@index([createdAt])
   @@index([deletedAt])
   @@index([id, deletedAt])
@@ -367,11 +384,15 @@ model StockTransaction {
   branch        Branch      @relation(fields: [branchId], references: [id])
   items         StockItem[]
   stockCards    StockCard[]
+  creator       User?       @relation("StockTransactionCreator", fields: [createdBy], references: [id])
+  updater       User?       @relation("StockTransactionUpdater", fields: [updatedBy], references: [id])
 
   @@unique([code, branchId])
   @@index([createdAt])
   @@index([deletedAt])
   @@index([id, deletedAt])
+  @@index([status, branchId, deletedAt])
+  @@index([branchId, deletedAt])
   @@map("stock_transactions")
 }
 
@@ -388,10 +409,10 @@ model StockItem {
   quantity          Float            @default(0)
   unitPrice         Float            @default(0)
   total             Float            @default(0)
-  batchCode         String?          @db.VarChar(50)
   discountType      String?          @default("VALUE")
   discountValue     Float?           @default(0)
   supplierId        String?
+  stockItemLots     StockItemLot[]
   product           Product          @relation(fields: [productId], references: [id])
   stockTransactions StockTransaction @relation(fields: [transId], references: [id], onDelete: Cascade)
 
@@ -399,6 +420,42 @@ model StockItem {
   @@index([deletedAt])
   @@index([id, deletedAt])
   @@map("stock_items")
+}
+
+model StockItemLot {
+  id           String      @id() @default(uuid()) @db.Uuid()
+  stockItemId  String      @map("stock_item_id") @db.Uuid()
+  productLotId String      @map("product_lot_id") @db.Uuid()
+  quantity     Float       @default(1) @map("quantity")
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt()
+  stockItem    StockItem?  @relation(fields: [stockItemId], references: [id], onDelete: Cascade)
+  productLot   ProductLot? @relation(fields: [productLotId], references: [id], onDelete: Cascade)
+
+  @@map("stock_item_lots")
+}
+
+model ProductLot {
+  id              String           @id() @default(uuid()) @db.Uuid()
+  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdBy       String?          @map("created_by") @db.Uuid()
+  updatedAt       DateTime         @updatedAt() @map("updated_at") @db.Timestamptz(6)
+  updatedBy       String?          @map("updated_by") @db.Uuid()
+  deletedAt       DateTime?        @map("deleted_at") @db.Timestamptz(6)
+  deletedBy       String?          @map("deleted_by") @db.Uuid()
+  productId       String           @map("product_id") @db.Uuid()
+  name            String           @db.VarChar(100)
+  expiryDate      DateTime         @map("expiry_date")
+  quantity        Float            @default(0)
+  product         Product          @relation(fields: [productId], references: [id])
+  invoiceItemLots InvoiceItemLot[]
+  stockItemLots   StockItemLot[]
+
+  @@index([createdAt])
+  @@index([deletedAt])
+  @@index([id, deletedAt])
+  @@index([productId, deletedAt])
+  @@map("product_lots")
 }
 
 model StockCard {
@@ -483,6 +540,7 @@ model MedicineRoute {
   @@index([createdAt])
   @@index([deletedAt])
   @@index([id, deletedAt])
+  @@index([branchId, deletedAt])
   @@map("medicine_routes")
 }
 
@@ -552,9 +610,9 @@ model Customer {
   customerInvoiceInfo CustomerInvoiceInfo?
   invoices            Invoice[]
 
-  @@unique([phone, storeCode, deletedAt])
-  @@unique([email, storeCode, deletedAt])
-  @@unique([code, storeCode, deletedAt])
+  @@unique([phone, storeCode])
+  @@unique([email, storeCode])
+  @@unique([code, storeCode])
   @@index([createdAt])
   @@index([deletedAt])
   @@index([id, deletedAt])
@@ -600,28 +658,6 @@ model CustomerGroup {
   @@index([id, deletedAt])
   @@index([storeCode, deletedAt])
   @@map("customer_groups")
-}
-
-model ProductLot {
-  id           String        @id() @default(uuid()) @db.Uuid()
-  createdAt    DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
-  createdBy    String?       @map("created_by") @db.Uuid()
-  updatedAt    DateTime      @updatedAt() @map("updated_at") @db.Timestamptz(6)
-  updatedBy    String?       @map("updated_by") @db.Uuid()
-  deletedAt    DateTime?     @map("deleted_at") @db.Timestamptz(6)
-  deletedBy    String?       @map("deleted_by") @db.Uuid()
-  productId    String        @map("product_id") @db.Uuid()
-  name         String        @db.VarChar(100)
-  expiryDate   DateTime      @map("expiry_date")
-  quantity     Float         @default(0)
-  product      Product       @relation(fields: [productId], references: [id])
-  invoiceItems InvoiceItem[]
-
-  @@index([createdAt])
-  @@index([deletedAt])
-  @@index([id, deletedAt])
-  @@index([productId, deletedAt])
-  @@map("product_lots")
 }
 
 model TransportInfo {

@@ -23,9 +23,9 @@ model Customer extends BaseModel {
   customerInvoiceInfo CustomerInvoiceInfo?
   invoices            Invoice[]
 
-  @@unique([phone, storeCode, deletedAt])
-  @@unique([email, storeCode, deletedAt])
-  @@unique([code, storeCode, deletedAt])
+  @@unique([phone, storeCode])
+  @@unique([email, storeCode])
+  @@unique([code, storeCode])
   @@index([storeCode])
   @@map("customers")
 }

@@ -4,6 +4,7 @@ import { DeleteManyRequestDto } from '@common/dtos'
 import { Prisma } from '@prisma/client'
 import { HttpException } from '@common/exceptions'
 import { CUSTOMER_ERROR } from '@common/errors'
+import { generateTimesTamp } from '@common/helpers'
 
 @Injectable()
 export class DeleteManyCustomerUseCase {
@@ -40,7 +41,10 @@ export class DeleteManyCustomerUseCase {
       this.prismaClient.customer.update({
         where: { id: customer.id, storeCode },
         data: {
-          deletedBy: userId
+          deletedBy: userId,
+          code: `del_${customer.code}_${generateTimesTamp()}`,
+          phone: customer.phone ? `del_${customer.phone}_${generateTimesTamp()}` : null,
+          email: customer.email ? `del_${customer.email}_${generateTimesTamp()}` : null
         }
       })
     )

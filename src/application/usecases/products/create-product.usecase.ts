@@ -23,6 +23,7 @@ export class CreateProductUseCase {
     /**
      * Kiểm tra mã sản phẩm, barcode không trùng
      */
+
     await validateUniqueFields(this.prismaClient, data, branchId)
 
     const productCode = data.code || (await generateCodeModel({ model: 'Product', branchId }))
@@ -31,7 +32,7 @@ export class CreateProductUseCase {
      * Sử dụng transaction để đảm bảo tính toàn vẹn dữ liệu
      */
     const newProduct = await this.prismaClient.$transaction(async tx => {
-      const newProduct = await tx.product.create({
+      return await tx.product.create({
         data: {
           name: data.name,
           productGroupId: data.productGroupId,
@@ -87,40 +88,6 @@ export class CreateProductUseCase {
           code: true
         }
       })
-
-      /**
-       * Tạo các biến thể nếu có
-       */
-      if (data.variants && data.variants.length > 0) {
-        const variantPromises = data.variants.map((variant, index) =>
-          tx.product.create({
-            data: {
-              name: data.name,
-              shortName: data.shortName,
-              productGroupId: data.productGroupId,
-              parentId: newProduct.id,
-              unitName: variant.unitName,
-              conversion: variant.conversion || 1,
-              code: variant.code || generateCodeIncrease(newProduct.code, index + 1),
-              barcode: variant.barcode,
-              costPrice: data.costPrice * variant.conversion,
-              salePrice: variant.salePrice,
-              isDirectSale: variant.isDirectSale,
-              isStockEnabled: false,
-              isLotEnabled: false,
-              package: data.package,
-              country: data.country,
-              manufacturerId: data.manufacturerId,
-              createdBy: userId,
-              branchId
-            }
-          })
-        )
-
-        await Promise.all(variantPromises)
-      }
-
-      return newProduct
     })
 
     return await getProductById(this.prismaClient, newProduct.id, branchId)

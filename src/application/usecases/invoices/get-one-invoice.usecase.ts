@@ -3,6 +3,7 @@ import { PrismaService } from '@infrastructure/prisma'
 import { Invoice } from '@common/types'
 import { HttpException } from '@common/exceptions'
 import { INVOICE_ERROR } from '@common/errors'
+import { USER_INCLUDE_FIELDS } from '@common/constants'
 
 @Injectable()
 export class GetOneInvoiceUseCase {
@@ -45,7 +46,8 @@ export class GetOneInvoiceUseCase {
                 },
                 barcode: true
               }
-            }
+            },
+            invoiceItemLots: true
           }
         },
         customer: {
@@ -63,6 +65,9 @@ export class GetOneInvoiceUseCase {
             phone: true,
             email: true
           }
+        },
+        creator: {
+          ...USER_INCLUDE_FIELDS
         }
       }
     })

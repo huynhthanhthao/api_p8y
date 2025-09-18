@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common'
 import { PrismaService } from '@infrastructure/prisma'
 import { HttpException } from '@common/exceptions'
 import { SUPPLIER_ERROR } from '@common/errors'
+import { generateTimesTamp } from '@common/helpers'
 
 @Injectable()
 export class DeleteSupplierUseCase {
@@ -23,6 +24,7 @@ export class DeleteSupplierUseCase {
     await this.prismaClient.supplier.update({
       where: { id, branchId },
       data: {
+        code: `del_${supplier.code}_${generateTimesTamp()}`,
         deletedBy: userId
       }
     })

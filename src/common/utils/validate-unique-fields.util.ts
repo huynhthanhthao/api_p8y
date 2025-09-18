@@ -10,39 +10,64 @@ export async function validateUniqueFields(
   branchId: string,
   id?: string
 ): Promise<void> {
-  const codes = [dto.code, ...(dto.variants?.map(p => p.code) || [])].filter(Boolean)
-  const barcodes = [dto.barcode, ...(dto.variants?.map(p => p.barcode) || [])].filter(Boolean)
+  // B1: Map code/barcode -> id (nếu có)
+  const codeMap = new Map<string, string | undefined>()
+  const barcodeMap = new Map<string, string | undefined>()
+
+  if (dto.code) codeMap.set(dto.code, id)
+  if (dto.barcode) barcodeMap.set(dto.barcode, id)
+
+  dto.variants?.forEach(v => {
+    if (v.code) codeMap.set(v.code, v.id)
+    if (v.barcode) barcodeMap.set(v.barcode, v.id)
+  })
+
+  const codes = [...codeMap.keys()]
+  const barcodes = [...barcodeMap.keys()]
 
   if (!codes.length && !barcodes.length) return
 
-  // Tìm sản phẩm đầu tiên có mã hoặc mã vạch trùng
-  const existingProduct = await prisma.product.findFirst({
-    where: {
-      ...(id && {
-        id: {
-          not: id
-        }
-      }),
-      branchId,
-      OR: [
-        ...(codes.length > 0 ? [{ code: { in: codes } }] : []),
-        ...(barcodes.length > 0 ? [{ barcode: { in: barcodes } }] : [])
-      ]
-    },
-    select: { code: true, barcode: true }
-  })
-
-  if (!existingProduct) return
-
-  // Kiểm tra trùng mã
-  if (existingProduct.code && codes.includes(existingProduct.code)) {
-    throw new HttpException(HttpStatus.CONFLICT, PRODUCT_ERROR.CODE_EXISTS, [existingProduct.code])
+  // B2: check duplicate trong DTO
+  function findDuplicates(arr: string[]) {
+    return arr.filter((item, i) => arr.indexOf(item) !== i)
   }
 
-  // Kiểm tra trùng mã vạch
-  if (existingProduct.barcode && barcodes.includes(existingProduct.barcode)) {
-    throw new HttpException(HttpStatus.CONFLICT, PRODUCT_ERROR.BARCODE_EXISTS, [
-      existingProduct.barcode
-    ])
+  const dupCodes = findDuplicates(codes)
+  if (dupCodes.length > 0) {
+    throw new HttpException(HttpStatus.CONFLICT, PRODUCT_ERROR.CODE_EXISTS, dupCodes)
+  }
+
+  const dupBarcodes = findDuplicates(barcodes)
+  if (dupBarcodes.length > 0) {
+    throw new HttpException(HttpStatus.CONFLICT, PRODUCT_ERROR.BARCODE_EXISTS, dupBarcodes)
+  }
+
+  // B3: check DB
+  const existing = await prisma.product.findFirst({
+    where: {
+      branchId,
+      OR: [
+        ...(codes.length ? [{ code: { in: codes } }] : []),
+        ...(barcodes.length ? [{ barcode: { in: barcodes } }] : [])
+      ]
+    },
+    select: { id: true, code: true, barcode: true }
+  })
+
+  if (!existing) return
+
+  // B4: loại bỏ chính nó bằng map
+  if (existing.code && codes.includes(existing.code)) {
+    const expectId = codeMap.get(existing.code)
+    if (!expectId || existing.id !== expectId) {
+      throw new HttpException(HttpStatus.CONFLICT, PRODUCT_ERROR.CODE_EXISTS, [existing.code])
+    }
+  }
+
+  if (existing.barcode && barcodes.includes(existing.barcode)) {
+    const expectId = barcodeMap.get(existing.barcode)
+    if (!expectId || existing.id !== expectId) {
+      throw new HttpException(HttpStatus.CONFLICT, PRODUCT_ERROR.BARCODE_EXISTS, [existing.barcode])
+    }
   }
 }

@@ -3,6 +3,7 @@ import 'branch'
 import 'stock_item'
 import 'stock_card'
 import 'supplier'
+import 'user'
 
 model StockTransaction extends BaseModel {
   branchId      String      @db.Uuid
@@ -15,13 +16,18 @@ model StockTransaction extends BaseModel {
   supplier      Supplier?   @relation(fields: [supplierId], references: [id])
   note          String?     @db.Text
   transactedAt  DateTime?   @default(now())
-
-
+  
   // Relations
   branch        Branch      @relation(fields: [branchId], references: [id])
   items         StockItem[]
   stockCards    StockCard[]
+  creator       User?       @relation("StockTransactionCreator", fields: [createdBy], references: [id])
+  updater       User?       @relation("StockTransactionUpdater", fields: [updatedBy], references: [id])
+
+  @@index([status, branchId, deletedAt])
+  @@index([branchId, deletedAt])
 
   @@unique([code, branchId])
+
   @@map("stock_transactions")
 }

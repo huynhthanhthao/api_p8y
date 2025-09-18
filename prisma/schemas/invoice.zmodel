@@ -5,6 +5,7 @@ import 'delivery_info'
 import 'customer'
 import 'branch'
 import 'payment_method'
+import 'user'
 
 
 model Invoice extends BaseModel {
@@ -26,8 +27,12 @@ model Invoice extends BaseModel {
   deliveryInfo      DeliveryInfo?
   customer          Customer?      @relation(fields: [customerId], references: [id])
   invoiceItems      InvoiceItem[]
+  creator           User?          @relation("InvoiceCreator", fields: [createdBy], references: [id])
+  updater           User?          @relation("InvoiceUpdater", fields: [updatedBy], references: [id])
 
   @@index([branchId, deletedAt])
-  @@unique([code, branchId, deletedAt])
+
+  @@unique([code, branchId])
+
   @@map("invoices")
 }

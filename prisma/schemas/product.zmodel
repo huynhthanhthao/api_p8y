@@ -57,8 +57,10 @@ model Product extends BaseModel {
   variants         Product[]         @relation("ProductVariants")
 
   @@index([branchId, deletedAt])
-  @@index([code, branchId, deletedAt])
-  @@index([barcode, branchId, deletedAt])
-  @@unique([code, branchId, deletedAt])
+  @@index([branchId, deletedAt, code])
+  @@index([branchId, deletedAt, barcode])
+
+  @@unique([branchId,code])
+
   @@map("products")
 }

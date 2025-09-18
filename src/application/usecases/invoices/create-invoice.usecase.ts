@@ -72,7 +72,14 @@ export class CreateInvoiceUseCase {
             discountType: item.discountType,
             note: item.note,
             productId: item.productId,
-            productLotId: item.productLotId
+            invoiceItemLots: item.lots?.length
+              ? {
+                  create: item.lots.map(lot => ({
+                    productLotId: lot.productLotId,
+                    quantity: lot.quantity
+                  }))
+                }
+              : undefined
           }))
         }
       },
@@ -81,20 +88,35 @@ export class CreateInvoiceUseCase {
   }
 
   private checkMissingProductLotId(data: CreateInvoiceRequestDto, productList: Product[]): void {
-    // Tạo Map từ invoiceItems để tra cứu nhanh productLotId theo productId
-    const invoiceItemMap = new Map(
-      data.invoiceItems.map(item => [item.productId, item.productLotId])
-    )
+    for (const product of productList) {
+      const item = data.invoiceItems.find(i => i.productId === product.id)
 
-    // Tìm sản phẩm đầu tiên trong productList có isLotEnabled: true nhưng thiếu productLotId
-    const invalidProduct = productList.find(
-      product => product.isLotEnabled && !invoiceItemMap.get(product.id)
-    )
+      if (!item) continue
 
-    if (invalidProduct) {
-      throw new HttpException(HttpStatus.BAD_REQUEST, INVOICE_ERROR.MISSING_PRODUCT_LOT_ID, [
-        invalidProduct?.code
-      ])
+      if (product.isLotEnabled) {
+        /**
+         * Quản lý theo lô: bắt buộc có lots, quantity = 0
+         */
+        if (!item.lots?.length) {
+          throw new HttpException(HttpStatus.BAD_REQUEST, INVOICE_ERROR.MISSING_PRODUCT_LOT_ID, [
+            product.code
+          ])
+        }
+        if (item.quantity !== 0) {
+          throw new HttpException(HttpStatus.BAD_REQUEST, INVOICE_ERROR.INVALID_QUANTITY_FOR_LOT, [
+            product.code
+          ])
+        }
+      } else {
+        /**
+         * Không quản lý lô: không được truyền lots
+         */
+        if (item.lots?.length) {
+          throw new HttpException(HttpStatus.BAD_REQUEST, INVOICE_ERROR.UNEXPECTED_PRODUCT_LOT, [
+            product.code
+          ])
+        }
+      }
     }
   }
 }

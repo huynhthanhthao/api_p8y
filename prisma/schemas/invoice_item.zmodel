@@ -3,22 +3,35 @@ import 'invoice'
 import 'base'
 import 'product_lot'
 
-model InvoiceItem  extends BaseModel {
-  quantity      Float       @map("quantity") @default(1)              // Số lượng
-  salePrice     Float       @map("sale_price") @default(0)            // Đơn giá tại thời điểm bán
-  costPrice     Float       @map("cost_price") @default(0)            // Đơn giá tại thời điểm bán
-  discountValue Float?      @map("discount_value") @default(0)              // Giảm giá (VND hoặc %)
-  discountType  String?     @map("discount_type") @db.VarChar(10) @default("VALUE")    // PERCENT or VALUE
-  note          String?     @map("note") @db.VarChar(500)        // Ghi chú
-  productId     String      @map("product_id") @db.Uuid
-  invoiceId     String      @map("invoice_id") @db.Uuid
-  productLotId  String?     @map("product_lot_id") @db.Uuid
+model InvoiceItem extends BaseModel {
+  salePrice       Float            @map("sale_price") @default(0)            // Unit price at the time of sale
+  costPrice       Float            @map("cost_price") @default(0)            // Cost price at the time of sale
+  discountValue   Float?           @map("discount_value") @default(0)         // Discount (VND or %)
+  discountType    String?          @map("discount_type") @db.VarChar(10) @default("VALUE") // PERCENT or VALUE
+  note            String?          @map("note") @db.VarChar(500)            // Note
+  productId       String           @map("product_id") @db.Uuid
+  invoiceId       String           @map("invoice_id") @db.Uuid
 
   // Relations
-  productLot    ProductLot? @relation(fields: [productLotId], references: [id], onDelete: SetNull)
-  product       Product     @relation(fields: [productId], references: [id], onDelete: SetNull)
-  invoice       Invoice     @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  product         Product          @relation(fields: [productId], references: [id], onDelete: SetNull)
+  invoice         Invoice          @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  invoiceItemLots InvoiceItemLot[] // Relation to track quantities per lot
 
   @@index([invoiceId, deletedAt])
   @@map("invoice_items")
+}
+
+model InvoiceItemLot {
+  id            String       @id @default(uuid()) @db.Uuid
+  invoiceItemId String       @map("invoice_item_id") @db.Uuid
+  productLotId  String       @map("product_lot_id") @db.Uuid
+  quantity      Float        @map("quantity") @default(1)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  // Relations
+  invoiceItem   InvoiceItem? @relation(fields: [invoiceItemId], references: [id], onDelete: Cascade)
+  productLot    ProductLot?  @relation(fields: [productLotId], references: [id], onDelete: Cascade)
+
+  @@map("invoice_item_lots")
 }

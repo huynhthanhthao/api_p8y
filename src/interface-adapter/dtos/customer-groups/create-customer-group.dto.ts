@@ -1,4 +1,13 @@
-import { IsString, IsNotEmpty, MaxLength, IsNumber, IsOptional, IsEnum } from 'class-validator'
+import {
+  IsString,
+  IsNotEmpty,
+  MaxLength,
+  IsNumber,
+  IsOptional,
+  IsEnum,
+  Min,
+  IsInt
+} from 'class-validator'
 import { Transform, TransformFnParams } from 'class-transformer'
 import { DiscountTypeEnum } from '@common/enums'
 
@@ -11,6 +20,8 @@ export class CreateCustomerGroupRequestDto {
 
   @IsOptional()
   @IsNumber({}, { message: 'Giá trị giảm giá phải là số' })
+  @Min(0, { message: 'Giá trị phải lớn hơn hoặc bằng 0' })
+  @IsInt({ message: 'Giá trị giảm giá phải là số nguyên' })
   discountValue: number
 
   @IsOptional()

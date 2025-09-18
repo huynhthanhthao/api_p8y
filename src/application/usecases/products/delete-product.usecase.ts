@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common'
 import { PrismaService } from '@infrastructure/prisma'
 import { HttpException } from '@common/exceptions'
 import { PRODUCT_ERROR } from '@common/errors'
+import { generateTimesTamp } from '@common/helpers'
 
 @Injectable()
 export class DeleteProductUseCase {
@@ -23,6 +24,8 @@ export class DeleteProductUseCase {
     await this.prismaClient.product.update({
       where: { id, branchId },
       data: {
+        code: `del_${product.code}_${generateTimesTamp()}`,
+        barcode: `del_${product.code}_${generateTimesTamp()}`,
         deletedBy: userId
       }
     })

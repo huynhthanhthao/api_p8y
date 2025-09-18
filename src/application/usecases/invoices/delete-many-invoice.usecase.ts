@@ -4,6 +4,7 @@ import { PrismaService } from '@infrastructure/prisma'
 import { DeleteManyRequestDto } from '@common/dtos'
 import { HttpException } from '@common/exceptions'
 import { INVOICE_ERROR } from '@common/errors'
+import { generateTimesTamp } from '@common/helpers'
 
 @Injectable()
 export class DeleteManyInvoiceUseCase {
@@ -18,21 +19,28 @@ export class DeleteManyInvoiceUseCase {
     userId: string,
     branchId: string
   ): Promise<Prisma.BatchPayload> {
-    const existingGroups = await this.prismaClient.invoice.findMany({
+    const invoices = await this.prismaClient.invoice.findMany({
       where: {
         id: { in: data.ids },
         branchId
       }
     })
 
-    if (existingGroups.length !== data.ids.length) {
+    if (invoices.length !== data.ids.length) {
       throw new HttpException(HttpStatus.NOT_FOUND, INVOICE_ERROR.SOME_INVOICES_NOT_FOUND)
     }
 
-    await this.prismaClient.invoice.updateMany({
-      where: { id: { in: data.ids }, branchId },
-      data: { deletedBy: userId }
-    })
+    const updatePromises = invoices.map(invoice =>
+      this.prismaClient.invoice.update({
+        where: { id: invoice.id, branchId },
+        data: {
+          deletedBy: userId,
+          code: `del_${invoice.code}_${generateTimesTamp()}`
+        }
+      })
+    )
+
+    await Promise.all(updatePromises)
 
     return await this.prismaClient.invoice.deleteMany({
       where: {

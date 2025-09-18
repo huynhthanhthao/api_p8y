@@ -1,6 +1,7 @@
 import 'base'
 import 'stock_transaction'
 import 'product'
+import 'product_lot'
 
 model StockItem  extends BaseModel {
   transId           String           @db.Uuid
@@ -8,14 +9,29 @@ model StockItem  extends BaseModel {
   quantity          Float            @default(0)    // Quantity
   unitPrice         Float            @default(0)    // Unit price
   total             Float            @default(0)    // Total amount
-  batchCode         String?          @db.VarChar(50)  // Batch number
   discountType      String?          @default("VALUE")
   discountValue     Float?           @default(0)
   supplierId        String?
-  
-  // relations
+
+  // Relations
+  stockItemLots     StockItemLot[]
   product           Product          @relation(fields: [productId], references: [id])
   stockTransactions StockTransaction @relation(fields: [transId], references: [id], onDelete: Cascade)
 
   @@map("stock_items")
+}
+
+model StockItemLot {
+  id           String      @id @default(uuid()) @db.Uuid
+  stockItemId  String      @map("stock_item_id") @db.Uuid
+  productLotId String      @map("product_lot_id") @db.Uuid
+  quantity     Float       @map("quantity") @default(1)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  // Relations
+  stockItem    StockItem?  @relation(fields: [stockItemId], references: [id], onDelete: Cascade)
+  productLot   ProductLot? @relation(fields: [productLotId], references: [id], onDelete: Cascade)
+
+  @@map("stock_item_lots")
 }

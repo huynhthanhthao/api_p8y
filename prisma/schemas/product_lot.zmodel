@@ -1,16 +1,18 @@
 import "base"
 import "product"
 import "invoice_item"
+import "stock_item"
 
 model ProductLot extends BaseModel {
-  productId    String        @map("product_id") @db.Uuid
-  name         String        @db.VarChar(100)
-  expiryDate   DateTime      @map("expiry_date")
-  quantity     Float         @default(0)      
+  productId       String           @map("product_id") @db.Uuid
+  name            String           @db.VarChar(100)
+  expiryDate      DateTime         @map("expiry_date")
+  quantity        Float            @default(0)      
 
   // Relations
-  product      Product       @relation(fields: [productId], references: [id])
-  invoiceItems InvoiceItem[]
+  product         Product          @relation(fields: [productId], references: [id])
+  invoiceItemLots InvoiceItemLot[]
+  stockItemLots   StockItemLot[]
 
   @@index([productId, deletedAt])
   @@map("product_lots")

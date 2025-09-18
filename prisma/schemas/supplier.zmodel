@@ -19,7 +19,9 @@ model Supplier extends BaseModel {
   stockTransaction StockTransaction[]
 
   @@index([branchId, deletedAt])
-  @@unique([code, branchId, deletedAt])
-  @@unique([phone, branchId, deletedAt])
+
+  @@unique([code, branchId])
+  @@unique([phone, branchId])
+
   @@map("suppliers")
 }

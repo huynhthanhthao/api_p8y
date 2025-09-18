@@ -217,7 +217,7 @@ export class UpdateProductUseCase {
             productGroupId: data.productGroupId || existingProduct.productGroupId,
             package: data.package || existingProduct.package,
             country: data.country || existingProduct.country,
-            manufacturerId: data.manufacturerId || existingProduct.country,
+            manufacturerId: data.manufacturerId || existingProduct.manufacturerId,
             parentId: existingProduct.id,
             unitName: variant.unitName,
             conversion: variant.conversion,
