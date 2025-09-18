@@ -65,7 +65,6 @@ export class CreateInvoiceUseCase {
         createdBy: userId,
         invoiceItems: {
           create: data.invoiceItems.map(item => ({
-            quantity: item.quantity,
             costPrice: productList.find(p => p.id === item.productId)?.costPrice || 0,
             salePrice: item.salePrice,
             discountValue: item.discountValue,
@@ -116,6 +115,11 @@ export class CreateInvoiceUseCase {
             product.code
           ])
         }
+
+        if (item.quantity == 0)
+          throw new HttpException(HttpStatus.BAD_REQUEST, INVOICE_ERROR.INVALID_QUANTITY_NONE_LOT, [
+            product.code
+          ])
       }
     }
   }

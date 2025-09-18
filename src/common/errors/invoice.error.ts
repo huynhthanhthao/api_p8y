@@ -18,5 +18,9 @@ export const INVOICE_ERROR = {
   UNEXPECTED_PRODUCT_LOT: {
     code: 'INVOICE_05',
     message: 'Không thể khai báo lô cho sản phẩm không quản lý theo lô'
+  },
+  INVALID_QUANTITY_NONE_LOT: {
+    code: 'INVOICE_06',
+    message: 'Số lượng là bắt buộc'
   }
 }
