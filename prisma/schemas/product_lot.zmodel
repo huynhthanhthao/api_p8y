@@ -2,14 +2,17 @@ import "base"
 import "product"
 import "invoice_item"
 import "stock_item"
+import "branch"
 
 model ProductLot extends BaseModel {
   productId       String           @map("product_id") @db.Uuid
   name            String           @db.VarChar(100)
-  expiryDate      DateTime         @map("expiry_date")
-  quantity        Float            @default(0)      
-
+  expiryAt        DateTime         @map("expiry_at")
+  quantity        Float            @default(0)
+  branchId        String           @map("branch_id") @db.Uuid
+  
   // Relations
+  branch          Branch           @relation(fields: [branchId], references: [id])
   product         Product          @relation(fields: [productId], references: [id])
   invoiceItemLots InvoiceItemLot[]
   stockItemLots   StockItemLot[]

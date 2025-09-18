@@ -29,7 +29,8 @@ const softDelete = createSoftDeleteExtension({
     Manufacturer: true,
     StockTransaction: true,
     StockItem: true,
-    StockCard: true
+    StockCard: true,
+    ProductLot: true
   },
   defaultConfig: {
     field: 'deletedAt',

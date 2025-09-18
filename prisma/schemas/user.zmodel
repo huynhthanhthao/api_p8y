@@ -33,8 +33,8 @@ model User extends BaseModel {
 
   @@index([phone, storeCode, deletedAt])
 
-  @@unique([storeCode, phone])
-  @@unique([storeCode, email])
+  @@unique([storeCode, phone], name: "idx_store_phone")
+  @@unique([storeCode, email], name: "idx_store_email")
 
   @@map("users")
 }

@@ -46,6 +46,7 @@ Table branches {
   productLocations stock_locations [not null]
   medicineRoutes medicine_routes [not null]
   paymentMethods payment_methods [not null]
+  productLots product_lots [not null]
 }
 
 Table users {
@@ -369,8 +370,10 @@ Table product_lots {
   deletedBy String
   productId String [not null]
   name String [not null]
-  expiryDate DateTime [not null]
+  expiryAt DateTime [not null]
   quantity Float [not null, default: 0]
+  branchId String [not null]
+  branch branches [not null]
   product products [not null]
   invoiceItemLots invoice_item_lots [not null]
   stockItemLots stock_item_lots [not null]
@@ -664,6 +667,8 @@ Ref: stock_items.transId > stock_transactions.id [delete: Cascade]
 Ref: stock_item_lots.stockItemId > stock_items.id [delete: Cascade]
 
 Ref: stock_item_lots.productLotId > product_lots.id [delete: Cascade]
+
+Ref: product_lots.branchId > branches.id
 
 Ref: product_lots.productId > products.id
 

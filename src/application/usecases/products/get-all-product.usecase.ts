@@ -48,6 +48,18 @@ export class GetAllProductUseCase {
           updatedBy: true
         },
         include: {
+          medicineInfo: {
+            include: {
+              route: {
+                omit: {
+                  deletedAt: true,
+                  deletedBy: true,
+                  createdBy: true,
+                  updatedBy: true
+                }
+              }
+            }
+          },
           photos: {
             omit: {
               deletedAt: true,

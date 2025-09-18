@@ -63,6 +63,7 @@ model Branch {
   productLocations  ProductLocation[]
   medicineRoutes    MedicineRoute[]
   paymentMethods    PaymentMethod[]
+  productLots       ProductLot[]
 
   @@index([createdAt])
   @@index([deletedAt])
@@ -98,8 +99,8 @@ model User {
   createdStockTransactions StockTransaction[] @relation("StockTransactionCreator")
   updatedStockTransactions StockTransaction[] @relation("StockTransactionUpdater")
 
-  @@unique([storeCode, phone])
-  @@unique([storeCode, email])
+  @@unique([storeCode, phone], name: "idx_store_phone")
+  @@unique([storeCode, email], name: "idx_store_email")
   @@index([createdAt])
   @@index([deletedAt])
   @@index([id, deletedAt])
@@ -445,8 +446,10 @@ model ProductLot {
   deletedBy       String?          @map("deleted_by") @db.Uuid()
   productId       String           @map("product_id") @db.Uuid()
   name            String           @db.VarChar(100)
-  expiryDate      DateTime         @map("expiry_date")
+  expiryAt        DateTime         @map("expiry_at")
   quantity        Float            @default(0)
+  branchId        String           @map("branch_id") @db.Uuid()
+  branch          Branch           @relation(fields: [branchId], references: [id])
   product         Product          @relation(fields: [productId], references: [id])
   invoiceItemLots InvoiceItemLot[]
   stockItemLots   StockItemLot[]
