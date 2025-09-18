@@ -5,6 +5,7 @@ import {
   GetAllProductLotRequestDto,
   GetAllProductLotResponseDto
 } from '@interface-adapter/dtos/product-lots'
+import { getEndOfDay, getStartOfDay } from '@common/helpers'
 
 @Injectable()
 export class GetAllProductLotUseCase {
@@ -18,14 +19,22 @@ export class GetAllProductLotUseCase {
     data: GetAllProductLotRequestDto,
     branchId: string
   ): Promise<GetAllProductLotResponseDto> {
-    const { page, perPage, keyword, orderBy, sortBy, isParent } = data
+    const { page, perPage, keyword, orderBy, sortBy, isExpired, minQuantity } = data
 
     const where: Prisma.ProductLotWhereInput = {
-      branchId
+      branchId,
+      quantity: {
+        gte: minQuantity
+      }
     }
 
     if (keyword) {
       where.OR = [{ name: { contains: keyword, mode: 'insensitive' } }]
+    }
+
+    if (isExpired !== undefined) {
+      const endOfToday = getEndOfDay(new Date())
+      where.expiryAt = isExpired ? { lt: endOfToday } : { gte: endOfToday }
     }
 
     return await this.prismaClient.findManyWithPagination(
