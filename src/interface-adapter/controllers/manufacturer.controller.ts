@@ -22,7 +22,8 @@ import {
 import {
   CreateManufacturerRequestDto,
   GetAllManufacturerRequestDto,
-  GetAllManufacturerResponseDto
+  GetAllManufacturerResponseDto,
+  UpdateManufacturerRequestDto
 } from '@interface-adapter/dtos/manufacturers'
 import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
@@ -52,7 +53,7 @@ export class ManufacturerController {
   @Patch(':id')
   update(
     @Param() params: UUIDParamDto,
-    @Body() data: CreateManufacturerRequestDto,
+    @Body() data: UpdateManufacturerRequestDto,
     @Req() req: RequestAccessBranchJWT
   ): Promise<Manufacturer> {
     return this._updateManufacturerUseCase.execute(params.id, data, req.userId, req.branchId)

@@ -22,7 +22,8 @@ import {
 import {
   CreateCustomerRequestDto,
   GetAllCustomerRequestDto,
-  GetAllCustomerResponseDto
+  GetAllCustomerResponseDto,
+  UpdateCustomerRequestDto
 } from '@interface-adapter/dtos/customers'
 import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
@@ -52,7 +53,7 @@ export class CustomerController {
   @Patch(':id')
   update(
     @Param() params: UUIDParamDto,
-    @Body() data: CreateCustomerRequestDto,
+    @Body() data: UpdateCustomerRequestDto,
     @Req() req: RequestAccessBranchJWT
   ): Promise<Customer> {
     return this._updateCustomerUseCase.execute(params.id, data, req.userId, req.storeCode)

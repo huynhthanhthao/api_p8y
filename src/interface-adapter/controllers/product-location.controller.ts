@@ -22,7 +22,8 @@ import {
 import {
   CreateProductLocationRequestDto,
   GetAllProductLocationRequestDto,
-  GetAllProductLocationResponseDto
+  GetAllProductLocationResponseDto,
+  UpdateProductLocationRequestDto
 } from '@interface-adapter/dtos/product-locations'
 import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
@@ -52,7 +53,7 @@ export class ProductLocationController {
   @Patch(':id')
   update(
     @Param() params: UUIDParamDto,
-    @Body() data: CreateProductLocationRequestDto,
+    @Body() data: UpdateProductLocationRequestDto,
     @Req() req: RequestAccessBranchJWT
   ): Promise<ProductLocation> {
     return this._updateProductLocationUseCase.execute(params.id, data, req.userId, req.branchId)

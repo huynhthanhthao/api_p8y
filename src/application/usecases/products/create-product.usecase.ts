@@ -15,17 +15,22 @@ export class CreateProductUseCase {
   }
 
   async execute(data: CreateProductRequestDto, userId: string, branchId: string): Promise<Product> {
-    // Kiểm tra thông tin tồn kho
+    /**
+     * Kiểm tra thông tin tồn kho
+     */
     validateStockRange(data.minStock, data.maxStock)
 
-    // Kiểm tra mã sản phẩm, barcode không trùng
+    /**
+     * Kiểm tra mã sản phẩm, barcode không trùng
+     */
     await validateUniqueFields(this.prismaClient, data, branchId)
 
     const productCode = data.code || (await generateCodeModel({ model: 'Product', branchId }))
 
-    // Sử dụng transaction để đảm bảo tính toàn vẹn dữ liệu
+    /**
+     * Sử dụng transaction để đảm bảo tính toàn vẹn dữ liệu
+     */
     const newProduct = await this.prismaClient.$transaction(async tx => {
-      // Tạo sản phẩm chính
       const newProduct = await tx.product.create({
         data: {
           name: data.name,
@@ -83,7 +88,9 @@ export class CreateProductUseCase {
         }
       })
 
-      // Tạo các biến thể nếu có
+      /**
+       * Tạo các biến thể nếu có
+       */
       if (data.variants && data.variants.length > 0) {
         const variantPromises = data.variants.map((variant, index) =>
           tx.product.create({

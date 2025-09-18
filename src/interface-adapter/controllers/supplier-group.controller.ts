@@ -20,7 +20,8 @@ import {
 } from '@usecases/supplier-groups'
 import {
   CreateSupplierGroupRequestDto,
-  GetAllSupplierGroupRequestDto
+  GetAllSupplierGroupRequestDto,
+  UpdateSupplierGroupRequestDto
 } from '@interface-adapter/dtos/supplier-groups'
 import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
@@ -46,7 +47,7 @@ export class SupplierGroupController {
   @Patch(':id')
   update(
     @Param() params: UUIDParamDto,
-    @Body() data: CreateSupplierGroupRequestDto,
+    @Body() data: UpdateSupplierGroupRequestDto,
     @Req() req: RequestAccessBranchJWT
   ) {
     return this._updateSupplierGroupUseCase.execute(params.id, data, req.userId, req.branchId)

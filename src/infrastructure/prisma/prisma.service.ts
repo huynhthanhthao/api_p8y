@@ -25,10 +25,8 @@ const softDelete = createSoftDeleteExtension({
     DeliveryInfo: true,
     Permission: true,
     PermissionGroup: true,
-    ProductWeight: true,
     TransportInfo: true,
     Manufacturer: true,
-    MedicineInfo: true,
     StockTransaction: true,
     StockItem: true,
     StockCard: true

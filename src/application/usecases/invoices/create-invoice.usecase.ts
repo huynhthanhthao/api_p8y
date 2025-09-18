@@ -5,7 +5,7 @@ import { generateCodeModel } from '@common/utils'
 import { INVOICE_INCLUDE_FIELDS } from '@common/constants'
 import { HttpException } from '@common/exceptions'
 import { INVOICE_ERROR } from '@common/errors'
-import { Invoice } from '@common/types'
+import { Invoice, Product } from '@common/types'
 
 @Injectable()
 export class CreateInvoiceUseCase {
@@ -18,21 +18,39 @@ export class CreateInvoiceUseCase {
   async execute(data: CreateInvoiceRequestDto, userId: string, branchId: string): Promise<Invoice> {
     const productIds = data.invoiceItems.map(item => item.productId)
 
-    const productList = await this.prismaClient.product.findMany({
+    const productList = (await this.prismaClient.product.findMany({
       where: {
         id: {
           in: productIds
         },
-        branchId
+        branchId,
+        isDirectSale: true
       },
       select: {
         id: true,
-        costPrice: true
+        code: true,
+        costPrice: true,
+        isStockEnabled: true,
+        isLotEnabled: true,
+        isDirectSale: true
       }
-    })
+    })) as Product[]
 
+    /**
+     * Kiểm tra sản phẩm hợp lệ
+     */
     if (productIds.length !== productList.length)
       throw new HttpException(HttpStatus.NOT_FOUND, INVOICE_ERROR.SOME_INVOICES_NOT_FOUND)
+
+    /**
+     * Kiểm tra sản phẩm có lô hợp lệ chưa
+     */
+    this.checkMissingProductLotId(data, productList)
+
+    /**
+     * Xử lý cập nhật kho
+     * ...
+     */
 
     return this.prismaClient.invoice.create({
       data: {
@@ -60,5 +78,23 @@ export class CreateInvoiceUseCase {
       },
       ...INVOICE_INCLUDE_FIELDS
     })
+  }
+
+  private checkMissingProductLotId(data: CreateInvoiceRequestDto, productList: Product[]): void {
+    // Tạo Map từ invoiceItems để tra cứu nhanh productLotId theo productId
+    const invoiceItemMap = new Map(
+      data.invoiceItems.map(item => [item.productId, item.productLotId])
+    )
+
+    // Tìm sản phẩm đầu tiên trong productList có isLotEnabled: true nhưng thiếu productLotId
+    const invalidProduct = productList.find(
+      product => product.isLotEnabled && !invoiceItemMap.get(product.id)
+    )
+
+    if (invalidProduct) {
+      throw new HttpException(HttpStatus.BAD_REQUEST, INVOICE_ERROR.MISSING_PRODUCT_LOT_ID, [
+        invalidProduct?.code
+      ])
+    }
   }
 }

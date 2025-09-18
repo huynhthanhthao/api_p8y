@@ -22,7 +22,8 @@ import {
 import {
   CreateProductGroupRequestDto,
   GetAllProductGroupRequestDto,
-  GetAllProductGroupResponseDto
+  GetAllProductGroupResponseDto,
+  UpdateProductGroupRequestDto
 } from '@interface-adapter/dtos/product-groups'
 import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
@@ -52,7 +53,7 @@ export class ProductGroupController {
   @Patch(':id')
   update(
     @Param() params: UUIDParamDto,
-    @Body() data: CreateProductGroupRequestDto,
+    @Body() data: UpdateProductGroupRequestDto,
     @Req() req: RequestAccessBranchJWT
   ): Promise<ProductGroup> {
     return this._updateProductGroupUseCase.execute(params.id, data, req.userId, req.branchId)

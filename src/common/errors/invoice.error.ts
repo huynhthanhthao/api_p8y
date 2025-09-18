@@ -5,6 +5,10 @@ export const INVOICE_ERROR = {
   },
   SOME_INVOICES_NOT_FOUND: {
     code: 'INVOICE_02',
-    message: 'Hóa đơn sản phẩm không tồn tại'
+    message: 'Một số sản phẩm không tồn tại hoặc không cho phép bán'
+  },
+  MISSING_PRODUCT_LOT_ID: {
+    code: 'INVOICE_03',
+    message: 'Sản phẩm yêu cầu lô nhưng không được cung cấp'
   }
 }

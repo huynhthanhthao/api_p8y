@@ -21,6 +21,14 @@ export const PRODUCT_INCLUDE_FIELDS = {
         }
       }
     },
+    productGroup: {
+      omit: {
+        deletedAt: true,
+        deletedBy: true,
+        createdBy: true,
+        updatedBy: true
+      }
+    },
     productWeight: true,
     photos: {
       omit: {

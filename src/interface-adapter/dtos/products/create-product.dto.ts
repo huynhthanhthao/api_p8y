@@ -8,10 +8,8 @@ import {
   IsNumber,
   Min,
   ValidateNested,
-  ArrayNotEmpty,
   IsArray,
-  IsBoolean,
-  ValidateIf
+  IsBoolean
 } from 'class-validator'
 import { Transform, TransformFnParams, Type } from 'class-transformer'
 import { ProductTypeEnum, ProductWeightUnitEnum } from '@common/enums/product.enum'
@@ -95,15 +93,15 @@ export class CreateProductRequestDto {
   @MaxLength(255, { message: 'Tên sản phẩm không được vượt quá 255 ký tự' })
   name: string
 
+  @IsNotEmpty({ message: 'ID nhóm sản phẩm không được để trống' })
+  @IsUUID('4', { message: 'ID nhóm sản phẩm phải là UUID hợp lệ' })
+  productGroupId: string
+
   @IsOptional()
   @IsString({ message: 'Mã sản phẩm phải là chuỗi ký tự' })
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @MaxLength(50, { message: 'Mã sản phẩm không được vượt quá 50 ký tự' })
   code: string
-
-  @IsNotEmpty({ message: 'ID nhóm sản phẩm không được để trống' })
-  @IsUUID('4', { message: 'ID nhóm sản phẩm phải là UUID hợp lệ' })
-  productGroupId: string
 
   @IsOptional()
   @Transform(({ value }: TransformFnParams) => value?.trim())
@@ -160,14 +158,13 @@ export class CreateProductRequestDto {
   @Type(() => ProductWeightRequestDto)
   productWeight: ProductWeightRequestDto
 
-  @ValidateIf(o => o.type === ProductTypeEnum.MEDICINE)
+  @IsOptional()
   @ValidateNested()
   @Type(() => MedicineInfoRequestDto)
   medicineInfo: MedicineInfoRequestDto
 
   @IsOptional()
   @IsArray({ message: 'Danh sách sản phẩm cùng loại phải là mảng' })
-  @ArrayNotEmpty({ message: 'Danh sách sản phẩm cùng loại không được để trống' })
   @ValidateNested({ each: true })
   @Type(() => ProductVariantRequestDto)
   variants: ProductVariantRequestDto[]

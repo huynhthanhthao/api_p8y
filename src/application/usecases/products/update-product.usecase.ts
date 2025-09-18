@@ -33,26 +33,44 @@ export class UpdateProductUseCase {
       }
     })
 
+    /**
+     * Kiểm tra sản phẩm có tồn tại không
+     */
     if (!existingProduct) {
       throw new HttpException(HttpStatus.NOT_FOUND, PRODUCT_ERROR.PRODUCT_NOT_FOUND)
     }
 
-    // Kiểm tra thông tin tồn kho
+    /**
+     * Kiểm tra thông tin tồn kho
+     */
     validateStockRange(
       data.minStock || existingProduct.minStock,
       data.maxStock || existingProduct.maxStock
     )
 
-    // // Kiểm tra mã sản phẩm, barcode không trùng
+    /**
+     * Kiểm tra mã sản phẩm, barcode không trùng
+     */
     await validateUniqueFields(this.prismaClient, data, branchId, id)
 
-    const productCode = data.code || (await generateCodeModel({ model: 'Product', branchId }))
+    /**
+     * Xử lý tạo / cập nhật mã sản phẩm
+     */
+    const productCodeNext = await generateCodeModel({ model: 'Product', branchId })
+
+    const productCode = data.code === '' ? productCodeNext : data.code || existingProduct.code
 
     return await this.prismaClient.$transaction(async tx => {
+      /**
+       * Xử lý cập nhật sản phẩm cùng loại
+       */
       if (data.variants) {
-        await this.handleVariants(tx, data, existingProduct, productCode, userId, branchId)
+        await this.handleVariants(tx, data, existingProduct, productCodeNext, userId, branchId)
       }
 
+      /**
+       * Xử lý cập nhật sản phẩm cùng loại
+       */
       return await tx.product.update({
         where: {
           id: id,
@@ -91,19 +109,33 @@ export class UpdateProductUseCase {
           }),
           ...(data.productWeight && {
             productWeight: {
-              update: {
-                unit: data.productWeight.unit,
-                value: data.productWeight.value
+              upsert: {
+                create: {
+                  unit: data.productWeight.unit,
+                  value: data.productWeight.value
+                },
+                update: {
+                  unit: data.productWeight.unit,
+                  value: data.productWeight.value
+                }
               }
             }
           }),
           ...(data.medicineInfo && {
             medicineInfo: {
-              update: {
-                dosage: data.medicineInfo.dosage,
-                ingredient: data.medicineInfo.ingredient,
-                regNumber: data.medicineInfo.regNumber,
-                routeId: data.medicineInfo.routeId
+              upsert: {
+                create: {
+                  dosage: data.medicineInfo.dosage,
+                  ingredient: data.medicineInfo.ingredient,
+                  regNumber: data.medicineInfo.regNumber,
+                  routeId: data.medicineInfo.routeId
+                },
+                update: {
+                  dosage: data.medicineInfo.dosage,
+                  ingredient: data.medicineInfo.ingredient,
+                  regNumber: data.medicineInfo.regNumber,
+                  routeId: data.medicineInfo.routeId
+                }
               }
             }
           })
@@ -123,11 +155,15 @@ export class UpdateProductUseCase {
     userId: string,
     branchId: string
   ): Promise<void> {
-    // Lấy danh sách variant hiện tại
+    /**
+     * Lấy danh sách variant hiện tại
+     */
     const existingVariantIds = existingProduct.variants.map(v => v.id)
     const incomingVariantIds = data.variants!.filter(v => v.id).map(v => v.id as string)
 
-    // Xóa các variant không còn tồn tại trong dữ liệu mới
+    /**
+     * Xóa các variant không còn tồn tại trong dữ liệu mới
+     */
     const variantsToDelete = existingVariantIds.filter(id => !incomingVariantIds.includes(id))
 
     if (variantsToDelete.length > 0) {
@@ -145,10 +181,14 @@ export class UpdateProductUseCase {
 
     const costPriceBase = data.costPrice || existingProduct.costPrice || 0
 
-    // Cập nhật hoặc tạo mới các variant
+    /**
+     * Cập nhật hoặc tạo mới các variant
+     */
     for (const [index, variant] of data.variants!.entries()) {
       if (variant.id) {
-        // Cập nhật variant hiện có
+        /**
+         *Cập nhật variant hiện có
+         */
         await tx.product.update({
           where: { id: variant.id, branchId },
           data: {
@@ -165,7 +205,9 @@ export class UpdateProductUseCase {
           }
         })
       } else {
-        // Tạo variant mới
+        /**
+         * Tạo variant mới
+         */
         const variantCode = variant.code || generateCodeIncrease(productCode, index + 1)
 
         await tx.product.create({

@@ -24,7 +24,8 @@ import { RequestAccessBranchJWT } from '@common/interfaces'
 import { DeleteManyRequestDto, UUIDParamDto } from '@common/dtos'
 import {
   CreateSupplierRequestDto,
-  GetAllSupplierRequestDto
+  GetAllSupplierRequestDto,
+  UpdateSupplierRequestDto
 } from '@interface-adapter/dtos/suppliers'
 
 @Controller('suppliers')
@@ -47,7 +48,7 @@ export class SupplierController {
   @Patch(':id')
   update(
     @Param() params: UUIDParamDto,
-    @Body() data: CreateSupplierRequestDto,
+    @Body() data: UpdateSupplierRequestDto,
     @Req() req: RequestAccessBranchJWT
   ) {
     return this._updateSupplierUseCase.execute(params.id, data, req.userId, req.branchId)
