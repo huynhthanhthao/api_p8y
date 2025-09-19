@@ -57,6 +57,14 @@ export const PRODUCT_INCLUDE_FIELDS = {
         unitName: true,
         conversion: true
       }
+    },
+    productLots: {
+      omit: {
+        deletedAt: true,
+        deletedBy: true,
+        createdBy: true,
+        updatedBy: true
+      }
     }
   }
 } as const satisfies Partial<Prisma.ProductFindUniqueArgs>

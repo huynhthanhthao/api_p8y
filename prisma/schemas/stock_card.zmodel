@@ -2,20 +2,17 @@ import 'product'
 import 'stock_transaction'
 import 'base'
 
-model StockCard extends BaseModel {
-  productId        String            @db.Uuid
-  transId          String?           @db.Uuid
-  orderId          String?           @db.Uuid
+model StockCard {
+  id               String            @id @default(uuid()) @db.Uuid
+  transactionId    String?           @db.Uuid @map("transaction_id")
+  orderId          String?           @db.Uuid @map("order_id")
 
-  type             String            @db.VarChar(20) // ORDER, Tran
-  inQty            Float             @default(0)
-  outQty           Float             @default(0)
-  balance          Float             @default(0)
-  note             String?           @db.Text
+  type             String            @db.VarChar(50)
+  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
 
   // Relations
-  product          Product           @relation(fields: [productId], references: [id])
-  stockTransaction StockTransaction? @relation(fields: [transId], references: [id])
+  products         Product[]
+  stockTransaction StockTransaction? @relation(fields: [transactionId], references: [id])
 
   @@map("stock_cards")
 }

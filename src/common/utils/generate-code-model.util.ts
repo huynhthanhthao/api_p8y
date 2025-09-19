@@ -38,6 +38,11 @@ const MODEL_CONFIGS: Partial<Record<Prisma.ModelName, ModelConfig>> = {
     prefix: 'HD',
     prismaMethod: 'invoice',
     codeLength: 6
+  },
+  StockTransaction: {
+    prefix: 'PN',
+    prismaMethod: 'stockTransaction',
+    codeLength: 6
   }
 }
 
@@ -84,48 +89,39 @@ export async function generateCodeModel<T extends Prisma.ModelName>(
   const prefix = customPrefix || config.prefix
   const codeLength = config.codeLength || 6
 
-  // Use a transaction to ensure atomicity and prevent race conditions
-  return await prisma.$transaction(
-    async tx => {
-      const conditions: any = {}
-      if (storeCode) conditions.storeCode = storeCode
-      if (branchId) conditions.branchId = branchId
+  const conditions: any = {}
+  if (storeCode) conditions.storeCode = storeCode
+  if (branchId) conditions.branchId = branchId
 
-      // Build where condition for the specific prefix
-      conditions[fieldName] = {
-        startsWith: prefix
-      }
+  // Build where condition for the specific prefix
+  conditions[fieldName] = {
+    startsWith: prefix
+  }
 
-      const prismaModel = tx[config.prismaMethod] as any
+  const prismaModel = prisma[config.prismaMethod] as any
 
-      // Find the latest record with the specific prefix
-      const latestRecord = await prismaModel.findFirst({
-        where: conditions,
-        orderBy: {
-          [fieldName]: 'desc'
-        },
-        select: {
-          [fieldName]: true
-        }
-      })
-
-      const latestCode = latestRecord?.[fieldName] || null
-      let nextNumber = 1
-
-      if (latestCode) {
-        const numberPart = latestCode.replace(prefix, '')
-        const currentNumber = parseInt(numberPart, 10)
-        nextNumber = !isNaN(currentNumber) ? currentNumber + 1 : 1
-      }
-
-      // Format the code with prefix and padded number
-      return formatCode(prefix, nextNumber, codeLength)
+  // Find the latest record with the specific prefix
+  const latestRecord = await prismaModel.findFirst({
+    where: conditions,
+    orderBy: {
+      [fieldName]: 'desc'
     },
-    {
-      timeout: 10000,
-      isolationLevel: Prisma.TransactionIsolationLevel.Serializable
+    select: {
+      [fieldName]: true
     }
-  )
+  })
+
+  const latestCode = latestRecord?.[fieldName] || null
+  let nextNumber = 1
+
+  if (latestCode) {
+    const numberPart = latestCode.replace(prefix, '')
+    const currentNumber = parseInt(numberPart, 10)
+    nextNumber = !isNaN(currentNumber) ? currentNumber + 1 : 1
+  }
+
+  // Format the code with prefix and padded number
+  return formatCode(prefix, nextNumber, codeLength)
 }
 
 // Helper function to format code

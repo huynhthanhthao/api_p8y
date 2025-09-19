@@ -1,5 +1,5 @@
 import { PrismaService } from '@infrastructure/prisma'
-import { StoreWithBranches } from '../types'
+import { StoreWithBranches } from '../../types'
 
 export async function getStoreWithAccessibleBranches(
   prisma: PrismaService,

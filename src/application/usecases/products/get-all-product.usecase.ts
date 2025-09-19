@@ -87,6 +87,14 @@ export class GetAllProductUseCase {
               createdBy: true,
               updatedBy: true
             }
+          },
+          productLocations: {
+            omit: {
+              deletedAt: true,
+              deletedBy: true,
+              createdBy: true,
+              updatedBy: true
+            }
           }
         }
       },

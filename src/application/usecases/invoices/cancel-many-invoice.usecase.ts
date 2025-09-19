@@ -5,9 +5,10 @@ import { DeleteManyRequestDto } from '@common/dtos'
 import { HttpException } from '@common/exceptions'
 import { INVOICE_ERROR } from '@common/errors'
 import { generateTimesTamp } from '@common/helpers'
+import { InvoiceStatusEnum } from '@common/enums'
 
 @Injectable()
-export class DeleteManyInvoiceUseCase {
+export class CancelManyInvoiceUseCase {
   constructor(private readonly prismaService: PrismaService) {}
 
   private get prismaClient(): PrismaService {
@@ -30,22 +31,25 @@ export class DeleteManyInvoiceUseCase {
       throw new HttpException(HttpStatus.NOT_FOUND, INVOICE_ERROR.SOME_INVOICES_NOT_FOUND)
     }
 
-    const updatePromises = invoices.map(invoice =>
-      this.prismaClient.invoice.update({
-        where: { id: invoice.id, branchId },
-        data: {
-          deletedBy: userId,
-          code: `del_${invoice.code}_${generateTimesTamp()}`
-        }
-      })
+    /**
+     * Kiểm tra có hóa đơn đã hủy chưa
+     */
+    const hasInvoiceCanceled = invoices.find(
+      invoice => invoice.status === InvoiceStatusEnum.CANCELED
     )
 
-    await Promise.all(updatePromises)
+    if (hasInvoiceCanceled) {
+      throw new HttpException(HttpStatus.NOT_FOUND, INVOICE_ERROR.SOME_INVOICES_CANCELED)
+    }
 
-    return await this.prismaClient.invoice.deleteMany({
+    return await this.prismaClient.invoice.updateMany({
       where: {
         id: { in: data.ids },
+        updatedBy: userId,
         branchId
+      },
+      data: {
+        status: InvoiceStatusEnum.CANCELED
       }
     })
   }

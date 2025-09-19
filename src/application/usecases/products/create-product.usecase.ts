@@ -2,8 +2,8 @@ import { PrismaService } from '@infrastructure/prisma'
 import { Injectable } from '@nestjs/common'
 import { generateCodeIncrease, generateCodeModel, validateUniqueFields } from '@common/utils'
 import { CreateProductRequestDto } from '@interface-adapter/dtos/products'
-import { validateStockRange } from '@common/utils/validate-stock-range'
-import { getProductById } from '@common/utils/get-product-by-id.util'
+import { validateStockRange } from '@common/utils/products/validate-stock-range'
+import { getProductById } from '@common/utils/products/get-product-by-id.util'
 import { Product } from '@common/types'
 
 @Injectable()

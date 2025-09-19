@@ -28,13 +28,13 @@ const softDelete = createSoftDeleteExtension({
     TransportInfo: true,
     Manufacturer: true,
     StockTransaction: true,
-    StockItem: true,
     StockCard: true,
     ProductLot: true
   },
   defaultConfig: {
     field: 'deletedAt',
     allowToOneUpdates: true,
+    allowCompoundUniqueIndexWhere: true,
     createValue: deleted => {
       if (deleted) return new Date()
       return null

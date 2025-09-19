@@ -3,35 +3,26 @@ import 'stock_transaction'
 import 'product'
 import 'product_lot'
 
-model StockItem  extends BaseModel {
-  transId           String           @db.Uuid
-  productId         String           @db.Uuid
-  quantity          Float            @default(0)    // Quantity
-  unitPrice         Float            @default(0)    // Unit price
-  total             Float            @default(0)    // Total amount
-  discountType      String?          @default("VALUE")
-  discountValue     Float?           @default(0)
-  supplierId        String?
+model StockItem {
+  id               String           @id @default(uuid()) @db.Uuid
+  transactionId    String           @db.Uuid @map("transaction_id")
+  productId        String           @db.Uuid @map("product_id")
+  quantity         Float            @default(0)   // Quantity
+  unitPrice        Float            @default(0) @map("unit_price")   // Unit price
+  discountType     String?          @default("VALUE") @map("discount_type")
+  discountValue    Float?           @default(0) @map("discount_value")
+  previousStock    Float?           @map("previous_stock")
+  finalStock       Float?           @map("final_stock")
+  productLotId     String?          @map("product_lot_id") @db.Uuid
 
+  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
   // Relations
-  stockItemLots     StockItemLot[]
-  product           Product          @relation(fields: [productId], references: [id])
-  stockTransactions StockTransaction @relation(fields: [transId], references: [id], onDelete: Cascade)
+  productLot       ProductLot?      @relation(fields: [productLotId], references: [id], onDelete: Cascade)
+  product          Product          @relation(fields: [productId], references: [id])
+  stockTransaction StockTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
 
   @@map("stock_items")
 }
 
-model StockItemLot {
-  id           String      @id @default(uuid()) @db.Uuid
-  stockItemId  String      @map("stock_item_id") @db.Uuid
-  productLotId String      @map("product_lot_id") @db.Uuid
-  quantity     Float       @map("quantity") @default(1)
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-
-  // Relations
-  stockItem    StockItem?  @relation(fields: [stockItemId], references: [id], onDelete: Cascade)
-  productLot   ProductLot? @relation(fields: [productLotId], references: [id], onDelete: Cascade)
-
-  @@map("stock_item_lots")
-}

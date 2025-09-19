@@ -15,17 +15,6 @@ import { Transform, TransformFnParams, Type } from 'class-transformer'
 import { DiscountTypeEnum, PaymentMethodCodeEnum } from '@common/enums'
 import { InvoiceStatusEnum } from '@common/enums'
 
-export class CreateInvoiceItemLotDto {
-  @IsNotEmpty({ message: 'ID lô sản phẩm không được để trống' })
-  @IsUUID('4', { message: 'ID lô sản phẩm phải là UUID hợp lệ' })
-  productLotId: string
-
-  @IsNotEmpty({ message: 'Số lượng lô không được để trống' })
-  @IsNumber({}, { message: 'Số lượng lô phải là số' })
-  @Min(0, { message: 'Số lượng lô phải lớn hơn hoặc bằng 0' })
-  quantity: number
-}
-
 export class CreateInvoiceItemRequestDto {
   @IsNotEmpty({ message: 'ID sản phẩm không được để trống' })
   @IsUUID('4', { message: 'ID sản phẩm phải là UUID hợp lệ' })
@@ -33,7 +22,7 @@ export class CreateInvoiceItemRequestDto {
 
   @IsNotEmpty({ message: 'Số lượng không được để trống' })
   @IsNumber({}, { message: 'Số lượng phải là số' })
-  @Min(0, { message: 'Số lượng phải lớn hơn hoặc bằng 0' })
+  @Min(1, { message: 'Số lượng phải lớn hơn hoặc bằng 0' })
   quantity: number
 
   @IsNotEmpty({ message: 'Đơn giá không được để trống' })
@@ -58,9 +47,9 @@ export class CreateInvoiceItemRequestDto {
   note: string
 
   @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => CreateInvoiceItemLotDto)
-  lots: CreateInvoiceItemLotDto[]
+  @IsNotEmpty({ message: 'ID lô sản phẩm không được để trống' })
+  @IsUUID('4', { message: 'ID lô sản phẩm phải là UUID hợp lệ' })
+  productLotId: string
 }
 
 export class CreateInvoiceRequestDto {
@@ -73,7 +62,7 @@ export class CreateInvoiceRequestDto {
   @IsEnum(InvoiceStatusEnum, {
     message: `Trạng thái phải là một trong: ${Object.values(InvoiceStatusEnum).join(', ')}`
   })
-  status: InvoiceStatusEnum
+  status: InvoiceStatusEnum = InvoiceStatusEnum.PAID
 
   @IsOptional()
   @IsNumber({}, { message: 'Giá trị giảm giá phải là số' })
@@ -101,6 +90,12 @@ export class CreateInvoiceRequestDto {
   @IsOptional()
   @IsUUID('4', { message: 'ID khách hàng phải là UUID hợp lệ' })
   customerId: string
+
+  @IsOptional()
+  @IsNumber({}, { message: 'Tiền khách đưa giảm giá phải là số' })
+  @Min(0, { message: 'Tiền khách đưa giảm giá phải lớn hơn hoặc bằng 0' })
+  @IsInt({ message: 'Tiền khách đưa giảm giá phải là số nguyên' })
+  moneyReceived: number
 
   @IsNotEmpty({ message: 'Hóa đơn phải có ít nhất một sản phẩm' })
   @ValidateNested({ each: true })

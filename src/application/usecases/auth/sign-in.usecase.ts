@@ -7,7 +7,7 @@ import { UserStatusEnum, UserTypeEnum } from '@common/enums'
 import { HttpException } from '@common/exceptions'
 import { SIGNIN_ERROR } from '@common/errors'
 import { SIGNIN_TOKEN_EXPIRY } from '@common/constants'
-import { getStoreWithAccessibleBranches } from '@common/utils/get-store-with-access-branches.util'
+import { getStoreWithAccessibleBranches } from '@common/utils/auth/get-store-with-access-branches.util'
 import { SignInDecodeJWT } from '@common/interfaces'
 
 @Injectable()

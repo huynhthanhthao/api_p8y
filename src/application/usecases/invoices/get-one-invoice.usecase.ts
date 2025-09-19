@@ -3,7 +3,7 @@ import { PrismaService } from '@infrastructure/prisma'
 import { Invoice } from '@common/types'
 import { HttpException } from '@common/exceptions'
 import { INVOICE_ERROR } from '@common/errors'
-import { USER_INCLUDE_FIELDS } from '@common/constants'
+import { INVOICE_INCLUDE_FIELDS, USER_INCLUDE_FIELDS } from '@common/constants'
 
 @Injectable()
 export class GetOneInvoiceUseCase {
@@ -16,60 +16,7 @@ export class GetOneInvoiceUseCase {
         branchId,
         deletedAt: null
       },
-      omit: {
-        deletedAt: true,
-        deletedBy: true,
-        createdBy: true,
-        updatedBy: true
-      },
-      include: {
-        invoiceItems: {
-          omit: {
-            deletedAt: true,
-            deletedBy: true,
-            createdBy: true,
-            updatedBy: true
-          },
-          include: {
-            product: {
-              select: {
-                id: true,
-                name: true,
-                code: true,
-                deletedAt: true,
-                photos: {
-                  select: {
-                    id: true,
-                    filename: true,
-                    path: true
-                  }
-                },
-                barcode: true
-              }
-            },
-            invoiceItemLots: true
-          }
-        },
-        customer: {
-          select: {
-            id: true,
-            name: true,
-            code: true,
-            avatar: {
-              select: {
-                id: true,
-                filename: true,
-                path: true
-              }
-            },
-            phone: true,
-            email: true
-          }
-        },
-        creator: {
-          ...USER_INCLUDE_FIELDS
-        }
-      }
+      ...INVOICE_INCLUDE_FIELDS
     })
 
     if (!invoice) {

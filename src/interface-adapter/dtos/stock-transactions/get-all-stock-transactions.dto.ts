@@ -1,6 +1,6 @@
 import { PaginationQueryDto } from '@common/dtos/pagination-query.dto'
 import { PaginationResponseDto } from '@common/dtos/pagination-response.dto'
-import { StockTransactionType } from '@common/enums'
+import { StockTransactionTypeEnum } from '@common/enums'
 import { StockTransaction } from '@common/types'
 import { Transform, TransformFnParams } from 'class-transformer'
 import { IsEnum, IsOptional, IsUUID } from 'class-validator'
@@ -15,8 +15,8 @@ export class GetAllStockTransactionRequestDto extends PaginationQueryDto {
 
   @IsOptional()
   @Transform(({ value }: TransformFnParams) => value?.trim())
-  @IsEnum(StockTransactionType)
-  type: StockTransactionType
+  @IsEnum(StockTransactionTypeEnum)
+  type: StockTransactionTypeEnum
 }
 
 export class GetAllStockTransactionResponseDto extends PaginationResponseDto<StockTransaction> {

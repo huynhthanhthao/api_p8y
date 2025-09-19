@@ -22,11 +22,6 @@ export class CreateProductLotRequestDto {
   @IsDate({ message: 'Ngày hết hạn không đúng định dạng' })
   expiryAt: string
 
-  @IsNotEmpty({ message: 'Số lượng không được để trống' })
-  @IsNumber({}, { message: 'Số lượng phải là số' })
-  @Min(0, { message: 'Số lượng không được nhỏ hơn 0' })
-  quantity: number
-
   @IsOptional()
   @IsUUID('4', { message: 'ID sản phẩm phải là UUID hợp lệ' })
   productId: string

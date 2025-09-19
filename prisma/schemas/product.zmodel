@@ -17,7 +17,7 @@ model Product extends BaseModel {
   branchId         String            @map("branch_id") @db.Uuid
   name             String            @db.VarChar(255)
   code             String            @db.VarChar(100)
-  productGroupId   String            @map("group_id") @db.Uuid
+  productGroupId   String            @map("product_group_id") @db.Uuid
   type             String            @db.VarChar(50) @default("PRODUCT") // PRODUCT, SERVICE, COMBO, MEDICINE
   barcode          String?           @db.VarChar(100) @default("")
   shortName        String?           @map("short_name") @db.VarChar(100) @default("")
@@ -29,7 +29,7 @@ model Product extends BaseModel {
 
   isLotEnabled     Boolean           @map("is_lot_enabled") @db.Boolean @default(false)
   isStockEnabled   Boolean           @map("is_stock_enabled") @db.Boolean @default(false)
-  stockQuantity    Float?
+  stockQuantity    Float?            @map("stock_quantity")
   minStock         Float?            @map("min_stock") @default(0)
   maxStock         Float?            @map("max_stock") @default(999999999)
 
@@ -38,7 +38,7 @@ model Product extends BaseModel {
   manufacturerId   String?           @map("manufacturer_id") @db.Uuid // Hãng sản xuất
 
   parentId         String?           @map("parent_id") @db.Uuid // Liên kết đến sản phẩm chính
-  unitName         String?           @db.VarChar(50) // Tên đơn vị: viên, chai, lốc
+  unitName         String?           @db.VarChar(50) @map("unit_name")// Tên đơn vị: viên, chai, lốc
   conversion       Float?            @default(1) // Quy đổi: 1 chai = 10 viên
 
   // Relations

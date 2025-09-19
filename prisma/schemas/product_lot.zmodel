@@ -5,18 +5,20 @@ import "stock_item"
 import "branch"
 
 model ProductLot extends BaseModel {
-  productId       String           @map("product_id") @db.Uuid
-  name            String           @db.VarChar(100)
-  expiryAt        DateTime         @map("expiry_at")
-  quantity        Float            @default(0)
-  branchId        String           @map("branch_id") @db.Uuid
+  productId     String        @map("product_id") @db.Uuid
+  name          String        @db.VarChar(100)
+  expiryAt      DateTime      @map("expiry_at")
+  stockQuantity Float         @map("stock_quantity") @default(0)
+  branchId      String        @map("branch_id") @db.Uuid
   
   // Relations
-  branch          Branch           @relation(fields: [branchId], references: [id])
-  product         Product          @relation(fields: [productId], references: [id])
-  invoiceItemLots InvoiceItemLot[]
-  stockItemLots   StockItemLot[]
+  branch        Branch        @relation(fields: [branchId], references: [id])
+  product       Product       @relation(fields: [productId], references: [id])
+  invoiceItems  InvoiceItem[]
+  stockItems    StockItem[]
 
   @@index([productId, deletedAt])
+  @@index([branchId, deletedAt])
+  @@index([productId, branchId, deletedAt])
   @@map("product_lots")
 }

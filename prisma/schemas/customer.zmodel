@@ -7,19 +7,19 @@ import 'file'
 model Customer extends BaseModel {
   name                String               @db.VarChar(255)
   code                String               @db.VarChar(100)
-  storeCode           String               @db.VarChar(50)
+  storeCode           String               @db.VarChar(50) @map("store_code")
   email               String?              @db.VarChar(255)
   phone               String?              @db.VarChar(50)
   birthday            DateTime?            @db.Date
   gender              String?              @db.VarChar(20)
   note                String?              @db.VarChar(500) @default("")
-  avatarId            String?              @db.Uuid
+  avatarId            String?              @db.Uuid @map("avatar_id")
+  customerGroupId     String?              @map("customer_group_id") @db.Uuid
 
   // Relations
   avatar              File?                @relation(fields: [avatarId], references: [id])
   store               Store?               @relation(fields: [storeCode], references: [code], onDelete: SetNull)
   customerGroup       CustomerGroup?       @relation(fields: [customerGroupId], references: [id])
-  customerGroupId     String?              @map("customer_group_id") @db.Uuid
   customerInvoiceInfo CustomerInvoiceInfo?
   invoices            Invoice[]
 

@@ -1,4 +1,11 @@
-export enum StockTransactionType {
+export enum StockTransactionTypeEnum {
   IMPORT = 'IMPORT',
-  CANCEL = 'CANCEL'
+  CANCEL = 'CANCEL',
+  CHECK = 'CHECK'
+}
+
+export enum StockTransactionStatusEnum {
+  PENDING = 'PENDING',
+  COMPLETED = 'COMPLETED',
+  CANCELED = 'CANCELED'
 }

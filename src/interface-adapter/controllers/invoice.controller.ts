@@ -13,8 +13,8 @@ import {
 } from '@nestjs/common'
 import {
   CreateInvoiceUseCase,
-  DeleteManyInvoiceUseCase,
-  DeleteInvoiceUseCase,
+  CancelManyInvoiceUseCase,
+  CancelInvoiceUseCase,
   GetAllInvoiceUseCase,
   GetOneInvoiceUseCase
 } from '@usecases/invoices'
@@ -35,8 +35,8 @@ export class InvoiceController {
     private readonly _getAllInvoiceUseCase: GetAllInvoiceUseCase,
     private readonly _getOneInvoiceUseCase: GetOneInvoiceUseCase,
     private readonly _createInvoiceUseCase: CreateInvoiceUseCase,
-    private readonly _deleteInvoiceUseCase: DeleteInvoiceUseCase,
-    private readonly _deleteManyInvoiceUseCase: DeleteManyInvoiceUseCase
+    private readonly _CancelInvoiceUseCase: CancelInvoiceUseCase,
+    private readonly _cancelManyInvoiceUseCase: CancelManyInvoiceUseCase
   ) {}
 
   @Post()
@@ -47,17 +47,17 @@ export class InvoiceController {
     return this._createInvoiceUseCase.execute(data, req.userId, req.branchId)
   }
 
-  @Delete(':id')
+  @Post(':id/cancel')
   delete(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<string> {
-    return this._deleteInvoiceUseCase.execute(params.id, req.userId, req.branchId)
+    return this._CancelInvoiceUseCase.execute(params.id, req.userId, req.branchId)
   }
 
-  @Delete('')
+  @Post('/cancel')
   deleteMany(
     @Body() data: DeleteManyRequestDto,
     @Req() req: RequestAccessBranchJWT
   ): Promise<Prisma.BatchPayload> {
-    return this._deleteManyInvoiceUseCase.execute(data, req.userId, req.branchId)
+    return this._cancelManyInvoiceUseCase.execute(data, req.userId, req.branchId)
   }
 
   @Get(':id')

@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client/extension'
-import { UserBasicInfo } from '../types'
+import { UserBasicInfo } from '../../types'
 
 export async function getUserInfo(tx: PrismaClient, userId: string): Promise<UserBasicInfo> {
   return tx.user.findUniqueOrThrow({

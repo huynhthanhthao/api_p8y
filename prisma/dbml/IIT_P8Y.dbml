@@ -76,6 +76,7 @@ Table users {
   updatedInvoices invoices [not null]
   createdStockTransactions stock_transactions [not null]
   updatedStockTransactions stock_transactions [not null]
+  reviewedStockTransactions stock_transactions [not null]
 
   indexes {
     (storeCode, phone) [unique]
@@ -144,6 +145,7 @@ Table invoices {
   discountValue Float [default: 0]
   discountType String [default: 'VALUE']
   note String
+  moneyReceived Float
   paymentMethodCode String
   customerId String
   transportId String [unique]
@@ -174,22 +176,13 @@ Table invoice_items {
   costPrice Float [not null, default: 0]
   discountValue Float [default: 0]
   discountType String [default: 'VALUE']
-  note String
+  note String [default: '']
+  quantity Float [not null, default: 0]
   productId String [not null]
   invoiceId String [not null]
+  productLotId String
   product products [not null]
   invoice invoices [not null]
-  invoiceItemLots invoice_item_lots [not null]
-}
-
-Table invoice_item_lots {
-  id String [pk]
-  invoiceItemId String [not null]
-  productLotId String [not null]
-  quantity Float [not null, default: 1]
-  createdAt DateTime [default: `now()`, not null]
-  updatedAt DateTime [not null]
-  invoiceItem invoice_items
   productLot product_lots
 }
 
@@ -314,14 +307,16 @@ Table stock_transactions {
   discountType String [default: 'VALUE']
   discountValue Float [default: 0]
   supplierId String
-  supplier suppliers
   note String
   transactedAt DateTime [default: `now()`]
+  reviewedBy String
+  supplier suppliers
   branch branches [not null]
-  items stock_items [not null]
+  stockItems stock_items [not null]
   stockCards stock_cards [not null]
   creator users
   updater users
+  reviewer users
 
   indexes {
     (code, branchId) [unique]
@@ -330,34 +325,20 @@ Table stock_transactions {
 
 Table stock_items {
   id String [pk]
-  createdAt DateTime [default: `now()`, not null]
-  createdBy String
-  updatedAt DateTime [not null]
-  updatedBy String
-  deletedAt DateTime
-  deletedBy String
-  transId String [not null]
+  transactionId String [not null]
   productId String [not null]
   quantity Float [not null, default: 0]
   unitPrice Float [not null, default: 0]
-  total Float [not null, default: 0]
   discountType String [default: 'VALUE']
   discountValue Float [default: 0]
-  supplierId String
-  stockItemLots stock_item_lots [not null]
-  product products [not null]
-  stockTransactions stock_transactions [not null]
-}
-
-Table stock_item_lots {
-  id String [pk]
-  stockItemId String [not null]
-  productLotId String [not null]
-  quantity Float [not null, default: 1]
+  previousStock Float
+  finalStock Float
+  productLotId String
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
-  stockItem stock_items
   productLot product_lots
+  product products [not null]
+  stockTransaction stock_transactions [not null]
 }
 
 Table product_lots {
@@ -371,31 +352,21 @@ Table product_lots {
   productId String [not null]
   name String [not null]
   expiryAt DateTime [not null]
-  quantity Float [not null, default: 0]
+  stockQuantity Float [not null, default: 0]
   branchId String [not null]
   branch branches [not null]
   product products [not null]
-  invoiceItemLots invoice_item_lots [not null]
-  stockItemLots stock_item_lots [not null]
+  invoiceItems invoice_items [not null]
+  stockItems stock_items [not null]
 }
 
 Table stock_cards {
   id String [pk]
-  createdAt DateTime [default: `now()`, not null]
-  createdBy String
-  updatedAt DateTime [not null]
-  updatedBy String
-  deletedAt DateTime
-  deletedBy String
-  productId String [not null]
-  transId String
+  transactionId String
   orderId String
   type String [not null]
-  inQty Float [not null, default: 0]
-  outQty Float [not null, default: 0]
-  balance Float [not null, default: 0]
-  note String
-  product products [not null]
+  createdAt DateTime [default: `now()`, not null]
+  products products [not null]
   stockTransaction stock_transactions
 }
 
@@ -493,10 +464,10 @@ Table customers {
   gender String
   note String [default: '']
   avatarId String
+  customerGroupId String
   avatar files
   store stores
   customerGroup customer_groups
-  customerGroupId String
   customerInvoiceInfo customer_invoice_info
   invoices invoices [not null]
 
@@ -597,6 +568,11 @@ Table ProductToProductLocation {
   productsId String [ref: > products.id]
 }
 
+Table ProductToStockCard {
+  stockcardsId String [ref: > stock_cards.id]
+  productsId String [ref: > products.id]
+}
+
 Table FileToProduct {
   photosId String [ref: > files.id]
   productsId String [ref: > products.id]
@@ -630,9 +606,7 @@ Ref: invoice_items.productId > products.id [delete: Set Null]
 
 Ref: invoice_items.invoiceId > invoices.id [delete: Cascade]
 
-Ref: invoice_item_lots.invoiceItemId > invoice_items.id [delete: Cascade]
-
-Ref: invoice_item_lots.productLotId > product_lots.id [delete: Cascade]
+Ref: invoice_items.productLotId > product_lots.id [delete: Cascade]
 
 Ref: products.branchId > branches.id
 
@@ -660,21 +634,19 @@ Ref: stock_transactions.createdBy > users.id
 
 Ref: stock_transactions.updatedBy > users.id
 
+Ref: stock_transactions.reviewedBy > users.id
+
+Ref: stock_items.productLotId > product_lots.id [delete: Cascade]
+
 Ref: stock_items.productId > products.id
 
-Ref: stock_items.transId > stock_transactions.id [delete: Cascade]
-
-Ref: stock_item_lots.stockItemId > stock_items.id [delete: Cascade]
-
-Ref: stock_item_lots.productLotId > product_lots.id [delete: Cascade]
+Ref: stock_items.transactionId > stock_transactions.id [delete: Cascade]
 
 Ref: product_lots.branchId > branches.id
 
 Ref: product_lots.productId > products.id
 
-Ref: stock_cards.productId > products.id
-
-Ref: stock_cards.transId > stock_transactions.id
+Ref: stock_cards.transactionId > stock_transactions.id
 
 Ref: stock_locations.branchId > branches.id
 

@@ -3,11 +3,11 @@ import 'product'
 import 'medicine_route'
 
 model MedicineInfo {
-  productId  String         @unique @db.Uuid
-  regNumber  String?        @db.VarChar(100)  // Số đăng ký
-  ingredient String?        @db.VarChar(100)  // Hoạt chất
+  productId  String         @unique @db.Uuid @map("product_id")
+  regNumber  String?        @db.VarChar(100) @map("reg_number")  // Số đăng ký
+  ingredient String?        @db.VarChar(100)   // Hoạt chất
   dosage     String?        @db.VarChar(100)  // Hàm lượng
-  routeId    String?        @db.Uuid        // FK tới MedicineRoute
+  routeId    String?        @db.Uuid @map("route_id")     // FK tới MedicineRoute
 
   // Relations
   product    Product?       @relation(fields: [productId], references: [id])

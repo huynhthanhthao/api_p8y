@@ -17,7 +17,31 @@ export const INVOICE_INCLUDE_FIELDS = {
         updatedBy: true
       },
       include: {
-        invoiceItemLots: true
+        product: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+            deletedAt: true,
+            photos: {
+              select: {
+                id: true,
+                filename: true,
+                path: true
+              },
+              take: 1
+            },
+            barcode: true
+          }
+        },
+        productLot: {
+          omit: {
+            deletedAt: true,
+            deletedBy: true,
+            createdBy: true,
+            updatedBy: true
+          }
+        }
       }
     },
     customer: {

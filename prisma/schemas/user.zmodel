@@ -8,28 +8,29 @@ import 'stock_transaction'
 
 // User model
 model User extends BaseModel {
-  firstName                String             @map("first_name") @db.VarChar(100)
-  lastName                 String?            @map("last_name") @default("") @db.VarChar(100)
-  phone                    String             @db.VarChar(20)
-  storeCode                String             @map("store_code")
-  status                   String             @db.VarChar(50) // ACTIVE, INACTIVE
-  type                     String             @db.VarChar(50) // SUPER_ADMIN, STAFF
-  password                 String             @db.VarChar(255)
-  email                    String?            @db.VarChar(255) @default("")
-  lastLogin                DateTime?          @map("last_login") @db.Timestamptz(6)
-  wareCode                 String?            @map("ware_code") @db.VarChar(50)
-  address                  String?            @db.VarChar(500) @default("")
-  avatarUrl                String?            @db.VarChar(255) @default("") 
+  firstName                 String             @map("first_name") @db.VarChar(100)
+  lastName                  String?            @map("last_name") @default("") @db.VarChar(100)
+  phone                     String             @db.VarChar(20)
+  storeCode                 String             @map("store_code")
+  status                    String             @db.VarChar(50) // ACTIVE, INACTIVE
+  type                      String             @db.VarChar(50) // SUPER_ADMIN, STAFF
+  password                  String             @db.VarChar(255)
+  email                     String?            @db.VarChar(255) @default("")
+  lastLogin                 DateTime?          @map("last_login") @db.Timestamptz(6)
+  wareCode                  String?            @map("ware_code") @db.VarChar(50)
+  address                   String?            @db.VarChar(500) @default("")
+  avatarUrl                 String?            @db.VarChar(255) @default("") 
 
   // Relations - Many-to-many (Prisma tự tạo junction tables)
-  store                    Store              @relation(fields: [storeCode], references: [code])
-  roles                    Role[]
-  branches                 Branch[]
+  store                     Store              @relation(fields: [storeCode], references: [code])
+  roles                     Role[]
+  branches                  Branch[]
 
-  createdInvoices          Invoice[]          @relation("InvoiceCreator")
-  updatedInvoices          Invoice[]          @relation("InvoiceUpdater")
-  createdStockTransactions StockTransaction[] @relation("StockTransactionCreator")
-  updatedStockTransactions StockTransaction[] @relation("StockTransactionUpdater")
+  createdInvoices           Invoice[]          @relation("InvoiceCreator")
+  updatedInvoices           Invoice[]          @relation("InvoiceUpdater")
+  createdStockTransactions  StockTransaction[] @relation("StockTransactionCreator")
+  updatedStockTransactions  StockTransaction[] @relation("StockTransactionUpdater")
+  reviewedStockTransactions StockTransaction[] @relation("StockTransactionReviewer")
 
   @@index([phone, storeCode, deletedAt])
 

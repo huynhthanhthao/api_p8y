@@ -12,35 +12,30 @@ export class UpsertPaymentMethodRequestDto {
   code: PaymentMethodCodeEnum
 
   @IsOptional()
-  @IsNotEmpty({ message: 'Tên chủ tài khoản không được để trống' })
   @IsString({ message: 'Tên chủ tài khoản phải là chuỗi' })
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @MaxLength(255, { message: 'Tên chủ tài khoản không được vượt quá 255 ký tự' })
   bankAccountHolder: string
 
   @IsOptional()
-  @IsNotEmpty({ message: 'Mã bin không được để trống' })
   @IsString({ message: 'Mã bin phải là chuỗi' })
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @MaxLength(20, { message: 'Mã bin không được vượt quá 20 ký tự' })
   bankBin: string
 
   @IsOptional()
-  @IsNotEmpty({ message: 'Mã ngân hàng không được để trống' })
   @IsString({ message: 'Mã ngân hàng phải là chuỗi' })
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @MaxLength(50, { message: 'Mã ngân hàng không được vượt quá 50 ký tự' })
   bankShortName: string
 
   @IsOptional()
-  @IsNotEmpty({ message: 'Số tài khoản không được để trống' })
   @IsString({ message: 'Số tài khoản phải là chuỗi' })
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @MaxLength(50, { message: 'Số tài khoảnkhông được vượt quá 50 ký tự' })
   bankAccount: string
 
   @IsOptional()
-  @IsNotEmpty({ message: 'Trạng thái sử dụng không được để trống' })
   @IsBoolean({ message: 'Trạng thái sử dụng' })
   isActive: boolean
 }

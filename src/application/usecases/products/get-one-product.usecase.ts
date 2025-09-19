@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '@infrastructure/prisma'
 import { Product } from '@common/types'
-import { getProductById } from '@common/utils/get-product-by-id.util'
+import { getProductById } from '@common/utils/products/get-product-by-id.util'
 
 @Injectable()
 export class GetOneProductUseCase {

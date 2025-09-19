@@ -16,6 +16,7 @@ import {
   ProductLocationController,
   ProductLotController,
   ProvinceController,
+  StockTransactionController,
   SupplierController,
   SupplierGroupController
 } from './controllers'
@@ -109,8 +110,8 @@ import {
 import { InvoiceController } from './controllers/invoice.controller'
 import {
   CreateInvoiceUseCase,
-  DeleteInvoiceUseCase,
-  DeleteManyInvoiceUseCase,
+  CancelInvoiceUseCase,
+  CancelManyInvoiceUseCase,
   GetAllInvoiceUseCase,
   GetOneInvoiceUseCase
 } from '@usecases/invoices'
@@ -119,9 +120,17 @@ import {
   DeleteProductLotUseCase,
   DeleteManyProductLotUseCase,
   GetAllProductLotUseCase,
-  GetOneProductLotUseCase,
-  UpdateProductLotUseCase
+  GetOneProductLotUseCase
 } from '@usecases/product-lots'
+import {
+  CreateStockTransactionUseCase,
+  CancelStockTransactionUseCase,
+  CancelManyStockTransactionUseCase,
+  GetAllStockTransactionUseCase,
+  GetOneStockTransactionUseCase,
+  ReviewStockTransactionUseCase,
+  UpdateStockTransactionUseCase
+} from '@usecases/stock-transactions'
 
 const controllers = [
   AuthController,
@@ -138,7 +147,8 @@ const controllers = [
   ProductController,
   PaymentMethodController,
   InvoiceController,
-  ProductLotController
+  ProductLotController,
+  StockTransactionController
 ]
 
 const useCases = [
@@ -235,8 +245,8 @@ const useCases = [
 
   // Invoice
   CreateInvoiceUseCase,
-  DeleteInvoiceUseCase,
-  DeleteManyInvoiceUseCase,
+  CancelInvoiceUseCase,
+  CancelManyInvoiceUseCase,
   GetAllInvoiceUseCase,
   GetOneInvoiceUseCase,
 
@@ -246,7 +256,15 @@ const useCases = [
   DeleteManyProductLotUseCase,
   GetAllProductLotUseCase,
   GetOneProductLotUseCase,
-  UpdateProductLotUseCase
+
+  // StockTransaction
+  CreateStockTransactionUseCase,
+  CancelStockTransactionUseCase,
+  CancelManyStockTransactionUseCase,
+  GetAllStockTransactionUseCase,
+  GetOneStockTransactionUseCase,
+  ReviewStockTransactionUseCase,
+  UpdateStockTransactionUseCase
 ]
 
 @Module({

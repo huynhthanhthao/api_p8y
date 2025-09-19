@@ -1,5 +1,5 @@
 import { PrismaService } from '@infrastructure/prisma'
-import { Branch } from '../types/branch.type'
+import { Branch } from '../../types/branch.type'
 
 export async function getBranchWithUserAccess(
   prisma: PrismaService,

@@ -1,11 +1,12 @@
 import { PrismaService } from '@infrastructure/prisma'
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { CreateInvoiceRequestDto } from '@interface-adapter/dtos/invoinces'
-import { generateCodeModel } from '@common/utils'
+import { generateCodeModel, updateStockQuantity } from '@common/utils'
 import { INVOICE_INCLUDE_FIELDS } from '@common/constants'
 import { HttpException } from '@common/exceptions'
 import { INVOICE_ERROR } from '@common/errors'
 import { Invoice, Product } from '@common/types'
+import { InvoiceStatusEnum, StockCardTypeEnum } from '@common/enums'
 
 @Injectable()
 export class CreateInvoiceUseCase {
@@ -16,9 +17,12 @@ export class CreateInvoiceUseCase {
   }
 
   async execute(data: CreateInvoiceRequestDto, userId: string, branchId: string): Promise<Invoice> {
+    if (data.status === InvoiceStatusEnum.CANCELED)
+      throw new HttpException(HttpStatus.BAD_REQUEST, INVOICE_ERROR.CANNOT_CREATE_CANCELED_INVOICE)
+
     const productIds = data.invoiceItems.map(item => item.productId)
 
-    const productList = (await this.prismaClient.product.findMany({
+    const productList = await this.prismaClient.product.findMany({
       where: {
         id: {
           in: productIds
@@ -32,9 +36,10 @@ export class CreateInvoiceUseCase {
         costPrice: true,
         isStockEnabled: true,
         isLotEnabled: true,
-        isDirectSale: true
+        isDirectSale: true,
+        stockQuantity: true
       }
-    })) as Product[]
+    })
 
     /**
      * Kiểm tra sản phẩm hợp lệ
@@ -47,46 +52,67 @@ export class CreateInvoiceUseCase {
      */
     this.checkMissingProductLotId(data, productList)
 
-    /**
-     * Xử lý cập nhật kho
-     * ...
-     */
+    return await this.prismaClient.$transaction(async (tx: PrismaService) => {
+      const invoice = await tx.invoice.create({
+        data: {
+          code: await generateCodeModel({ model: 'Invoice', branchId }),
+          status: data.status,
+          customerId: data.customerId,
+          discountType: data.discountType,
+          moneyReceived: data.moneyReceived,
+          discountValue: data.discountValue,
+          note: data.note,
+          paymentMethodCode: data.paymentMethodCode,
+          branchId,
+          createdBy: userId,
+          invoiceItems: {
+            create: data.invoiceItems.map(item => ({
+              costPrice: productList.find(p => p.id === item.productId)?.costPrice || 0,
+              salePrice: item.salePrice,
+              discountValue: item.discountValue,
+              quantity: item.quantity,
+              discountType: item.discountType,
+              note: item.note,
+              productId: item.productId,
+              productLotId: item.productLotId
+            }))
+          }
+        },
+        ...INVOICE_INCLUDE_FIELDS
+      })
 
-    return this.prismaClient.invoice.create({
-      data: {
-        code: await generateCodeModel({ model: 'Invoice', branchId }),
-        status: data.status,
-        customerId: data.customerId,
-        discountType: data.discountType,
-        discountValue: data.discountValue,
-        note: data.note,
-        paymentMethodCode: data.paymentMethodCode,
-        branchId,
-        createdBy: userId,
-        invoiceItems: {
-          create: data.invoiceItems.map(item => ({
-            costPrice: productList.find(p => p.id === item.productId)?.costPrice || 0,
-            salePrice: item.salePrice,
-            discountValue: item.discountValue,
-            discountType: item.discountType,
-            note: item.note,
-            productId: item.productId,
-            invoiceItemLots: item.lots?.length
-              ? {
-                  create: item.lots.map(lot => ({
-                    productLotId: lot.productLotId,
-                    quantity: lot.quantity
-                  }))
-                }
-              : undefined
-          }))
+      /**
+       * Xử lý cập nhật kho
+       */
+      for (const item of data.invoiceItems) {
+        const product = productList.find(p => p.id === item.productId)
+        if (!product) continue
+
+        /**
+         * Chỉ cập nhật kho nếu sản phẩm có bật quản lý kho
+         *  */
+        if (product.isStockEnabled) {
+          await updateStockQuantity(
+            {
+              productId: product.id,
+              isLotEnabled: product.isLotEnabled,
+              productLotId: item.productLotId!,
+              quantity: item.quantity
+            },
+            StockCardTypeEnum.INVOICE,
+            tx
+          )
         }
-      },
-      ...INVOICE_INCLUDE_FIELDS
+      }
+
+      return invoice
     })
   }
 
-  private checkMissingProductLotId(data: CreateInvoiceRequestDto, productList: Product[]): void {
+  private checkMissingProductLotId(
+    data: CreateInvoiceRequestDto,
+    productList: Pick<Product, 'id' | 'isLotEnabled' | 'code'>[]
+  ): void {
     for (const product of productList) {
       const item = data.invoiceItems.find(i => i.productId === product.id)
 
@@ -96,13 +122,8 @@ export class CreateInvoiceUseCase {
         /**
          * Quản lý theo lô: bắt buộc có lots, quantity = 0
          */
-        if (!item.lots?.length) {
+        if (!item.productLotId) {
           throw new HttpException(HttpStatus.BAD_REQUEST, INVOICE_ERROR.MISSING_PRODUCT_LOT_ID, [
-            product.code
-          ])
-        }
-        if (item.quantity !== 0) {
-          throw new HttpException(HttpStatus.BAD_REQUEST, INVOICE_ERROR.INVALID_QUANTITY_FOR_LOT, [
             product.code
           ])
         }
@@ -110,16 +131,11 @@ export class CreateInvoiceUseCase {
         /**
          * Không quản lý lô: không được truyền lots
          */
-        if (item.lots?.length) {
+        if (item.productLotId) {
           throw new HttpException(HttpStatus.BAD_REQUEST, INVOICE_ERROR.UNEXPECTED_PRODUCT_LOT, [
             product.code
           ])
         }
-
-        if (item.quantity == 0)
-          throw new HttpException(HttpStatus.BAD_REQUEST, INVOICE_ERROR.INVALID_QUANTITY_NONE_LOT, [
-            product.code
-          ])
       }
     }
   }

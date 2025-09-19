@@ -38,3 +38,14 @@ export const ACCESS_BRANCH_ERROR = {
     message: 'Token không hợp lệ'
   }
 }
+
+export const REFRESH_TOKEN_ERROR = {
+  USER_NOT_FOUND: {
+    code: 'REFRESH_TOKEN_01',
+    message: 'Tài khoản không tồn tại'
+  },
+  USER_IS_INACTIVE: {
+    code: 'REFRESH_TOKEN_02',
+    message: 'Tài khoản đã bị khóa'
+  }
+}

@@ -16,8 +16,7 @@ import {
   DeleteManyProductLotUseCase,
   DeleteProductLotUseCase,
   GetAllProductLotUseCase,
-  GetOneProductLotUseCase,
-  UpdateProductLotUseCase
+  GetOneProductLotUseCase
 } from '@usecases/product-lots'
 import {
   CreateProductLotRequestDto,
@@ -37,7 +36,6 @@ export class ProductLotController {
     private readonly _getAllProductLotUseCase: GetAllProductLotUseCase,
     private readonly _getOneProductLotUseCase: GetOneProductLotUseCase,
     private readonly _createProductLotUseCase: CreateProductLotUseCase,
-    private readonly _updateProductLotUseCase: UpdateProductLotUseCase,
     private readonly _deleteProductLotUseCase: DeleteProductLotUseCase,
     private readonly _deleteManyProductLotUseCase: DeleteManyProductLotUseCase
   ) {}
@@ -48,15 +46,6 @@ export class ProductLotController {
     @Req() req: RequestAccessBranchJWT
   ): Promise<ProductLot> {
     return this._createProductLotUseCase.execute(data, req.userId, req.branchId)
-  }
-
-  @Patch(':id')
-  update(
-    @Param() params: UUIDParamDto,
-    @Body() data: UpdateProductLotRequestDto,
-    @Req() req: RequestAccessBranchJWT
-  ): Promise<ProductLot> {
-    return this._updateProductLotUseCase.execute(params.id, data, req.userId, req.branchId)
   }
 
   @Delete(':id')

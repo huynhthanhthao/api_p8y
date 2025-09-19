@@ -5,7 +5,7 @@ import {
   GetAllProductLotRequestDto,
   GetAllProductLotResponseDto
 } from '@interface-adapter/dtos/product-lots'
-import { getEndOfDay, getStartOfDay } from '@common/helpers'
+import { getEndOfDay } from '@common/helpers'
 
 @Injectable()
 export class GetAllProductLotUseCase {
@@ -19,12 +19,13 @@ export class GetAllProductLotUseCase {
     data: GetAllProductLotRequestDto,
     branchId: string
   ): Promise<GetAllProductLotResponseDto> {
-    const { page, perPage, keyword, orderBy, sortBy, isExpired, minQuantity } = data
+    const { page, perPage, keyword, orderBy, sortBy, isExpired, minStockQuantity, productId } = data
 
     const where: Prisma.ProductLotWhereInput = {
       branchId,
-      quantity: {
-        gte: minQuantity
+      productId,
+      stockQuantity: {
+        gte: minStockQuantity
       }
     }
 

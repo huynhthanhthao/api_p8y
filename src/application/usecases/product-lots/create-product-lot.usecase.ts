@@ -36,7 +36,6 @@ export class CreateProductLotUseCase {
       data: {
         name: data.name,
         expiryAt: data.expiryAt,
-        quantity: data.quantity,
         productId: data.productId,
         createdBy: userId,
         branchId

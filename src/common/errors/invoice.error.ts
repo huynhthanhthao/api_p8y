@@ -11,16 +11,20 @@ export const INVOICE_ERROR = {
     code: 'INVOICE_03',
     message: 'Sản phẩm yêu cầu lô nhưng không được cung cấp'
   },
-  INVALID_QUANTITY_FOR_LOT: {
+  SOME_INVOICES_CANCELED: {
     code: 'INVOICE_04',
-    message: 'Sản phẩm quản lý theo lô không được phép có số lượng khác 0'
+    message: 'Một số sản phẩm đã hủy hoặc không cho phép bán'
+  },
+  INVOICE_CANCELED: {
+    code: 'INVOICE_05',
+    message: 'Hóa đơn đã hủy'
+  },
+  CANNOT_CREATE_CANCELED_INVOICE: {
+    code: 'INVOICE_06',
+    message: 'Không thể tạo hóa đơn với trạng thái hủy'
   },
   UNEXPECTED_PRODUCT_LOT: {
-    code: 'INVOICE_05',
+    code: 'INVOICE_07',
     message: 'Không thể khai báo lô cho sản phẩm không quản lý theo lô'
-  },
-  INVALID_QUANTITY_NONE_LOT: {
-    code: 'INVOICE_06',
-    message: 'Số lượng là bắt buộc'
   }
 }

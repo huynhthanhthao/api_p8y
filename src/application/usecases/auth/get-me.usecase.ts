@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '@infrastructure/prisma'
-import { getUserInfo } from '@common/utils/get-user-info.util'
+import { getUserInfo } from '@common/utils/auth/get-user-info.util'
 import { UserTypeEnum } from '@common/enums'
 import { getStoreWithAccessibleBranches } from '@common/utils'
 import { Branch } from '@common/types'

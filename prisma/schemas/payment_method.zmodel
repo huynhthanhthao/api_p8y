@@ -5,11 +5,11 @@ import "user"
 model PaymentMethod {
   code              String    @db.VarChar(50) // Ví dụ: CASH, BANK_TRANSFER
   branchId          String    @map("branch_id") @db.Uuid
-  isActive          Boolean   @default(false)
-  bankAccountHolder String?   @db.VarChar(255)   // Chủ tài khoản
-  bankBin           String?   @db.VarChar(20)    // Mã BIN
-  bankShortName     String?   @db.VarChar(50)    // Tên viết tắt: VCB, ACB
-  bankAccount       String?   @db.VarChar(50)    // Số tài khoản/thẻ
+  isActive          Boolean   @default(false) @map("is_active")
+  bankAccountHolder String?   @db.VarChar(255) @map("bank_account_holder")  // Chủ tài khoản
+  bankBin           String?   @db.VarChar(20) @map("bank_bin")     // Mã BIN
+  bankShortName     String?   @db.VarChar(50) @map("bank_short_name")  // Tên viết tắt: VCB, ACB
+  bankAccount       String?   @db.VarChar(50) @map("bank_account")   // Số tài khoản/thẻ
 
   // Relations
   invoices          Invoice[]

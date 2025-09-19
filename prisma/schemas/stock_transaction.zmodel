@@ -6,23 +6,25 @@ import 'supplier'
 import 'user'
 
 model StockTransaction extends BaseModel {
-  branchId      String      @db.Uuid
+  branchId      String      @db.Uuid @map("branch_id")
   status        String      @default("PENDING")
   code          String
   type          String
-  discountType  String?     @default("VALUE")
-  discountValue Float?      @default(0)
-  supplierId    String?     @db.Uuid
-  supplier      Supplier?   @relation(fields: [supplierId], references: [id])
+  discountType  String?     @default("VALUE") @map("discount_type")
+  discountValue Float?      @default(0) @map("discount_value")
+  supplierId    String?     @db.Uuid @map("supplier_id")
   note          String?     @db.Text
-  transactedAt  DateTime?   @default(now())
+  transactedAt  DateTime?   @default(now()) @map("transacted_at") @db.Timestamptz(6)
+  reviewedBy    String?     @map("reviewed_by") @db.Uuid
   
   // Relations
+  supplier      Supplier?   @relation(fields: [supplierId], references: [id])
   branch        Branch      @relation(fields: [branchId], references: [id])
-  items         StockItem[]
+  stockItems    StockItem[]
   stockCards    StockCard[]
   creator       User?       @relation("StockTransactionCreator", fields: [createdBy], references: [id])
   updater       User?       @relation("StockTransactionUpdater", fields: [updatedBy], references: [id])
+  reviewer      User?       @relation("StockTransactionReviewer", fields: [reviewedBy], references: [id])
 
   @@index([status, branchId, deletedAt])
   @@index([branchId, deletedAt])
