@@ -18,5 +18,9 @@ export const PRODUCT_ERROR = {
   MAX_STOCK_NOT_GREATER_THAN_MIN_STOCK: {
     code: 'PRODUCT_05',
     message: 'Tồn tối đa phải lớn hơn tồn tối thiểu'
+  },
+  STOCK_CARD_EXISTS: {
+    code: 'PRODUCT_06',
+    message: 'Đã phát sinh giao dịch không thể cập nhập hình thức quản lý kho'
   }
 }

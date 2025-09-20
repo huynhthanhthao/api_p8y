@@ -1,6 +1,9 @@
 import { PrismaService } from '@infrastructure/prisma'
 import { HttpStatus, Injectable } from '@nestjs/common'
-import { CreateInvoiceRequestDto } from '@interface-adapter/dtos/invoinces'
+import {
+  CreateInvoiceItemRequestDto,
+  CreateInvoiceRequestDto
+} from '@interface-adapter/dtos/invoinces'
 import { generateCodeModel, updateStockQuantity } from '@common/utils'
 import { INVOICE_INCLUDE_FIELDS } from '@common/constants'
 import { HttpException } from '@common/exceptions'
@@ -41,10 +44,12 @@ export class CreateInvoiceUseCase {
       }
     })
 
+    const uniqueProductIds = [...new Set(data.invoiceItems.map(p => p.productId))]
+
     /**
      * Kiểm tra sản phẩm hợp lệ
      */
-    if (productIds.length !== productList.length)
+    if (uniqueProductIds.length !== productList.length)
       throw new HttpException(HttpStatus.NOT_FOUND, INVOICE_ERROR.SOME_INVOICES_NOT_FOUND)
 
     /**
@@ -84,7 +89,7 @@ export class CreateInvoiceUseCase {
       /**
        * Xử lý cập nhật kho
        */
-      for (const item of data.invoiceItems) {
+      for (const item of this.groupInvoiceItems(data.invoiceItems)) {
         const product = productList.find(p => p.id === item.productId)
         if (!product) continue
 
@@ -105,6 +110,15 @@ export class CreateInvoiceUseCase {
         }
       }
 
+      await tx.stockCard.create({
+        data: {
+          type: StockCardTypeEnum.INVOICE,
+          products: {
+            connect: uniqueProductIds.map(id => ({ id }))
+          },
+          invoiceId: invoice.id
+        }
+      })
       return invoice
     })
   }
@@ -138,5 +152,23 @@ export class CreateInvoiceUseCase {
         }
       }
     }
+  }
+
+  private groupInvoiceItems(
+    invoiceItems: CreateInvoiceItemRequestDto[]
+  ): CreateInvoiceItemRequestDto[] {
+    const map = new Map<string, CreateInvoiceItemRequestDto>()
+
+    for (const item of invoiceItems) {
+      const key = `${item.productId}-${item.productLotId ?? 'no-lot'}`
+      if (map.has(key)) {
+        const existing = map.get(key)!
+        existing.quantity += item.quantity
+      } else {
+        map.set(key, { ...item })
+      }
+    }
+
+    return Array.from(map.values())
   }
 }

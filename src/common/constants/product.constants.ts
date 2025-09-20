@@ -64,6 +64,9 @@ export const PRODUCT_INCLUDE_FIELDS = {
         deletedBy: true,
         createdBy: true,
         updatedBy: true
+      },
+      orderBy: {
+        createdAt: 'asc'
       }
     }
   }

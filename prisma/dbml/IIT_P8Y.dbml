@@ -363,7 +363,7 @@ Table product_lots {
 Table stock_cards {
   id String [pk]
   transactionId String
-  orderId String
+  invoiceId String
   type String [not null]
   createdAt DateTime [default: `now()`, not null]
   products products [not null]

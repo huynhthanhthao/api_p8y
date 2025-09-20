@@ -29,7 +29,10 @@ export class UpdateProductUseCase {
         branchId
       },
       include: {
-        variants: true
+        variants: true,
+        stockCards: {
+          take: 1
+        }
       }
     })
 
@@ -38,6 +41,15 @@ export class UpdateProductUseCase {
      */
     if (!existingProduct) {
       throw new HttpException(HttpStatus.NOT_FOUND, PRODUCT_ERROR.PRODUCT_NOT_FOUND)
+    }
+
+    /**
+     * Check cập nhật số lượng kho
+     */
+    if (data.isLotEnabled && data.isLotEnabled !== existingProduct.isLotEnabled) {
+      if (existingProduct.stockCards.length > 0) {
+        throw new HttpException(HttpStatus.BAD_REQUEST, PRODUCT_ERROR.STOCK_CARD_EXISTS)
+      }
     }
 
     /**
