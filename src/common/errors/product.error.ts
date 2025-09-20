@@ -22,5 +22,17 @@ export const PRODUCT_ERROR = {
   STOCK_CARD_EXISTS: {
     code: 'PRODUCT_06',
     message: 'Đã phát sinh giao dịch không thể cập nhập hình thức quản lý kho'
+  },
+  STOCK_QUANTITY_NOT_ALLOWED: {
+    code: 'PRODUCT_09',
+    message: 'Sản phẩm quản lý theo lô không được khai báo tồn kho tổng'
+  },
+  STOCK_QUANTITY_REQUIRED: {
+    code: 'PRODUCT_10',
+    message: 'Sản phẩm không quản lý theo lô phải khai báo tồn kho tổng'
+  },
+  LOT_REQUIRES_ENABLE_STOCK: {
+    code: 'PRODUCT_11',
+    message: 'Sản phẩm quản lý theo lô bắt buộc phải bật quản lý kho'
   }
 }

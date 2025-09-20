@@ -3,7 +3,7 @@ import { PrismaService } from '@infrastructure/prisma'
 import { Invoice } from '@common/types'
 import { HttpException } from '@common/exceptions'
 import { INVOICE_ERROR } from '@common/errors'
-import { INVOICE_INCLUDE_FIELDS, USER_INCLUDE_FIELDS } from '@common/constants'
+import { INVOICE_INCLUDE_FIELDS } from '@common/constants'
 
 @Injectable()
 export class GetOneInvoiceUseCase {

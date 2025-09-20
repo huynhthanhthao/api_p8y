@@ -1,6 +1,11 @@
 import { PrismaService } from '@infrastructure/prisma'
 import { Injectable } from '@nestjs/common'
-import { generateCodeIncrease, generateCodeModel, validateUniqueFields } from '@common/utils'
+import {
+  generateCodeIncrease,
+  generateCodeModel,
+  validateUniqueFields,
+  validateValidEnableLot
+} from '@common/utils'
 import { CreateProductRequestDto } from '@interface-adapter/dtos/products'
 import { validateStockRange } from '@common/utils/products/validate-stock-range'
 import { getProductById } from '@common/utils/products/get-product-by-id.util'
@@ -17,13 +22,11 @@ export class CreateProductUseCase {
   async execute(data: CreateProductRequestDto, userId: string, branchId: string): Promise<Product> {
     /**
      * Kiểm tra thông tin tồn kho
-     */
-    validateStockRange(data.minStock, data.maxStock)
-
-    /**
+     * Kiểm tra số lượng kho không được để trống nếu quản lý kho không theo lô
      * Kiểm tra mã sản phẩm, barcode không trùng
      */
-
+    validateStockRange(data.minStock, data.maxStock)
+    validateValidEnableLot(data.isLotEnabled, data.isStockEnabled, data.stockQuantity)
     await validateUniqueFields(this.prismaClient, data, branchId)
 
     const productCode = data.code || (await generateCodeModel({ model: 'Product', branchId }))
@@ -31,7 +34,7 @@ export class CreateProductUseCase {
     /**
      * Sử dụng transaction để đảm bảo tính toàn vẹn dữ liệu
      */
-    const newProduct = await this.prismaClient.$transaction(async tx => {
+    const result = await this.prismaClient.$transaction(async tx => {
       const newProduct = await tx.product.create({
         data: {
           name: data.name,
@@ -124,6 +127,6 @@ export class CreateProductUseCase {
       return newProduct
     })
 
-    return await getProductById(this.prismaClient, newProduct.id, branchId)
+    return await getProductById(this.prismaClient, result.id, branchId)
   }
 }

@@ -3,11 +3,17 @@ import { HttpStatus, Injectable } from '@nestjs/common'
 import { HttpException } from '@common/exceptions'
 import { UpdateProductRequestDto } from '@interface-adapter/dtos/products'
 import { PRODUCT_ERROR } from '@common/errors'
-import { generateCodeIncrease, generateCodeModel, validateUniqueFields } from '@common/utils'
+import {
+  generateCodeIncrease,
+  generateCodeModel,
+  validateUniqueFields,
+  validateValidEnableLot
+} from '@common/utils'
 import { validateStockRange } from '@common/utils/products/validate-stock-range'
 import { PRODUCT_INCLUDE_FIELDS } from '@common/constants'
 import { Prisma } from '@prisma/client'
 import { Product } from '@common/types'
+import { StockCardTypeEnum, StockTransactionStatusEnum } from '@common/enums'
 
 @Injectable()
 export class UpdateProductUseCase {
@@ -31,7 +37,12 @@ export class UpdateProductUseCase {
       include: {
         variants: true,
         stockCards: {
-          take: 1
+          take: 1,
+          where: {
+            type: {
+              not: StockCardTypeEnum.STOCK_TRANSACTION_CHECK
+            }
+          }
         }
       }
     })
@@ -44,7 +55,7 @@ export class UpdateProductUseCase {
     }
 
     /**
-     * Check cập nhật số lượng kho
+     * Check cập nhật trạng thái quản lý kho
      */
     if (data.isLotEnabled && data.isLotEnabled !== existingProduct.isLotEnabled) {
       if (existingProduct.stockCards.length > 0) {
@@ -54,15 +65,18 @@ export class UpdateProductUseCase {
 
     /**
      * Kiểm tra thông tin tồn kho
-     */
-    validateStockRange(
-      data.minStock || existingProduct.minStock,
-      data.maxStock || existingProduct.maxStock
-    )
-
-    /**
+     * Kiểm tra số lượng kho không được để trống nếu quản lý kho không theo lô
      * Kiểm tra mã sản phẩm, barcode không trùng
      */
+    validateStockRange(
+      data.minStock ?? existingProduct.minStock,
+      data.maxStock ?? existingProduct.maxStock
+    )
+    validateValidEnableLot(
+      data.isLotEnabled ?? existingProduct.isLotEnabled,
+      data.isStockEnabled ?? existingProduct.isStockEnabled,
+      data.stockQuantity
+    )
     await validateUniqueFields(this.prismaClient, data, branchId, id)
 
     /**
@@ -74,6 +88,38 @@ export class UpdateProductUseCase {
 
     return await this.prismaClient.$transaction(async tx => {
       /**
+       * check cập nhật số lượng kho
+       */
+      if (data.stockQuantity && data.stockQuantity !== existingProduct.stockQuantity) {
+        await tx.stockTransaction.create({
+          data: {
+            code: await generateCodeModel({ model: 'StockTransaction', branchId, prefix: 'KK' }),
+            type: StockCardTypeEnum.STOCK_TRANSACTION_CHECK,
+            note: 'Cập nhật số lượng kho',
+            createdBy: userId,
+            reviewedBy: userId,
+            status: StockTransactionStatusEnum.COMPLETED,
+            stockItems: {
+              create: {
+                previousStock: existingProduct.stockQuantity,
+                productId: existingProduct.id,
+                quantity: data.stockQuantity
+              }
+            },
+            stockCards: {
+              create: {
+                type: StockCardTypeEnum.STOCK_TRANSACTION_CHECK,
+                products: {
+                  connect: { id: existingProduct.id }
+                }
+              }
+            },
+            branchId
+          }
+        })
+      }
+
+      /**
        * Xử lý cập nhật sản phẩm cùng loại
        */
       if (data.variants) {
@@ -81,7 +127,7 @@ export class UpdateProductUseCase {
       }
 
       /**
-       * Xử lý cập nhật sản phẩm cùng loại
+       * cập nhật sản phẩm
        */
       return await tx.product.update({
         where: {
@@ -105,11 +151,14 @@ export class UpdateProductUseCase {
           minStock: data.minStock,
           package: data.package,
           country: data.country,
-          stockQuantity: data.stockQuantity,
           manufacturerId: data.manufacturerId,
           unitName: data.unitName,
           updatedBy: userId,
           branchId,
+          stockQuantity: data.stockQuantity,
+          ...(data.isLotEnabled && {
+            stockQuantity: null
+          }),
           ...(data.photoIds && {
             photos: {
               set: data.photoIds.map(id => ({ id }))

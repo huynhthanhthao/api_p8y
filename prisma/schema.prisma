@@ -399,7 +399,6 @@ model StockItem {
   discountType     String?          @default("VALUE") @map("discount_type")
   discountValue    Float?           @default(0) @map("discount_value")
   previousStock    Float?           @map("previous_stock")
-  finalStock       Float?           @map("final_stock")
   productLotId     String?          @map("product_lot_id") @db.Uuid()
   createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt        DateTime         @updatedAt() @map("updated_at") @db.Timestamptz(6)
