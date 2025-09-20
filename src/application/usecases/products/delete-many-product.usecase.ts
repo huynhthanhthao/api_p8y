@@ -41,7 +41,7 @@ export class DeleteManyProductUseCase {
         data: {
           deletedBy: userId,
           code: `del_${product.code}_${generateTimesTamp()}`,
-          barcode: `del_${product.barcode}_${generateTimesTamp()}`
+          barcode: product.barcode || `del_${product.barcode}_${generateTimesTamp()}`
         }
       })
     )

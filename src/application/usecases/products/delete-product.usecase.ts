@@ -25,7 +25,7 @@ export class DeleteProductUseCase {
       where: { id, branchId },
       data: {
         code: `del_${product.code}_${generateTimesTamp()}`,
-        barcode: `del_${product.code}_${generateTimesTamp()}`,
+        barcode: product.barcode || `del_${product.barcode}_${generateTimesTamp()}`,
         deletedBy: userId
       }
     })
