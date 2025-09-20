@@ -16,9 +16,8 @@ export function validateValidEnableLot(
   if (isLotEnabled && typeof stockQuantity === 'number') {
     throw new HttpException(HttpStatus.BAD_REQUEST, PRODUCT_ERROR.STOCK_QUANTITY_NOT_ALLOWED)
   }
-  console.log(isLotEnabled, isStockEnabled, stockQuantity, 123)
 
-  if (!isLotEnabled && !stockQuantity) {
+  if (isStockEnabled && !isLotEnabled && typeof stockQuantity !== 'number') {
     throw new HttpException(HttpStatus.BAD_REQUEST, PRODUCT_ERROR.STOCK_QUANTITY_REQUIRED)
   }
 }

@@ -9,7 +9,6 @@ import {
   checkMissingProductLotId,
   generateCodeModel,
   getStockCardType,
-  groupStockItems,
   processHandleStockItems
 } from '@common/utils'
 import { StockTransactionStatusEnum, StockTransactionTypeEnum } from '@common/enums'
@@ -134,7 +133,7 @@ export class UpdateStockTransactionUseCase {
            */
           processHandleStockItems(
             stockTransaction.type as StockTransactionTypeEnum,
-            groupStockItems(data.stockItems),
+            data.stockItems,
             productList,
             tx
           ),

@@ -56,12 +56,41 @@ export class CreateStockTransactionUseCase {
      * Check sản phẩm lô
      * Check sản phẩm có bật quản lý kho
      */
-    checkMissingProductLotId(data, productList)
     checkInventoryEnabled(data, productList)
+    checkMissingProductLotId(data, productList)
     checkDuplicateProductId(data.type, data.stockItems, productList)
 
     return await this.prismaClient.$transaction(async (tx: PrismaService) => {
-      const stockTransaction = await tx.stockTransaction.create({
+      /**
+       * Xử lý nếu hoàn thành phiếu
+       */
+      if (data.status === StockTransactionStatusEnum.COMPLETED)
+        await Promise.all([
+          /**
+           * Xử lý stock item và cập nhật số lượng kho
+           */
+          processHandleStockItems(
+            data.type as StockTransactionTypeEnum,
+            data.stockItems,
+            productList,
+            tx
+          ),
+
+          /**
+           * Nếu complete, tạo thẻ kho
+           */
+          data.status === StockTransactionStatusEnum.COMPLETED &&
+            tx.stockCard.create({
+              data: {
+                products: {
+                  connect: uniqueProductIds.map(id => ({ id }))
+                },
+                type: getStockCardType(data.type)
+              }
+            })
+        ])
+
+      return await tx.stockTransaction.create({
         data: {
           code: data.code || (await this.generateCode(data.type, branchId)),
           type: data.type,
@@ -94,37 +123,6 @@ export class CreateStockTransactionUseCase {
         },
         ...STOCK_TRANSACTION_INCLUDE_FIELDS
       })
-
-      /**
-       * Xử lý nếu hoàn thành phiếu
-       */
-      if (data.status === StockTransactionStatusEnum.COMPLETED)
-        await Promise.all([
-          /**
-           * Xử lý stock item và cập nhật số lượng kho
-           */
-          processHandleStockItems(
-            stockTransaction.type as StockTransactionTypeEnum,
-            groupStockItems(data.stockItems),
-            productList,
-            tx
-          ),
-
-          /**
-           * Nếu complete, tạo thẻ kho
-           */
-          data.status === StockTransactionStatusEnum.COMPLETED &&
-            tx.stockCard.create({
-              data: {
-                products: {
-                  connect: uniqueProductIds.map(id => ({ id }))
-                },
-                type: getStockCardType(data.type)
-              }
-            })
-        ])
-
-      return stockTransaction
     })
   }
 

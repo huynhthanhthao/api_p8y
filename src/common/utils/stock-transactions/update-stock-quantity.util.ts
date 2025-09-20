@@ -20,7 +20,7 @@ interface StockInputWithoutLot extends BaseStockInput {
   isLotEnabled: false
 }
 
-type StockInput = StockInputWithLot | StockInputWithoutLot
+export type StockInput = StockInputWithLot | StockInputWithoutLot
 
 export async function updateStockQuantity(
   data: StockInput,

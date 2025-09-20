@@ -8,7 +8,14 @@ export const PRODUCT_INCLUDE_FIELDS = {
     updatedBy: true
   },
   include: {
-    manufacturer: true,
+    manufacturer: {
+      omit: {
+        deletedAt: true,
+        deletedBy: true,
+        createdBy: true,
+        updatedBy: true
+      }
+    },
     medicineInfo: {
       include: {
         route: {

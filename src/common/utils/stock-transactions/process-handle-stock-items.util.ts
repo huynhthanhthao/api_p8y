@@ -1,12 +1,13 @@
+import { PrismaService } from '@infrastructure/prisma'
 import { StockTransactionTypeEnum } from '@common/enums'
 import { PRODUCT_ERROR } from '@common/errors'
-import { Product, StockTransaction } from '@common/types'
+import { Product } from '@common/types'
 import { StockItemRequestDto } from '@interface-adapter/dtos/stock-transactions'
 import { HttpStatus } from '@nestjs/common'
 import { getStockCardType } from './get-stock-card-type.util'
 import { updateStockQuantity } from './update-stock-quantity.util'
 import { HttpException } from '@common/exceptions'
-import { PrismaService } from '@infrastructure/prisma'
+import { groupStockItems } from './grouped-stock-item.util'
 
 export async function processHandleStockItems(
   stockTransactionType: StockTransactionTypeEnum,
@@ -19,17 +20,26 @@ export async function processHandleStockItems(
   )
 
   /**
-   * Xử lý tuần tự để đảm bảo cập nhật tồn kho đúng
+   * Group stock items trước
    */
+  const stockItemsGrouped = groupStockItems(stockItems)
 
-  for (const stockItem of stockItems) {
-    const productTarget = productMap.get(stockItem.productId)
-
-    if (!productTarget) {
+  /**
+   * Kiểm tra tất cả products tồn tại một lần
+   */
+  for (const stockItem of stockItemsGrouped) {
+    if (!productMap.has(stockItem.productId)) {
       throw new HttpException(HttpStatus.NOT_FOUND, PRODUCT_ERROR.PRODUCT_NOT_FOUND)
     }
+  }
 
-    const stockCardType = getStockCardType(stockTransactionType as StockTransactionTypeEnum)
+  /**
+   * Xử lý tất cả stock items song song
+   */
+  const updatePromises = stockItemsGrouped.map(async stockItem => {
+    const productTarget = productMap.get(stockItem.productId)!
+
+    const stockCardType = getStockCardType(stockTransactionType)
 
     const stockInput = productTarget.isLotEnabled
       ? {
@@ -44,6 +54,8 @@ export async function processHandleStockItems(
           quantity: stockItem.quantity
         }
 
-    await updateStockQuantity(stockInput, stockCardType, tx)
-  }
+    return updateStockQuantity(stockInput, stockCardType, tx)
+  })
+
+  await Promise.all(updatePromises)
 }
