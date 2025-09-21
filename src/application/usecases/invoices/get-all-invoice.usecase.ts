@@ -55,7 +55,8 @@ export class GetAllInvoiceUseCase {
         orderBy: { [sortBy]: orderBy },
         ...INVOICE_INCLUDE_FIELDS
       },
-      { page, perPage }
+      { page, perPage },
+      false
     )
   }
 }

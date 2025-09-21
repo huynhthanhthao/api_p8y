@@ -28,12 +28,13 @@ const softDelete = createSoftDeleteExtension({
     TransportInfo: true,
     Manufacturer: true,
     StockTransaction: true,
+    StockCard: true,
     ProductLot: true
   },
   defaultConfig: {
     field: 'deletedAt',
     allowToOneUpdates: true,
-    allowCompoundUniqueIndexWhere: true,
+
     createValue: deleted => {
       if (deleted) return new Date()
       return null
@@ -87,13 +88,13 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     await this.$disconnect()
   }
 
-  // Sửa thành arrow function để khớp với property signature
   findManyWithPagination = async <T extends keyof PrismaClient>(
     model: T,
     queryArgs: AnyObject = {},
-    paginationArgs: PaginationArgs = { page: 1, perPage: PAGINATE_DEFAULT_PER_PAGE }
+    paginationArgs: PaginationArgs = { page: 1, perPage: PAGINATE_DEFAULT_PER_PAGE },
+    useSoftDeleteClient: boolean = true
   ) => {
-    const prismaModel = this.client[model] as PrismaModelDelegate
+    const prismaModel = (useSoftDeleteClient ? this.client : this)[model] as PrismaModelDelegate
     return customPaginate(prismaModel, queryArgs, paginationArgs)
   }
 }

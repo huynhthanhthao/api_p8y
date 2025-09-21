@@ -98,10 +98,6 @@ export class CreateStockTransactionRequestDto {
   @IsDate({ message: 'Thời gian giao dịch không đúng định dạng' })
   transactedAt: Date
 
-  @IsOptional()
-  @IsBoolean({ message: 'Trạng thái hoàn thành phải là kiểu Boolean' })
-  isCompeleted: boolean = false
-
   @IsNotEmpty({ message: 'Danh sách sản phẩm không được để trống' })
   @IsArray({ message: 'Danh sách sản phẩm phải là mảng' })
   @ValidateNested({ each: true })

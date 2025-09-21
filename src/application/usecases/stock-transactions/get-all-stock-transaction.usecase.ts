@@ -35,7 +35,8 @@ export class GetAllStockTransactionUseCase {
         orderBy: { [sortBy]: orderBy },
         ...STOCK_TRANSACTION_INCLUDE_FIELDS
       },
-      { page, perPage }
+      { page, perPage },
+      false
     )
   }
 }
