@@ -132,7 +132,6 @@ import {
   CancelManyStockTransactionUseCase,
   GetAllStockTransactionUseCase,
   GetOneStockTransactionUseCase,
-  ReviewStockTransactionUseCase,
   UpdateStockTransactionUseCase
 } from '@usecases/stock-transactions'
 import {
@@ -287,7 +286,6 @@ const useCases = [
   CancelManyStockTransactionUseCase,
   GetAllStockTransactionUseCase,
   GetOneStockTransactionUseCase,
-  ReviewStockTransactionUseCase,
   UpdateStockTransactionUseCase,
 
   // User

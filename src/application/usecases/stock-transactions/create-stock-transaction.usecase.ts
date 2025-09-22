@@ -9,7 +9,6 @@ import {
   checkMissingProductLotId,
   generateCodeModel,
   getStockCardType,
-  groupStockItems,
   processHandleStockItems
 } from '@common/utils'
 import { PrismaService } from '@infrastructure/prisma'
@@ -63,28 +62,16 @@ export class CreateStockTransactionUseCase {
     return await this.prismaClient.$transaction(async (tx: PrismaService) => {
       /**
        * Xử lý nếu hoàn thành phiếu
-       * stock item và cập nhật số lượng kho và  tạo thẻ kho
        */
       if (data.status === StockTransactionStatusEnum.COMPLETED)
-        await Promise.all([
-          processHandleStockItems(
-            data.type as StockTransactionTypeEnum,
-            data.stockItems,
-            productList,
-            tx
-          ),
-          tx.stockCard.create({
-            data: {
-              products: {
-                connect: uniqueProductIds.map(id => ({ id }))
-              },
-              type: getStockCardType(data.type),
-              branchId
-            }
-          })
-        ])
+        processHandleStockItems(
+          data.type as StockTransactionTypeEnum,
+          data.stockItems,
+          productList,
+          tx
+        )
 
-      return await tx.stockTransaction.create({
+      const transaction = await tx.stockTransaction.create({
         data: {
           code: data.code || (await this.generateCode(data.type, branchId)),
           type: data.type,
@@ -120,6 +107,23 @@ export class CreateStockTransactionUseCase {
         },
         ...STOCK_TRANSACTION_INCLUDE_FIELDS
       })
+
+      /**
+       * Tạo thẻ kho
+       */
+      if (data.status === StockTransactionStatusEnum.COMPLETED)
+        await tx.stockCard.create({
+          data: {
+            products: {
+              connect: uniqueProductIds.map(id => ({ id }))
+            },
+            type: getStockCardType(data.type),
+            branchId,
+            transactionId: transaction.id
+          }
+        })
+
+      return transaction
     })
   }
 

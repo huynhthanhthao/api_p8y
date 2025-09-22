@@ -146,7 +146,8 @@ export class UpdateStockTransactionUseCase {
                   connect: uniqueProductIds.map(id => ({ id }))
                 },
                 type: getStockCardType(data.type),
-                branchId
+                branchId,
+                transactionId: id
               }
             })
         ])
@@ -159,6 +160,7 @@ export class UpdateStockTransactionUseCase {
           discountValue: data.discountValue,
           note: data.note,
           supplierId: data.supplierId,
+          status: data.status,
           transactedAt: data.transactedAt,
           updatedBy: userId,
           ...(data.status === StockTransactionStatusEnum.COMPLETED && {

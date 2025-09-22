@@ -6,7 +6,6 @@ import {
   CancelStockTransactionUseCase,
   GetAllStockTransactionUseCase,
   GetOneStockTransactionUseCase,
-  ReviewStockTransactionUseCase,
   UpdateStockTransactionUseCase
 } from '@usecases/stock-transactions'
 import { AccessTokenGuard } from '@common/guards/access-token.guard'
@@ -16,8 +15,7 @@ import { StockTransaction } from '@common/types'
 import {
   CreateStockTransactionRequestDto,
   GetAllStockTransactionRequestDto,
-  GetAllStockTransactionResponseDto,
-  UpdateStockTransactionRequestDto
+  GetAllStockTransactionResponseDto
 } from '@interface-adapter/dtos/stock-transactions'
 
 @Controller('stock-transactions')
@@ -28,7 +26,6 @@ export class StockTransactionController {
     private readonly _getOneStockTransactionUseCase: GetOneStockTransactionUseCase,
     private readonly _createStockTransactionUseCase: CreateStockTransactionUseCase,
     private readonly _CancelStockTransactionUseCase: CancelStockTransactionUseCase,
-    private readonly _ReviewStockTransactionUseCase: ReviewStockTransactionUseCase,
     private readonly _cancelManyStockTransactionUseCase: CancelManyStockTransactionUseCase,
     private readonly _updateStockTransactionUseCase: UpdateStockTransactionUseCase
   ) {}
@@ -53,14 +50,6 @@ export class StockTransactionController {
   @Post(':id/cancel')
   cancel(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<string> {
     return this._CancelStockTransactionUseCase.execute(params.id, req.userId, req.branchId)
-  }
-
-  @Post(':id/review')
-  review(
-    @Param() params: UUIDParamDto,
-    @Req() req: RequestAccessBranchJWT
-  ): Promise<StockTransaction> {
-    return this._ReviewStockTransactionUseCase.execute(params.id, req.userId, req.branchId)
   }
 
   @Post()
