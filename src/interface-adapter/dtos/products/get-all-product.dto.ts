@@ -3,7 +3,7 @@ import { PaginationResponseDto } from '@common/dtos/pagination-response.dto'
 import { ProductTypeEnum } from '@common/enums/product.enum'
 import { Product } from '@common/types'
 import { Transform, TransformFnParams } from 'class-transformer'
-import { IsBoolean, IsOptional, IsUUID } from 'class-validator'
+import { IsBoolean, IsEnum, IsOptional, IsUUID } from 'class-validator'
 
 export class GetAllProductRequestDto extends PaginationQueryDto {
   @IsOptional()
@@ -22,11 +22,11 @@ export class GetAllProductRequestDto extends PaginationQueryDto {
 
   @IsOptional()
   @Transform(({ value }: TransformFnParams) => {
-    return value?.split(',').map((id: ProductTypeEnum) => id.trim())
+    return value?.split(',').map((type: ProductTypeEnum) => type.trim())
   })
-  @IsUUID('4', {
-    each: true,
-    message: `Loại sản phẩm phải là một trong: ${Object.values(ProductTypeEnum).join(', ')}`
+  @IsEnum(ProductTypeEnum, {
+    message: `Loại sản phẩm phải là một trong: ${Object.values(ProductTypeEnum).join(', ')}`,
+    each: true
   })
   types: ProductTypeEnum[]
 
@@ -41,7 +41,7 @@ export class GetAllProductRequestDto extends PaginationQueryDto {
   isParent: boolean
 
   @IsOptional()
-  @IsBoolean({ message: 'isStockEnabled là giá trị boolean' })
+  @IsBoolean({ message: 'isParent là giá trị boolean' })
   @Transform(({ value }: TransformFnParams) => value === 'true' || value === true)
   isStockEnabled: boolean
 }
