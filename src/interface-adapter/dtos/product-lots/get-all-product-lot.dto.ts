@@ -1,8 +1,8 @@
 import { PaginationQueryDto } from '@common/dtos/pagination-query.dto'
 import { PaginationResponseDto } from '@common/dtos/pagination-response.dto'
 import { ProductLot } from '@common/types'
-import { Transform, TransformFnParams } from 'class-transformer'
-import { IsOptional, IsBoolean, IsInt, Min, IsUUID } from 'class-validator'
+import { Transform, TransformFnParams, Type } from 'class-transformer'
+import { IsOptional, IsBoolean, IsInt, Min, IsUUID, IsDate } from 'class-validator'
 
 export class GetAllProductLotRequestDto extends PaginationQueryDto {
   @IsOptional()
@@ -19,6 +19,24 @@ export class GetAllProductLotRequestDto extends PaginationQueryDto {
   @IsOptional()
   @IsUUID('4', { message: 'ID nhóm cha phải là UUID hợp lệ' })
   productId: string
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  @Transform(({ value }) => {
+    const date = new Date(value)
+    return new Date(date.setHours(0, 0, 0, 0))
+  })
+  expiryFrom: Date
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  @Transform(({ value }) => {
+    const date = new Date(value)
+    return new Date(date.setHours(23, 59, 59, 999))
+  })
+  expiryTo: Date
 }
 
 export class GetAllProductLotResponseDto extends PaginationResponseDto<ProductLot> {

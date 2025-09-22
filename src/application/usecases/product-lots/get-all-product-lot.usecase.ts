@@ -16,18 +16,50 @@ export class GetAllProductLotUseCase {
   }
 
   async execute(
-    data: GetAllProductLotRequestDto,
+    params: GetAllProductLotRequestDto,
     branchId: string
   ): Promise<GetAllProductLotResponseDto> {
-    const { page, perPage, keyword, orderBy, sortBy, isExpired, quantityGreaterThan, productId } =
-      data
+    const {
+      page,
+      perPage,
+      keyword,
+      orderBy,
+      sortBy,
+      isExpired,
+      quantityGreaterThan,
+      productId,
+      expiryFrom,
+      expiryTo
+    } = params
 
     const where: Prisma.ProductLotWhereInput = {
       branchId,
       productId,
       stockQuantity: {
         gt: quantityGreaterThan
-      }
+      },
+      ...(expiryFrom && expiryTo
+        ? {
+            expiryAt: {
+              gte: expiryFrom,
+              lte: expiryTo
+            }
+          }
+        : {}),
+      ...(expiryFrom && !expiryTo
+        ? {
+            expiryAt: {
+              gte: expiryFrom
+            }
+          }
+        : {}),
+      ...(!expiryFrom && expiryTo
+        ? {
+            expiryAt: {
+              lte: expiryTo
+            }
+          }
+        : {})
     }
 
     if (keyword) {
