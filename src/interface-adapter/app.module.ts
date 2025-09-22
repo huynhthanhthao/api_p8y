@@ -18,6 +18,7 @@ import {
   ProductLotController,
   ProvinceController,
   RoleController,
+  StockCardController,
   StockTransactionController,
   SupplierController,
   SupplierGroupController,
@@ -150,6 +151,7 @@ import {
   GetOneRoleUseCase,
   UpdateRoleUseCase
 } from '@usecases/roles'
+import { GetAllStockCardUseCase } from '@usecases/stock-cards'
 
 const controllers = [
   AuthController,
@@ -169,7 +171,8 @@ const controllers = [
   ProductLotController,
   StockTransactionController,
   UserController,
-  RoleController
+  RoleController,
+  StockCardController
 ]
 
 const useCases = [
@@ -301,7 +304,10 @@ const useCases = [
   DeleteManyRoleUseCase,
   GetAllRoleUseCase,
   GetOneRoleUseCase,
-  UpdateRoleUseCase
+  UpdateRoleUseCase,
+
+  // Stock card
+  GetAllStockCardUseCase
 ]
 
 @Module({

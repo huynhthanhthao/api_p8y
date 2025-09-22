@@ -48,6 +48,7 @@ Table branches {
   medicineRoutes medicine_routes [not null]
   paymentMethods payment_methods [not null]
   productLots product_lots [not null]
+  stockCards stock_cards [not null]
 }
 
 Table users {
@@ -163,6 +164,7 @@ Table invoices {
   deliveryInfo delivery_infos
   customer customers
   invoiceItems invoice_items [not null]
+  stockCards stock_cards [not null]
   creator users
   updater users
 
@@ -368,12 +370,15 @@ Table product_lots {
 
 Table stock_cards {
   id String [pk]
+  branchId String [not null]
   transactionId String
   invoiceId String
   type String [not null]
   createdAt DateTime [default: `now()`, not null]
+  branch branches [not null]
+  invoice invoices
+  transaction stock_transactions
   products products [not null]
-  stockTransaction stock_transactions
 }
 
 Table stock_locations {
@@ -662,6 +667,10 @@ Ref: stock_items.transactionId > stock_transactions.id [delete: Cascade]
 Ref: product_lots.branchId > branches.id
 
 Ref: product_lots.productId > products.id
+
+Ref: stock_cards.branchId > branches.id
+
+Ref: stock_cards.invoiceId > invoices.id
 
 Ref: stock_cards.transactionId > stock_transactions.id
 

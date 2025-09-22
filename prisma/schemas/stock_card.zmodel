@@ -1,17 +1,23 @@
 import 'product'
 import 'stock_transaction'
 import 'base'
+import 'branch'
+import 'invoice'
 
 model StockCard {
-  id               String            @id @default(uuid()) @db.Uuid
-  transactionId    String?           @db.Uuid @map("transaction_id")
-  invoiceId        String?           @db.Uuid @map("invoice_id")
-  type             String            @db.VarChar(50)
-  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  id            String            @id @default(uuid()) @db.Uuid
+  branchId      String            @map("branch_id") @db.Uuid
+  transactionId String?           @db.Uuid @map("transaction_id")
+  invoiceId     String?           @db.Uuid @map("invoice_id")
+  type          String            @db.VarChar(50)
+  createdAt     DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
 
   // Relations
-  products         Product[]
-  stockTransaction StockTransaction? @relation(fields: [transactionId], references: [id])
+  branch        Branch            @relation(fields: [branchId], references: [id])
+  invoice       Invoice?          @relation(fields: [invoiceId], references: [id])
+  transaction   StockTransaction? @relation(fields: [transactionId], references: [id])
+  products      Product[]
 
+  @@index([branchId])
   @@map("stock_cards")
 }

@@ -19,13 +19,14 @@ export class GetAllProductLotUseCase {
     data: GetAllProductLotRequestDto,
     branchId: string
   ): Promise<GetAllProductLotResponseDto> {
-    const { page, perPage, keyword, orderBy, sortBy, isExpired, minStockQuantity, productId } = data
+    const { page, perPage, keyword, orderBy, sortBy, isExpired, quantityGreaterThan, productId } =
+      data
 
     const where: Prisma.ProductLotWhereInput = {
       branchId,
       productId,
       stockQuantity: {
-        gte: minStockQuantity
+        gt: quantityGreaterThan
       }
     }
 

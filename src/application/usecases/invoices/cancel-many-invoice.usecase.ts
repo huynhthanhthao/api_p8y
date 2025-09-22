@@ -4,7 +4,6 @@ import { PrismaService } from '@infrastructure/prisma'
 import { DeleteManyRequestDto } from '@common/dtos'
 import { HttpException } from '@common/exceptions'
 import { INVOICE_ERROR } from '@common/errors'
-import { generateTimesTamp } from '@common/helpers'
 import { InvoiceStatusEnum } from '@common/enums'
 
 @Injectable()

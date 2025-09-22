@@ -65,6 +65,7 @@ model Branch {
   medicineRoutes    MedicineRoute[]
   paymentMethods    PaymentMethod[]
   productLots       ProductLot[]
+  stockCards        StockCard[]
 
   @@index([createdAt])
   @@index([deletedAt])
@@ -197,6 +198,7 @@ model Invoice {
   deliveryInfo      DeliveryInfo?
   customer          Customer?      @relation(fields: [customerId], references: [id])
   invoiceItems      InvoiceItem[]
+  stockCards        StockCard[]
   creator           User?          @relation("InvoiceCreator", fields: [createdBy], references: [id])
   updater           User?          @relation("InvoiceUpdater", fields: [updatedBy], references: [id])
 
@@ -444,13 +446,16 @@ model ProductLot {
 }
 
 model StockCard {
-  id               String            @id() @default(uuid()) @db.Uuid()
-  transactionId    String?           @map("transaction_id") @db.Uuid()
-  invoiceId        String?           @map("invoice_id") @db.Uuid()
-  type             String            @db.VarChar(50)
-  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
-  products         Product[]
-  stockTransaction StockTransaction? @relation(fields: [transactionId], references: [id])
+  id            String            @id() @default(uuid()) @db.Uuid()
+  branchId      String            @map("branch_id") @db.Uuid()
+  transactionId String?           @map("transaction_id") @db.Uuid()
+  invoiceId     String?           @map("invoice_id") @db.Uuid()
+  type          String            @db.VarChar(50)
+  createdAt     DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  branch        Branch            @relation(fields: [branchId], references: [id])
+  invoice       Invoice?          @relation(fields: [invoiceId], references: [id])
+  transaction   StockTransaction? @relation(fields: [transactionId], references: [id])
+  products      Product[]
 
   @@map("stock_cards")
 }

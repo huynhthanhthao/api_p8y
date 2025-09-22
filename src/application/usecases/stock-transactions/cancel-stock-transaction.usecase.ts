@@ -34,7 +34,7 @@ export class CancelStockTransactionUseCase {
     await this.prismaClient.stockTransaction.update({
       where: { id, branchId },
       data: {
-        status: StockTransactionStatusEnum.COMPLETED,
+        status: StockTransactionStatusEnum.CANCELED,
         updatedBy: userId
       }
     })

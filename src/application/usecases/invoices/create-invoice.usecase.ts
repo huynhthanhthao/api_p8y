@@ -116,7 +116,8 @@ export class CreateInvoiceUseCase {
           products: {
             connect: uniqueProductIds.map(id => ({ id }))
           },
-          invoiceId: invoice.id
+          invoiceId: invoice.id,
+          branchId
         }
       })
       return invoice

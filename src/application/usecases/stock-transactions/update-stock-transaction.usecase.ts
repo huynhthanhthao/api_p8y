@@ -145,7 +145,8 @@ export class UpdateStockTransactionUseCase {
                 products: {
                   connect: uniqueProductIds.map(id => ({ id }))
                 },
-                type: getStockCardType(data.type)
+                type: getStockCardType(data.type),
+                branchId
               }
             })
         ])

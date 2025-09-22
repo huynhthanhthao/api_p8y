@@ -6,6 +6,7 @@ import 'customer'
 import 'branch'
 import 'payment_method'
 import 'user'
+import 'stock_card'
 
 
 model Invoice extends BaseModel {
@@ -28,6 +29,7 @@ model Invoice extends BaseModel {
   deliveryInfo      DeliveryInfo?
   customer          Customer?      @relation(fields: [customerId], references: [id])
   invoiceItems      InvoiceItem[]
+  stockCards        StockCard[]
   creator           User?          @relation("InvoiceCreator", fields: [createdBy], references: [id])
   updater           User?          @relation("InvoiceUpdater", fields: [updatedBy], references: [id])
 

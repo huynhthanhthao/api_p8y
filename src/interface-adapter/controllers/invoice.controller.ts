@@ -39,12 +39,12 @@ export class InvoiceController {
     private readonly _cancelManyInvoiceUseCase: CancelManyInvoiceUseCase
   ) {}
 
-  @Post()
-  create(
-    @Body() data: CreateInvoiceRequestDto,
+  @Post('/cancel')
+  deleteMany(
+    @Body() data: DeleteManyRequestDto,
     @Req() req: RequestAccessBranchJWT
-  ): Promise<Invoice> {
-    return this._createInvoiceUseCase.execute(data, req.userId, req.branchId)
+  ): Promise<Prisma.BatchPayload> {
+    return this._cancelManyInvoiceUseCase.execute(data, req.userId, req.branchId)
   }
 
   @Post(':id/cancel')
@@ -52,12 +52,12 @@ export class InvoiceController {
     return this._CancelInvoiceUseCase.execute(params.id, req.userId, req.branchId)
   }
 
-  @Post('/cancel')
-  deleteMany(
-    @Body() data: DeleteManyRequestDto,
+  @Post()
+  create(
+    @Body() data: CreateInvoiceRequestDto,
     @Req() req: RequestAccessBranchJWT
-  ): Promise<Prisma.BatchPayload> {
-    return this._cancelManyInvoiceUseCase.execute(data, req.userId, req.branchId)
+  ): Promise<Invoice> {
+    return this._createInvoiceUseCase.execute(data, req.userId, req.branchId)
   }
 
   @Get(':id')

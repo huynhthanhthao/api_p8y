@@ -15,13 +15,35 @@ export class GetAllStockTransactionUseCase {
     data: GetAllStockTransactionRequestDto,
     branchId: string
   ): Promise<GetAllStockTransactionResponseDto> {
-    const { page, perPage, keyword, orderBy, sortBy, type, supplierGroupIds } = data
+    const { page, perPage, keyword, orderBy, sortBy, type, supplierGroupIds, from, to } = data
 
     const where: Prisma.StockTransactionWhereInput = {
       deletedAt: null,
       branchId,
       type,
-      ...(supplierGroupIds?.length && { supplierGroupId: { in: supplierGroupIds } })
+      ...(supplierGroupIds?.length && { supplierGroupId: { in: supplierGroupIds } }),
+      ...(from && to
+        ? {
+            createdAt: {
+              gte: new Date(from),
+              lte: new Date(to)
+            }
+          }
+        : {}),
+      ...(from && !to
+        ? {
+            createdAt: {
+              gte: new Date(from)
+            }
+          }
+        : {}),
+      ...(!from && to
+        ? {
+            createdAt: {
+              lte: new Date(to)
+            }
+          }
+        : {})
     }
 
     if (keyword) {

@@ -33,14 +33,6 @@ export class StockTransactionController {
     private readonly _updateStockTransactionUseCase: UpdateStockTransactionUseCase
   ) {}
 
-  @Post()
-  create(
-    @Body() data: CreateStockTransactionRequestDto,
-    @Req() req: RequestAccessBranchJWT
-  ): Promise<StockTransaction> {
-    return this._createStockTransactionUseCase.execute(data, req.userId, req.branchId)
-  }
-
   @Patch(':id')
   update(
     @Param() params: UUIDParamDto,
@@ -50,8 +42,16 @@ export class StockTransactionController {
     return this._updateStockTransactionUseCase.execute(params.id, data, req.userId, req.branchId)
   }
 
+  @Post('cancel')
+  cancelMany(
+    @Body() data: DeleteManyRequestDto,
+    @Req() req: RequestAccessBranchJWT
+  ): Promise<Prisma.BatchPayload> {
+    return this._cancelManyStockTransactionUseCase.execute(data, req.userId, req.branchId)
+  }
+
   @Post(':id/cancel')
-  delete(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<string> {
+  cancel(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<string> {
     return this._CancelStockTransactionUseCase.execute(params.id, req.userId, req.branchId)
   }
 
@@ -63,12 +63,12 @@ export class StockTransactionController {
     return this._ReviewStockTransactionUseCase.execute(params.id, req.userId, req.branchId)
   }
 
-  @Post('/cancel')
-  deleteMany(
-    @Body() data: DeleteManyRequestDto,
+  @Post()
+  create(
+    @Body() data: CreateStockTransactionRequestDto,
     @Req() req: RequestAccessBranchJWT
-  ): Promise<Prisma.BatchPayload> {
-    return this._cancelManyStockTransactionUseCase.execute(data, req.userId, req.branchId)
+  ): Promise<StockTransaction> {
+    return this._createStockTransactionUseCase.execute(data, req.userId, req.branchId)
   }
 
   @Get(':id')

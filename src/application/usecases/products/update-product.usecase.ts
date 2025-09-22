@@ -111,7 +111,8 @@ export class UpdateProductUseCase {
                 type: StockCardTypeEnum.STOCK_TRANSACTION_CHECK,
                 products: {
                   connect: { id: existingProduct.id }
-                }
+                },
+                branchId
               }
             },
             branchId

@@ -2,7 +2,7 @@ import { PaginationQueryDto } from '@common/dtos/pagination-query.dto'
 import { PaginationResponseDto } from '@common/dtos/pagination-response.dto'
 import { ProductLot } from '@common/types'
 import { Transform, TransformFnParams } from 'class-transformer'
-import { IsOptional, IsBoolean, IsInt, Min, IsNotEmpty, IsUUID } from 'class-validator'
+import { IsOptional, IsBoolean, IsInt, Min, IsUUID } from 'class-validator'
 
 export class GetAllProductLotRequestDto extends PaginationQueryDto {
   @IsOptional()
@@ -11,10 +11,10 @@ export class GetAllProductLotRequestDto extends PaginationQueryDto {
   isExpired: boolean
 
   @IsOptional()
-  @IsInt()
+  @IsInt({ message: 'Giá trị minStockQuantity phải là số nguyên' })
   @Min(0)
   @Transform(({ value }: TransformFnParams) => parseInt(value, 10))
-  minStockQuantity: number = 0
+  quantityGreaterThan: number
 
   @IsOptional()
   @IsUUID('4', { message: 'ID nhóm cha phải là UUID hợp lệ' })

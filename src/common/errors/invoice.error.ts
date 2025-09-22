@@ -5,7 +5,7 @@ export const INVOICE_ERROR = {
   },
   SOME_INVOICES_NOT_FOUND: {
     code: 'INVOICE_02',
-    message: 'Một số sản phẩm không tồn tại hoặc không cho phép bán'
+    message: 'Một số hóa đơn không tồn tại'
   },
   MISSING_PRODUCT_LOT_ID: {
     code: 'INVOICE_03',
@@ -13,7 +13,7 @@ export const INVOICE_ERROR = {
   },
   SOME_INVOICES_CANCELED: {
     code: 'INVOICE_04',
-    message: 'Một số sản phẩm đã hủy hoặc không cho phép bán'
+    message: 'Một số hóa đơn đã hủy'
   },
   INVOICE_CANCELED: {
     code: 'INVOICE_05',
@@ -25,6 +25,6 @@ export const INVOICE_ERROR = {
   },
   UNEXPECTED_PRODUCT_LOT: {
     code: 'INVOICE_07',
-    message: 'Không thể khai báo lô cho sản phẩm không quản lý theo lô'
+    message: 'Không thể khai báo lô cho hóa đơn không quản lý theo lô'
   }
 }

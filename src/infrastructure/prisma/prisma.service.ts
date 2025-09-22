@@ -26,7 +26,6 @@ const softDelete = createSoftDeleteExtension({
     TransportInfo: true,
     Manufacturer: true,
     StockTransaction: true,
-    StockCard: true,
     ProductLot: true
   },
   defaultConfig: {

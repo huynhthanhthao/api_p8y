@@ -15,6 +15,7 @@ import 'medicine_route'
 import 'stock_transaction'
 import 'payment_method'
 import 'product_lot'
+import 'stock_card'
 
 // Branch model
 model Branch extends BaseModel {
@@ -41,6 +42,7 @@ model Branch extends BaseModel {
   medicineRoutes    MedicineRoute[]
   paymentMethods    PaymentMethod[]
   productLots       ProductLot[]
+  stockCards        StockCard[]
 
   @@map("branches")
 }
