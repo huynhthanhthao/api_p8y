@@ -223,7 +223,7 @@ Table products {
   country String
   manufacturerId String
   parentId String
-  unitName String
+  unitName String [default: '']
   conversion Float [default: 1]
   branch branches [not null]
   manufacturer manufacturers

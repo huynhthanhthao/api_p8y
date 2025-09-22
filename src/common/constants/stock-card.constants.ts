@@ -51,6 +51,7 @@ export const STOCK_CARD_SELECT_FIELDS = {
           }
         }
       }
-    }
+    },
+    createdAt: true
   }
 } as const satisfies Partial<Prisma.StockCardFindUniqueArgs>

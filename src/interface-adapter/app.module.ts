@@ -151,6 +151,12 @@ import {
   UpdateRoleUseCase
 } from '@usecases/roles'
 import { GetAllStockCardUseCase } from '@usecases/stock-cards'
+import {
+  ReportBestProductSalesUseCase,
+  ReportRevenueUseCase,
+  ReportTopCustomerByOrderUseCase
+} from '@usecases/reports'
+import { ReportController } from './controllers/report.controller'
 
 const controllers = [
   AuthController,
@@ -171,7 +177,8 @@ const controllers = [
   StockTransactionController,
   UserController,
   RoleController,
-  StockCardController
+  StockCardController,
+  ReportController
 ]
 
 const useCases = [
@@ -305,7 +312,12 @@ const useCases = [
   UpdateRoleUseCase,
 
   // Stock card
-  GetAllStockCardUseCase
+  GetAllStockCardUseCase,
+
+  // Report
+  ReportRevenueUseCase,
+  ReportBestProductSalesUseCase,
+  ReportTopCustomerByOrderUseCase
 ]
 
 @Module({

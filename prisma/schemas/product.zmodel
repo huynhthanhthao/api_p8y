@@ -38,7 +38,7 @@ model Product extends BaseModel {
   manufacturerId   String?           @map("manufacturer_id") @db.Uuid // Hãng sản xuất
 
   parentId         String?           @map("parent_id") @db.Uuid // Liên kết đến sản phẩm chính
-  unitName         String?           @db.VarChar(50) @map("unit_name")// Tên đơn vị: viên, chai, lốc
+  unitName         String?           @db.VarChar(50) @map("unit_name") @default("") // Tên đơn vị: viên, chai, lốc
   conversion       Float?            @default(1) // Quy đổi: 1 chai = 10 viên
 
   // Relations

@@ -1,8 +1,8 @@
-import { SortByEnum, SortOrderEnum } from '@common/enums/sort.enum'
-import { Transform, TransformFnParams, Type } from 'class-transformer'
-import { IsBoolean, IsDate, IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator'
+import { ReportGroupByEnum } from '@common/enums'
+import { Transform, Type } from 'class-transformer'
+import { IsDate, IsEnum, IsOptional } from 'class-validator'
 
-export class PaginationQueryDto {
+export class ReportQueryDto {
   @IsOptional()
   @Type(() => Date)
   @IsDate()
@@ -20,4 +20,11 @@ export class PaginationQueryDto {
     return new Date(date.setHours(23, 59, 59, 999))
   })
   to: Date
+
+  @IsOptional()
+  @Transform(({ value }) => value?.trim())
+  @IsEnum(ReportGroupByEnum, {
+    message: `groupBy là một trong: ${Object.values(ReportGroupByEnum).join(', ')}`
+  })
+  groupBy: ReportGroupByEnum = ReportGroupByEnum.DAY
 }
