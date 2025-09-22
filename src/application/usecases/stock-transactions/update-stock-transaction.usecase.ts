@@ -111,6 +111,8 @@ export class UpdateStockTransactionUseCase {
       await tx.stockItem.createMany({
         data: data.stockItems.map(item => {
           const product = productList.find(p => p.id === item.productId)
+          const productLot = product?.productLots.find(p => p.id === item.productLotId)
+
           return {
             transactionId: id,
             productId: item.productId,
@@ -118,7 +120,7 @@ export class UpdateStockTransactionUseCase {
             discountValue: item.discountValue,
             unitPrice: item.unitPrice,
             quantity: item.quantity,
-            previousStock: product?.stockQuantity,
+            previousStock: item.productLotId ? productLot?.stockQuantity : product?.stockQuantity,
             ...(product?.isLotEnabled && {
               productLotId: item.productLotId
             })
@@ -127,20 +129,16 @@ export class UpdateStockTransactionUseCase {
       })
 
       if (data.status === StockTransactionStatusEnum.COMPLETED)
+        /**
+         * Xử lý stock item và cập nhật số lượng kho,  tạo thẻ kho
+         */
         await Promise.all([
-          /**
-           * Xử lý stock item và cập nhật số lượng kho
-           */
           processHandleStockItems(
             stockTransaction.type as StockTransactionTypeEnum,
             data.stockItems,
             productList,
             tx
           ),
-
-          /**
-           * Nếu complete, tạo thẻ kho
-           */
           data.status === StockTransactionStatusEnum.COMPLETED &&
             tx.stockCard.create({
               data: {

@@ -1,3 +1,4 @@
+import { Role } from './../../node_modules/.prisma/client/index.d'
 import { JwtModule } from '@nestjs/jwt'
 import { ConfigModule } from '@nestjs/config'
 import { Module } from '@nestjs/common'
@@ -16,9 +17,11 @@ import {
   ProductLocationController,
   ProductLotController,
   ProvinceController,
+  RoleController,
   StockTransactionController,
   SupplierController,
-  SupplierGroupController
+  SupplierGroupController,
+  UserController
 } from './controllers'
 import {
   SignInUseCase,
@@ -131,6 +134,22 @@ import {
   ReviewStockTransactionUseCase,
   UpdateStockTransactionUseCase
 } from '@usecases/stock-transactions'
+import {
+  CreateUserUseCase,
+  DeleteUserUseCase,
+  DeleteManyUserUseCase,
+  GetAllUserUseCase,
+  GetOneUserUseCase,
+  UpdateUserUseCase
+} from '@usecases/users'
+import {
+  CreateRoleUseCase,
+  DeleteRoleUseCase,
+  DeleteManyRoleUseCase,
+  GetAllRoleUseCase,
+  GetOneRoleUseCase,
+  UpdateRoleUseCase
+} from '@usecases/roles'
 
 const controllers = [
   AuthController,
@@ -148,7 +167,9 @@ const controllers = [
   PaymentMethodController,
   InvoiceController,
   ProductLotController,
-  StockTransactionController
+  StockTransactionController,
+  UserController,
+  RoleController
 ]
 
 const useCases = [
@@ -264,7 +285,23 @@ const useCases = [
   GetAllStockTransactionUseCase,
   GetOneStockTransactionUseCase,
   ReviewStockTransactionUseCase,
-  UpdateStockTransactionUseCase
+  UpdateStockTransactionUseCase,
+
+  // User
+  CreateUserUseCase,
+  DeleteUserUseCase,
+  DeleteManyUserUseCase,
+  GetAllUserUseCase,
+  GetOneUserUseCase,
+  UpdateUserUseCase,
+
+  // Role
+  CreateRoleUseCase,
+  DeleteRoleUseCase,
+  DeleteManyRoleUseCase,
+  GetAllRoleUseCase,
+  GetOneRoleUseCase,
+  UpdateRoleUseCase
 ]
 
 @Module({

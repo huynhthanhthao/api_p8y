@@ -3,6 +3,7 @@ import 'branch'
 import 'customer'
 import 'user'
 import 'customer_group'
+import 'role'
 
 // Store model
 model Store {
@@ -13,6 +14,7 @@ model Store {
 
   // Relations
   branches       Branch[]
+  roles          Role[]
   users          User[]
   customers      Customer[]
   customerGroups CustomerGroup[]

@@ -15,14 +15,17 @@ export class GetAllProductUseCase {
     data: GetAllProductRequestDto,
     branchId: string
   ): Promise<GetAllProductResponseDto> {
-    const { page, perPage, keyword, orderBy, sortBy, isParent } = data
+    const { page, perPage, keyword, orderBy, sortBy, isParent, isStockEnabled } = data
 
     const where: Prisma.ProductWhereInput = {
       branchId,
       ...(isParent !== undefined &&
         isParent && {
           parentId: null
-        })
+        }),
+      ...(isStockEnabled !== undefined && {
+        isStockEnabled: isStockEnabled
+      })
     }
 
     if (keyword) {

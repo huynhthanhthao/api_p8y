@@ -2,6 +2,7 @@ import 'base'
 import 'file'
 import 'customer'
 import 'product'
+import 'user'
 
 model File extends BaseModel {
   filename     String     @map("filename") @db.VarChar(255)
@@ -14,5 +15,6 @@ model File extends BaseModel {
   // Relations
   customers    Customer[]
   products     Product[]
+  users        User[]
   @@map("files")
 }

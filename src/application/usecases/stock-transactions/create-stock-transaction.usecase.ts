@@ -63,31 +63,24 @@ export class CreateStockTransactionUseCase {
     return await this.prismaClient.$transaction(async (tx: PrismaService) => {
       /**
        * Xử lý nếu hoàn thành phiếu
+       * stock item và cập nhật số lượng kho và  tạo thẻ kho
        */
       if (data.status === StockTransactionStatusEnum.COMPLETED)
         await Promise.all([
-          /**
-           * Xử lý stock item và cập nhật số lượng kho
-           */
           processHandleStockItems(
             data.type as StockTransactionTypeEnum,
             data.stockItems,
             productList,
             tx
           ),
-
-          /**
-           * Nếu complete, tạo thẻ kho
-           */
-          data.status === StockTransactionStatusEnum.COMPLETED &&
-            tx.stockCard.create({
-              data: {
-                products: {
-                  connect: uniqueProductIds.map(id => ({ id }))
-                },
-                type: getStockCardType(data.type)
-              }
-            })
+          tx.stockCard.create({
+            data: {
+              products: {
+                connect: uniqueProductIds.map(id => ({ id }))
+              },
+              type: getStockCardType(data.type)
+            }
+          })
         ])
 
       return await tx.stockTransaction.create({
@@ -107,13 +100,16 @@ export class CreateStockTransactionUseCase {
           stockItems: {
             create: data.stockItems.map(item => {
               const product = productList.find(p => p.id === item.productId)
+              const productLot = product?.productLots.find(p => p.id === item.productLotId)
               return {
                 productId: item.productId,
                 discountType: item.discountType,
                 discountValue: item.discountValue,
                 unitPrice: item.unitPrice,
                 quantity: item.quantity,
-                previousStock: product?.stockQuantity,
+                previousStock: item.productLotId
+                  ? productLot?.stockQuantity
+                  : product?.stockQuantity,
                 ...(product?.isLotEnabled && {
                   productLotId: item.productLotId
                 })

@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client'
-import { USER_INCLUDE_FIELDS } from './user.constants'
+import { USER_BASIC_INFO_SELECT } from './user.constants'
 
 export const STOCK_TRANSACTION_INCLUDE_FIELDS = {
   omit: {
@@ -25,6 +25,7 @@ export const STOCK_TRANSACTION_INCLUDE_FIELDS = {
             name: true,
             code: true,
             deletedAt: true,
+            isLotEnabled: true,
             photos: {
               select: {
                 id: true,
@@ -47,10 +48,10 @@ export const STOCK_TRANSACTION_INCLUDE_FIELDS = {
       }
     },
     creator: {
-      ...USER_INCLUDE_FIELDS
+      ...USER_BASIC_INFO_SELECT
     },
     reviewer: {
-      ...USER_INCLUDE_FIELDS
+      ...USER_BASIC_INFO_SELECT
     }
   }
 } as const satisfies Partial<Prisma.StockTransactionFindUniqueArgs>

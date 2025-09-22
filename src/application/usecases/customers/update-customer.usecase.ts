@@ -2,9 +2,8 @@ import { PrismaService } from '@infrastructure/prisma'
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { HttpException } from '@common/exceptions'
 import { UpdateCustomerRequestDto } from '@interface-adapter/dtos/customers'
-import { CUSTOMER_ERROR, CUSTOMER_GROUP_ERROR } from '@common/errors'
+import { CUSTOMER_ERROR } from '@common/errors'
 import { generateCodeModel } from '@common/utils'
-import { id } from 'zod/v4/locales/index.cjs'
 import { CUSTOMER_INCLUDE_FIELDS } from '@common/constants'
 import { Customer } from '@common/types'
 
@@ -31,25 +30,6 @@ export class UpdateCustomerUseCase {
 
     if (!customer) {
       throw new HttpException(HttpStatus.CONFLICT, CUSTOMER_ERROR.CUSTOMER_NOT_FOUND)
-    }
-
-    if (data.name && data.name !== customer.name) {
-      const recordWithSameName = await this.prismaClient.customer.findFirst({
-        where: {
-          name: {
-            equals: data.name,
-            mode: 'insensitive'
-          },
-          id: {
-            not: id
-          },
-          storeCode
-        }
-      })
-
-      if (recordWithSameName) {
-        throw new HttpException(HttpStatus.CONFLICT, CUSTOMER_GROUP_ERROR.NAME_ALREADY_EXISTS)
-      }
     }
 
     await this.validateUniqueFields(data, storeCode, id)

@@ -93,7 +93,15 @@ export class AccessBranchUseCase {
         status: true,
         address: true,
         lastLogin: true,
-        avatarUrl: true
+        avatarId: true,
+        avatar: {
+          omit: {
+            deletedAt: true,
+            deletedBy: true,
+            createdBy: true,
+            updatedBy: true
+          }
+        }
       }
     })
   }

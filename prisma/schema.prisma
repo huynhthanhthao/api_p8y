@@ -28,6 +28,7 @@ model Store {
   logo           String?         @db.VarChar(500)
   expiryAt       DateTime?       @map("expiry_at") @db.Timestamptz(6)
   branches       Branch[]
+  roles          Role[]
   users          User[]
   customers      Customer[]
   customerGroups CustomerGroup[]
@@ -81,17 +82,21 @@ model User {
   deletedBy                 String?            @map("deleted_by") @db.Uuid()
   firstName                 String             @map("first_name") @db.VarChar(100)
   lastName                  String?            @default("") @map("last_name") @db.VarChar(100)
-  phone                     String             @db.VarChar(20)
+  phone                     String             @db.VarChar(50)
   storeCode                 String             @map("store_code")
   status                    String             @db.VarChar(50)
   type                      String             @db.VarChar(50)
   password                  String             @db.VarChar(255)
   email                     String?            @default("") @db.VarChar(255)
   lastLogin                 DateTime?          @map("last_login") @db.Timestamptz(6)
-  wareCode                  String?            @map("ware_code") @db.VarChar(50)
+  wardCode                  Int?               @map("ward_code")
   address                   String?            @default("") @db.VarChar(500)
-  avatarUrl                 String?            @default("") @db.VarChar(255)
+  avatarId                  String?            @map("avatar_id") @db.Uuid()
+  provinceCode              Int?               @map("province_code")
   store                     Store              @relation(fields: [storeCode], references: [code])
+  ward                      Ward?              @relation(fields: [wardCode], references: [code], onDelete: SetNull)
+  province                  Province?          @relation(fields: [provinceCode], references: [code], onDelete: SetNull)
+  avatar                    File?              @relation(fields: [avatarId], references: [id])
   roles                     Role[]
   branches                  Branch[]
   createdInvoices           Invoice[]          @relation("InvoiceCreator")
@@ -118,6 +123,8 @@ model Role {
   deletedAt   DateTime?    @map("deleted_at") @db.Timestamptz(6)
   deletedBy   String?      @map("deleted_by") @db.Uuid()
   name        String       @db.VarChar(255)
+  storeCode   String       @map("store_code")
+  store       Store?       @relation(fields: [storeCode], references: [code])
   users       User[]
   permissions Permission[]
 
@@ -544,6 +551,7 @@ model File {
   type         String     @map("type") @db.VarChar(255)
   customers    Customer[]
   products     Product[]
+  users        User[]
 
   @@index([createdAt])
   @@index([deletedAt])
@@ -660,6 +668,7 @@ model Ward {
   provinceCode  Int      @map("province_code")
   province      Province @relation(fields: [provinceCode], references: [code])
   branches      Branch[]
+  users         User[]
 
   @@map("wards")
 }
@@ -672,6 +681,7 @@ model Province {
   phoneCode    String   @map("phone_code") @db.VarChar(50)
   branches     Branch[]
   wards        Ward[]
+  users        User[]
 
   @@map("provinces")
 }

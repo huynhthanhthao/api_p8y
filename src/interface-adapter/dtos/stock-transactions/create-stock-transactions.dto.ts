@@ -48,7 +48,6 @@ export class StockItemRequestDto {
   discountValue: number
 
   @IsOptional()
-  @IsNotEmpty({ message: 'ID lô sản phẩm không được để trống' })
   @IsUUID('4', { message: 'ID lô sản phẩm phải là UUID hợp lệ' })
   productLotId: string
 }

@@ -1,5 +1,6 @@
 import 'branch'
 import 'province'
+import 'user'
 
 model Ward {
   code          Int      @id
@@ -12,6 +13,7 @@ model Ward {
   // Relations
   province      Province @relation(fields: [provinceCode], references: [code])
   branches      Branch[]
+  users         User[]
 
   @@map("wards")
   @@allow('all', true)

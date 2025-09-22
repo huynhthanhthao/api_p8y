@@ -39,6 +39,11 @@ export class GetAllProductRequestDto extends PaginationQueryDto {
   @IsBoolean({ message: 'isParent là giá trị boolean' })
   @Transform(({ value }: TransformFnParams) => value === 'true' || value === true)
   isParent: boolean
+
+  @IsOptional()
+  @IsBoolean({ message: 'isStockEnabled là giá trị boolean' })
+  @Transform(({ value }: TransformFnParams) => value === 'true' || value === true)
+  isStockEnabled: boolean
 }
 
 export class GetAllProductResponseDto extends PaginationResponseDto<Product> {

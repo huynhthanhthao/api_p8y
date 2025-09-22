@@ -1,4 +1,5 @@
 import 'branch'
+import 'user'
 import 'ward'
 
 // Province model
@@ -12,6 +13,7 @@ model Province {
   // Relations
   branches     Branch[]
   wards        Ward[]
+  users        User[]
 
   @@map("provinces")
   @@allow('all', true)

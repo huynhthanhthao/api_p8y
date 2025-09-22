@@ -23,8 +23,6 @@ const softDelete = createSoftDeleteExtension({
     Invoice: true,
     InvoiceItem: true,
     DeliveryInfo: true,
-    Permission: true,
-    PermissionGroup: true,
     TransportInfo: true,
     Manufacturer: true,
     StockTransaction: true,

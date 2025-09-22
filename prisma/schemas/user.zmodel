@@ -5,24 +5,31 @@ import 'store'
 import 'payment_method'
 import 'invoice'
 import 'stock_transaction'
+import 'ward'
+import 'file'
+import 'province'
 
 // User model
 model User extends BaseModel {
   firstName                 String             @map("first_name") @db.VarChar(100)
   lastName                  String?            @map("last_name") @default("") @db.VarChar(100)
-  phone                     String             @db.VarChar(20)
+  phone                     String             @db.VarChar(50)
   storeCode                 String             @map("store_code")
   status                    String             @db.VarChar(50) // ACTIVE, INACTIVE
   type                      String             @db.VarChar(50) // SUPER_ADMIN, STAFF
   password                  String             @db.VarChar(255)
   email                     String?            @db.VarChar(255) @default("")
   lastLogin                 DateTime?          @map("last_login") @db.Timestamptz(6)
-  wareCode                  String?            @map("ware_code") @db.VarChar(50)
+  wardCode                  Int?               @map("ward_code")
   address                   String?            @db.VarChar(500) @default("")
-  avatarUrl                 String?            @db.VarChar(255) @default("") 
+  avatarId                  String?            @map("avatar_id") @db.Uuid
+  provinceCode              Int?               @map("province_code") 
 
   // Relations - Many-to-many (Prisma tự tạo junction tables)
   store                     Store              @relation(fields: [storeCode], references: [code])
+  ward                      Ward?              @relation(fields: [wardCode], references: [code], onDelete: SetNull)
+  province                  Province?          @relation(fields: [provinceCode], references: [code], onDelete: SetNull)
+  avatar                    File?              @relation(fields: [avatarId], references: [id])
   roles                     Role[]
   branches                  Branch[]
 

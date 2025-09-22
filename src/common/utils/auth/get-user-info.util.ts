@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client/extension'
 import { UserBasicInfo } from '../../types'
+import { File_SELECT_FIELDS } from '@common/constants/file.constants'
 
 export async function getUserInfo(tx: PrismaClient, userId: string): Promise<UserBasicInfo> {
   return tx.user.findUniqueOrThrow({
@@ -11,8 +12,9 @@ export async function getUserInfo(tx: PrismaClient, userId: string): Promise<Use
       lastName: true,
       type: true,
       phone: true,
-      avatarUrl: true,
-      status: true
+      status: true,
+      avatarId: true,
+      avatar: File_SELECT_FIELDS
     }
   })
 }

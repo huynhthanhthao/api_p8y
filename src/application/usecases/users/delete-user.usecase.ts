@@ -1,10 +1,10 @@
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { PrismaService } from '@infrastructure/prisma'
 import { HttpException } from '@common/exceptions'
-import { CUSTOMER_ERROR } from '@common/errors'
+import { USER_ERROR } from '@common/errors/'
 import { generateTimesTamp } from '@common/helpers'
 @Injectable()
-export class DeleteCustomerUseCase {
+export class DeleteUserUseCase {
   constructor(private readonly prismaService: PrismaService) {}
 
   private get prismaClient(): PrismaService {
@@ -12,25 +12,27 @@ export class DeleteCustomerUseCase {
   }
 
   async execute(id: string, userId: string, storeCode: string): Promise<string> {
-    const customer = await this.prismaClient.customer.findUnique({
+    const user = await this.prismaClient.user.findUnique({
       where: { id, storeCode }
     })
 
-    if (!customer) {
-      throw new HttpException(HttpStatus.NOT_FOUND, CUSTOMER_ERROR.CUSTOMER_NOT_FOUND)
+    if (!user) {
+      throw new HttpException(HttpStatus.NOT_FOUND, USER_ERROR.USER_NOT_FOUND)
     }
 
-    await this.prismaClient.customer.update({
+    if (user.id === userId)
+      throw new HttpException(HttpStatus.BAD_REQUEST, USER_ERROR.CANNOT_DELETE_YOURSELF)
+
+    await this.prismaClient.user.update({
       where: { id, storeCode },
       data: {
-        code: `del_${customer.code}_${generateTimesTamp()}`,
-        phone: customer.phone ? `del_${customer.phone}_${generateTimesTamp()}` : null,
-        email: customer.email ? `del_${customer.email}_${generateTimesTamp()}` : null,
+        phone: `del_${user.phone}_${generateTimesTamp()}`,
+        email: user.email ? `del_${user.email}_${generateTimesTamp()}` : null,
         deletedBy: userId
       }
     })
 
-    await this.prismaClient.customer.delete({
+    await this.prismaClient.user.delete({
       where: {
         id,
         storeCode
