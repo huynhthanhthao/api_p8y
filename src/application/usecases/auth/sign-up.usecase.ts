@@ -23,7 +23,7 @@ export class SignUpUseCase {
 
     await this.validateUserExists(data.phone)
 
-    await this.createStoreAndUserSuperAdmin(data, storeCode)
+    await this.initializeStoreSetup(data, storeCode)
 
     return { storeCode }
   }
@@ -45,10 +45,7 @@ export class SignUpUseCase {
     }
   }
 
-  private async createStoreAndUserSuperAdmin(
-    data: SignUpRequestDto,
-    storeCode: string
-  ): Promise<void> {
+  private async initializeStoreSetup(data: SignUpRequestDto, storeCode: string): Promise<void> {
     await this.prismaClient.$transaction(async tx => {
       const store = await tx.store.create({
         data: {
@@ -69,6 +66,29 @@ export class SignUpUseCase {
         }
       })
 
+      /**
+       * Tạo phương thức thanh toán
+       */
+      const paymentMethodsData = [
+        {
+          code: 'CASH',
+          branchId: store.branches[0].id,
+          isActive: true
+        },
+        {
+          code: 'BANK_TRANSFER',
+          branchId: store.branches[0].id,
+          isActive: false
+        }
+      ]
+
+      await tx.paymentMethod.createMany({
+        data: paymentMethodsData
+      })
+
+      /**
+       * Tạo user super admin
+       */
       await tx.user.create({
         data: {
           firstName: 'Chủ cửa hàng',
