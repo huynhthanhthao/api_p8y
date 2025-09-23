@@ -10,5 +10,5 @@ export class CreateRoleRequestDto {
 
   @IsNotEmpty({ message: 'Danh sách chức năng không được để trống' })
   @ArrayNotEmpty({ message: 'Danh sách chức năng không được để trống' })
-  permissionIds: string[]
+  permissionCodes: string[]
 }

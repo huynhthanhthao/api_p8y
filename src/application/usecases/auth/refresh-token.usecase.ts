@@ -14,10 +14,6 @@ export class RefreshTokenUseCase {
     private readonly prismaService: PrismaService
   ) {}
 
-  private get prismaClient(): PrismaService {
-    return this.prismaService.client
-  }
-
   async execute(
     userId: string,
     branchId: string,
@@ -30,7 +26,19 @@ export class RefreshTokenUseCase {
         status: true,
         password: true,
         storeCode: true,
-        type: true
+        type: true,
+        roles: {
+          select: {
+            id: true,
+            name: true,
+            permissions: {
+              select: {
+                code: true,
+                name: true
+              }
+            }
+          }
+        }
       }
     })
 
@@ -39,8 +47,20 @@ export class RefreshTokenUseCase {
     if (user.status !== UserStatusEnum.ACTIVE)
       throw new HttpException(HttpStatus.UNAUTHORIZED, REFRESH_TOKEN_ERROR.USER_IS_INACTIVE)
 
+    const permissionCodes = user.roles
+      .flatMap(role => role.permissions)
+      .map(permission => permission.code)
+
+    const uniquePermissionCodes = [...new Set(permissionCodes)]
+
     const accessToken = this.jwtService.sign(
-      { userId, branchId, storeCode },
+      {
+        userId,
+        storeCode,
+        branchId,
+        userType: user.type,
+        permissionCodes: uniquePermissionCodes
+      },
       {
         secret: process.env.JWT_SECRET_KEY_ACCESS,
         expiresIn: ACCESS_TOKEN_EXPIRY

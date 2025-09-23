@@ -27,9 +27,12 @@ import {
   GetAllSupplierRequestDto,
   UpdateSupplierRequestDto
 } from '@interface-adapter/dtos/suppliers'
+import { PermissionEnum } from '@common/enums'
+import { Roles } from '@common/utils'
+import { RolesGuard } from '@common/guards'
 
 @Controller('suppliers')
-@UseGuards(AccessTokenGuard)
+@UseGuards(AccessTokenGuard, RolesGuard)
 export class SupplierController {
   constructor(
     private readonly _getAllSupplierUseCase: GetAllSupplierUseCase,
@@ -41,11 +44,13 @@ export class SupplierController {
   ) {}
 
   @Post()
+  @Roles(PermissionEnum.SUPPLIER_CREATE)
   create(@Body() data: CreateSupplierRequestDto, @Req() req: RequestAccessBranchJWT) {
     return this._createSupplierUseCase.execute(data, req.userId, req.branchId)
   }
 
   @Patch(':id')
+  @Roles(PermissionEnum.SUPPLIER_UPDATE)
   update(
     @Param() params: UUIDParamDto,
     @Body() data: UpdateSupplierRequestDto,
@@ -55,21 +60,25 @@ export class SupplierController {
   }
 
   @Delete(':id')
+  @Roles(PermissionEnum.SUPPLIER_DELETE)
   delete(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT) {
     return this._deleteSupplierUseCase.execute(params.id, req.userId, req.branchId)
   }
 
   @Delete('')
+  @Roles(PermissionEnum.SUPPLIER_DELETE)
   deleteMany(@Body() data: DeleteManyRequestDto, @Req() req: RequestAccessBranchJWT) {
     return this._deleteManySupplierUseCase.execute(data, req.userId, req.branchId)
   }
 
   @Get(':id')
+  @Roles(PermissionEnum.SUPPLIER_VIEW)
   getOne(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT) {
     return this._getOneSupplierUseCase.execute(params.id, req.branchId)
   }
 
   @Get()
+  @Roles(PermissionEnum.SUPPLIER_VIEW)
   getAll(@Query() queryParams: GetAllSupplierRequestDto, @Req() req: RequestAccessBranchJWT) {
     return this._getAllSupplierUseCase.execute(queryParams, req.branchId)
   }

@@ -88,12 +88,13 @@ model User {
   status                    String             @db.VarChar(50)
   type                      String             @db.VarChar(50)
   password                  String             @db.VarChar(255)
-  email                     String?            @default("") @db.VarChar(255)
+  email                     String?            @db.VarChar(255)
   lastLogin                 DateTime?          @map("last_login") @db.Timestamptz(6)
   wardCode                  Int?               @map("ward_code")
   address                   String?            @default("") @db.VarChar(500)
   avatarId                  String?            @map("avatar_id") @db.Uuid()
   provinceCode              Int?               @map("province_code")
+  gender                    String?            @db.VarChar(20)
   store                     Store              @relation(fields: [storeCode], references: [code])
   ward                      Ward?              @relation(fields: [wardCode], references: [code], onDelete: SetNull)
   province                  Province?          @relation(fields: [provinceCode], references: [code], onDelete: SetNull)
@@ -136,12 +137,11 @@ model Role {
 }
 
 model Permission {
-  code      String          @id() @db.VarChar(50)
-  name      String          @db.VarChar(255)
-  roleId    String          @map("role_id") @db.Uuid()
-  groupCode String          @map("group_code") @db.VarChar(50)
-  role      Role            @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  group     PermissionGroup @relation(fields: [groupCode], references: [code])
+  code             String          @id() @db.VarChar(50)
+  name             String          @db.VarChar(255)
+  groupCode        String          @map("group_code") @db.VarChar(50)
+  roles            Role[]
+  permissionGroups PermissionGroup @relation(fields: [groupCode], references: [code])
 
   @@map("permissions")
 }

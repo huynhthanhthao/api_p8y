@@ -1,6 +1,9 @@
 import { ReportQueryDto } from '@common/dtos'
+import { PermissionEnum } from '@common/enums'
+import { RolesGuard } from '@common/guards'
 import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
+import { Roles } from '@common/utils'
 import {
   ReportBestProductResponseDto,
   ReportRevenueResponseDto,
@@ -14,7 +17,7 @@ import {
 } from '@usecases/reports'
 
 @Controller('reports')
-@UseGuards(AccessTokenGuard)
+@UseGuards(AccessTokenGuard, RolesGuard)
 export class ReportController {
   constructor(
     private readonly _reportRevenueUseCase: ReportRevenueUseCase,
@@ -23,6 +26,7 @@ export class ReportController {
   ) {}
 
   @Get('revenue')
+  @Roles(PermissionEnum.REPORT_VIEW)
   reportRevenue(
     @Query() params: ReportQueryDto,
     @Req() req: RequestAccessBranchJWT
@@ -31,6 +35,7 @@ export class ReportController {
   }
 
   @Get('products/top-sales')
+  @Roles(PermissionEnum.REPORT_VIEW)
   reportBestProductSales(
     @Query() params: ReportQueryDto,
     @Req() req: RequestAccessBranchJWT
@@ -39,6 +44,7 @@ export class ReportController {
   }
 
   @Get('customer/top-sales')
+  @Roles(PermissionEnum.REPORT_VIEW)
   reportTopCustomerByOrder(
     @Query() params: ReportQueryDto,
     @Req() req: RequestAccessBranchJWT

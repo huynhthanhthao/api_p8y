@@ -13,10 +13,12 @@ import {
   FileController,
   ManufacturerController,
   PaymentMethodController,
+  PermissionGroupController,
   ProductGroupController,
   ProductLocationController,
   ProductLotController,
   ProvinceController,
+  ReportController,
   RoleController,
   StockCardController,
   StockTransactionController,
@@ -124,7 +126,8 @@ import {
   DeleteProductLotUseCase,
   DeleteManyProductLotUseCase,
   GetAllProductLotUseCase,
-  GetOneProductLotUseCase
+  GetOneProductLotUseCase,
+  UpdateProductLotUseCase
 } from '@usecases/product-lots'
 import {
   CreateStockTransactionUseCase,
@@ -156,7 +159,7 @@ import {
   ReportRevenueUseCase,
   ReportTopCustomerByOrderUseCase
 } from '@usecases/reports'
-import { ReportController } from './controllers/report.controller'
+import { GetAllPermissionGroupUseCase } from '@usecases/permissions'
 
 const controllers = [
   AuthController,
@@ -178,7 +181,8 @@ const controllers = [
   UserController,
   RoleController,
   StockCardController,
-  ReportController
+  ReportController,
+  PermissionGroupController
 ]
 
 const useCases = [
@@ -286,6 +290,7 @@ const useCases = [
   DeleteManyProductLotUseCase,
   GetAllProductLotUseCase,
   GetOneProductLotUseCase,
+  UpdateProductLotUseCase,
 
   // StockTransaction
   CreateStockTransactionUseCase,
@@ -317,7 +322,10 @@ const useCases = [
   // Report
   ReportRevenueUseCase,
   ReportBestProductSalesUseCase,
-  ReportTopCustomerByOrderUseCase
+  ReportTopCustomerByOrderUseCase,
+
+  // Permission group
+  GetAllPermissionGroupUseCase
 ]
 
 @Module({

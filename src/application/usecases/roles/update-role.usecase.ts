@@ -57,12 +57,11 @@ export class UpdateRoleUseCase {
       },
       data: {
         name: data.name,
-        ...(data.permissionIds && {
+        ...(data.permissionCodes && {
           permissions: {
-            set: data.permissionIds.map(code => ({ code }))
+            set: data.permissionCodes.map(code => ({ code }))
           }
-        }),
-        updatedBy: userId
+        })
       },
       ...ROLE_SELECT_FIELDS
     })

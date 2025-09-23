@@ -93,6 +93,15 @@ export class SignInUseCase {
             createdBy: true,
             updatedBy: true
           }
+        },
+        roles: {
+          select: {
+            permissions: {
+              select: {
+                code: true
+              }
+            }
+          }
         }
       }
     })

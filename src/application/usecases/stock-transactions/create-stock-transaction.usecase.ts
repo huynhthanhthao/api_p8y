@@ -73,6 +73,7 @@ export class CreateStockTransactionUseCase {
 
       const transaction = await tx.stockTransaction.create({
         data: {
+          branchId,
           code: data.code || (await this.generateCode(data.type, branchId)),
           type: data.type,
           discountType: data.discountType,
@@ -81,7 +82,7 @@ export class CreateStockTransactionUseCase {
           supplierId: data.supplierId,
           transactedAt: data.transactedAt,
           createdBy: userId,
-          branchId,
+          status: data.status,
           ...(data.status === StockTransactionStatusEnum.COMPLETED && {
             reviewedBy: userId
           }),

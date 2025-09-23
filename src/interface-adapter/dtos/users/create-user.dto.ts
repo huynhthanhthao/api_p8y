@@ -10,7 +10,7 @@ import {
   ArrayNotEmpty
 } from 'class-validator'
 import { Transform, TransformFnParams } from 'class-transformer'
-import { UserStatusEnum, UserTypeEnum } from '@common/enums'
+import { GenderEnum, UserStatusEnum, UserTypeEnum } from '@common/enums'
 
 export class CreateUserRequestDto {
   @IsNotEmpty({ message: 'Tên không được để trống' })
@@ -83,4 +83,11 @@ export class CreateUserRequestDto {
   @ArrayNotEmpty({ message: 'Danh sách vai trò không được để trống' })
   @IsUUID('4', { each: true, message: 'ID vai trò phải là UUID hợp lệ' })
   roleIds: string[]
+
+  @IsOptional()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
+  @IsEnum(GenderEnum, {
+    message: `Giới tính phải là một trong: ${Object.values(GenderEnum).join(', ')}`
+  })
+  gender: GenderEnum
 }

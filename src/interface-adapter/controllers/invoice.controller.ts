@@ -27,9 +27,12 @@ import {
   GetAllInvoiceRequestDto,
   GetAllInvoiceResponseDto
 } from '@interface-adapter/dtos/invoinces'
+import { RolesGuard } from '@common/guards'
+import { Roles } from '@common/utils'
+import { PermissionEnum } from '@common/enums'
 
 @Controller('invoices')
-@UseGuards(AccessTokenGuard)
+@UseGuards(AccessTokenGuard, RolesGuard)
 export class InvoiceController {
   constructor(
     private readonly _getAllInvoiceUseCase: GetAllInvoiceUseCase,
@@ -40,7 +43,8 @@ export class InvoiceController {
   ) {}
 
   @Post('/cancel')
-  deleteMany(
+  @Roles(PermissionEnum.INVOICE_CANCEL)
+  cancelMany(
     @Body() data: DeleteManyRequestDto,
     @Req() req: RequestAccessBranchJWT
   ): Promise<Prisma.BatchPayload> {
@@ -48,11 +52,13 @@ export class InvoiceController {
   }
 
   @Post(':id/cancel')
-  delete(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<string> {
+  @Roles(PermissionEnum.INVOICE_CANCEL)
+  cancel(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<string> {
     return this._CancelInvoiceUseCase.execute(params.id, req.userId, req.branchId)
   }
 
   @Post()
+  @Roles(PermissionEnum.INVOICE_CREATE)
   create(
     @Body() data: CreateInvoiceRequestDto,
     @Req() req: RequestAccessBranchJWT
@@ -61,11 +67,13 @@ export class InvoiceController {
   }
 
   @Get(':id')
+  @Roles(PermissionEnum.INVOICE_VIEW)
   getOne(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<Invoice> {
     return this._getOneInvoiceUseCase.execute(params.id, req.branchId)
   }
 
   @Get()
+  @Roles(PermissionEnum.INVOICE_VIEW)
   getAll(
     @Query() queryParams: GetAllInvoiceRequestDto,
     @Req() req: RequestAccessBranchJWT

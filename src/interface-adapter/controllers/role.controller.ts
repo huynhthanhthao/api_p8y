@@ -29,9 +29,12 @@ import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
 import { DeleteManyRequestDto, UUIDParamDto } from '@common/dtos'
 import { Role } from '@common/types'
+import { RolesGuard } from '@common/guards'
+import { Roles } from '@common/utils'
+import { PermissionEnum } from '@common/enums'
 
 @Controller('roles')
-@UseGuards(AccessTokenGuard)
+@UseGuards(AccessTokenGuard, RolesGuard)
 export class RoleController {
   constructor(
     private readonly _getAllRoleUseCase: GetAllRoleUseCase,
@@ -43,11 +46,13 @@ export class RoleController {
   ) {}
 
   @Post()
+  @Roles(PermissionEnum.ROLE_CREATE)
   create(@Body() data: CreateRoleRequestDto, @Req() req: RequestAccessBranchJWT): Promise<Role> {
     return this._createRoleUseCase.execute(data, req.userId, req.storeCode)
   }
 
   @Patch(':id')
+  @Roles(PermissionEnum.ROLE_UPDATE)
   update(
     @Param() params: UUIDParamDto,
     @Body() data: UpdateRoleRequestDto,
@@ -57,11 +62,13 @@ export class RoleController {
   }
 
   @Delete(':id')
+  @Roles(PermissionEnum.ROLE_DELETE)
   delete(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<string> {
     return this._deleteRoleUseCase.execute(params.id, req.userId, req.storeCode)
   }
 
   @Delete('')
+  @Roles(PermissionEnum.ROLE_DELETE)
   deleteMany(
     @Body() data: DeleteManyRequestDto,
     @Req() req: RequestAccessBranchJWT
@@ -70,11 +77,13 @@ export class RoleController {
   }
 
   @Get(':id')
+  @Roles(PermissionEnum.ROLE_VIEW)
   getOne(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<Role> {
     return this._getOneRoleUseCase.execute(params.id, req.storeCode)
   }
 
   @Get()
+  @Roles(PermissionEnum.ROLE_VIEW)
   getAll(
     @Query() queryParams: GetAllRoleRequestDto,
     @Req() req: RequestAccessBranchJWT

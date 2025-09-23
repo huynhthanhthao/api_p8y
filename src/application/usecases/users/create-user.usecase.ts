@@ -30,6 +30,7 @@ export class CreateUserUseCase {
         lastName: data.lastName,
         phone: data.phone,
         email: data.email,
+        gender: data.gender,
         type: data.type,
         status: data.status,
         address: data.address,

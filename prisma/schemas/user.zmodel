@@ -18,12 +18,13 @@ model User extends BaseModel {
   status                    String             @db.VarChar(50) // ACTIVE, INACTIVE
   type                      String             @db.VarChar(50) // SUPER_ADMIN, STAFF
   password                  String             @db.VarChar(255)
-  email                     String?            @db.VarChar(255) @default("")
+  email                     String?            @db.VarChar(255)
   lastLogin                 DateTime?          @map("last_login") @db.Timestamptz(6)
   wardCode                  Int?               @map("ward_code")
   address                   String?            @db.VarChar(500) @default("")
   avatarId                  String?            @map("avatar_id") @db.Uuid
-  provinceCode              Int?               @map("province_code") 
+  provinceCode              Int?               @map("province_code")
+  gender                    String?            @db.VarChar(20) 
 
   // Relations - Many-to-many (Prisma tự tạo junction tables)
   store                     Store              @relation(fields: [storeCode], references: [code])

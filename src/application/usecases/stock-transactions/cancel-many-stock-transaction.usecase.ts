@@ -50,7 +50,6 @@ export class CancelManyStockTransactionUseCase {
     return await this.prismaClient.stockTransaction.updateMany({
       where: {
         id: { in: data.ids },
-        updatedBy: userId,
         branchId
       },
       data: {

@@ -21,6 +21,15 @@ export type UserBasicInfo = Prisma.UserGetPayload<{
         updatedBy: true
       }
     }
+    roles: {
+      select: {
+        permissions: {
+          select: {
+            code: true
+          }
+        }
+      }
+    }
   }
 }>
 

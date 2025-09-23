@@ -8,13 +8,7 @@ export const ROLE_SELECT_FIELDS = {
       select: {
         code: true,
         groupCode: true,
-        name: true,
-        group: {
-          select: {
-            code: true,
-            name: true
-          }
-        }
+        name: true
       }
     }
   }

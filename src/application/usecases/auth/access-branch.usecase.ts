@@ -43,7 +43,17 @@ export class AccessBranchUseCase {
 
     this.validateBranchAccess(branch)
 
-    const { accessToken, refreshToken } = this.generateTokens(userId, storeCode, branch.id)
+    const permissionCodes = user.roles
+      .flatMap(role => role.permissions)
+      .map(permission => permission.code)
+
+    const { accessToken, refreshToken } = this.generateTokens(
+      userId,
+      storeCode,
+      branch.id,
+      user.type as UserTypeEnum,
+      permissionCodes
+    )
 
     return {
       currentBranch: branch,
@@ -64,18 +74,41 @@ export class AccessBranchUseCase {
     }
   }
 
-  private generateTokens(userId: string, storeCode: string, branchId: string) {
-    const payload: AccessBranchDecodeJWT = { userId, storeCode, branchId }
+  private generateTokens(
+    userId: string,
+    storeCode: string,
+    branchId: string,
+    userType: UserTypeEnum,
+    permissionCodes: string[]
+  ) {
+    const uniquePermissionCodes = [...new Set(permissionCodes)]
 
-    const accessToken = this.jwtService.sign(payload, {
-      expiresIn: ACCESS_TOKEN_EXPIRY,
-      secret: process.env.JWT_SECRET_KEY_ACCESS
-    })
+    const accessToken = this.jwtService.sign(
+      {
+        userId,
+        storeCode,
+        branchId,
+        userType,
+        permissionCodes: uniquePermissionCodes
+      },
+      {
+        expiresIn: ACCESS_TOKEN_EXPIRY,
+        secret: process.env.JWT_SECRET_KEY_ACCESS
+      }
+    )
 
-    const refreshToken = this.jwtService.sign(payload, {
-      expiresIn: REFRESH_TOKEN_EXPIRY,
-      secret: process.env.JWT_SECRET_KEY_REFRESH
-    })
+    const refreshToken = this.jwtService.sign(
+      {
+        userId,
+        storeCode,
+        branchId,
+        userType
+      },
+      {
+        expiresIn: REFRESH_TOKEN_EXPIRY,
+        secret: process.env.JWT_SECRET_KEY_REFRESH
+      }
+    )
 
     return { accessToken, refreshToken }
   }
@@ -100,6 +133,18 @@ export class AccessBranchUseCase {
             deletedBy: true,
             createdBy: true,
             updatedBy: true
+          }
+        },
+        roles: {
+          select: {
+            id: true,
+            name: true,
+            permissions: {
+              select: {
+                code: true,
+                name: true
+              }
+            }
           }
         }
       }

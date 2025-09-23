@@ -29,9 +29,12 @@ import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
 import { DeleteManyRequestDto, UUIDParamDto } from '@common/dtos'
 import { Product } from '@common/types'
+import { RolesGuard } from '@common/guards'
+import { Roles } from '@common/utils'
+import { PermissionEnum } from '@common/enums'
 
 @Controller('products')
-@UseGuards(AccessTokenGuard)
+@UseGuards(AccessTokenGuard, RolesGuard)
 export class ProductController {
   constructor(
     private readonly _getAllProductUseCase: GetAllProductUseCase,
@@ -43,6 +46,7 @@ export class ProductController {
   ) {}
 
   @Post()
+  @Roles(PermissionEnum.PRODUCT_CREATE)
   create(
     @Body() data: CreateProductRequestDto,
     @Req() req: RequestAccessBranchJWT
@@ -51,6 +55,7 @@ export class ProductController {
   }
 
   @Patch(':id')
+  @Roles(PermissionEnum.PRODUCT_UPDATE)
   update(
     @Param() params: UUIDParamDto,
     @Body() data: UpdateProductRequestDto,
@@ -60,11 +65,13 @@ export class ProductController {
   }
 
   @Delete(':id')
+  @Roles(PermissionEnum.PRODUCT_DELETE)
   delete(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<string> {
     return this._deleteProductUseCase.execute(params.id, req.userId, req.branchId)
   }
 
   @Delete('')
+  @Roles(PermissionEnum.PRODUCT_DELETE)
   deleteMany(
     @Body() data: DeleteManyRequestDto,
     @Req() req: RequestAccessBranchJWT
@@ -73,11 +80,13 @@ export class ProductController {
   }
 
   @Get(':id')
+  @Roles(PermissionEnum.PRODUCT_VIEW)
   getOne(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<Product> {
     return this._getOneProductUseCase.execute(params.id, req.branchId)
   }
 
   @Get()
+  @Roles(PermissionEnum.PRODUCT_VIEW)
   getAll(
     @Query() queryParams: GetAllProductRequestDto,
     @Req() req: RequestAccessBranchJWT

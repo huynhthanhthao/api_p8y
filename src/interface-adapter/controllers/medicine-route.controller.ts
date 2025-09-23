@@ -29,9 +29,12 @@ import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
 import { DeleteManyRequestDto, UUIDParamDto } from '@common/dtos'
 import { MedicineRoute } from '@common/types'
+import { RolesGuard } from '@common/guards'
+import { Roles } from '@common/utils'
+import { PermissionEnum } from '@common/enums'
 
 @Controller('medicine-routes')
-@UseGuards(AccessTokenGuard)
+@UseGuards(AccessTokenGuard, RolesGuard)
 export class MedicineRouteController {
   constructor(
     private readonly _getAllMedicineRouteUseCase: GetAllMedicineRouteUseCase,
@@ -43,6 +46,7 @@ export class MedicineRouteController {
   ) {}
 
   @Post()
+  @Roles(PermissionEnum.MEDICINE_ROUTE_CREATE)
   create(
     @Body() data: CreateMedicineRouteRequestDto,
     @Req() req: RequestAccessBranchJWT
@@ -51,6 +55,7 @@ export class MedicineRouteController {
   }
 
   @Patch(':id')
+  @Roles(PermissionEnum.MEDICINE_ROUTE_UPDATE)
   update(
     @Param() params: UUIDParamDto,
     @Body() data: UpdateMedicineRouteRequestDto,
@@ -60,11 +65,13 @@ export class MedicineRouteController {
   }
 
   @Delete(':id')
+  @Roles(PermissionEnum.MEDICINE_ROUTE_DELETE)
   delete(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<string> {
     return this._deleteMedicineRouteUseCase.execute(params.id, req.userId, req.branchId)
   }
 
   @Delete('')
+  @Roles(PermissionEnum.MEDICINE_ROUTE_DELETE)
   deleteMany(
     @Body() data: DeleteManyRequestDto,
     @Req() req: RequestAccessBranchJWT
@@ -73,6 +80,7 @@ export class MedicineRouteController {
   }
 
   @Get(':id')
+  @Roles(PermissionEnum.MEDICINE_ROUTE_VIEW)
   getOne(
     @Param() params: UUIDParamDto,
     @Req() req: RequestAccessBranchJWT
@@ -81,6 +89,7 @@ export class MedicineRouteController {
   }
 
   @Get()
+  @Roles(PermissionEnum.MEDICINE_ROUTE_VIEW)
   getAll(
     @Query() queryParams: GetAllMedicineRouteRequestDto,
     @Req() req: RequestAccessBranchJWT

@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client'
 import { Body, Controller, Get, Param, Put, Query, Req, UseGuards } from '@nestjs/common'
 import {
   GetAllPaymentMethodUseCase,
@@ -13,9 +12,12 @@ import {
 import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
 import { PaymentMethod } from '@common/types'
+import { PermissionEnum } from '@common/enums'
+import { Roles } from '@common/utils'
+import { RolesGuard } from '@common/guards'
 
 @Controller('payment-methods')
-@UseGuards(AccessTokenGuard)
+@UseGuards(AccessTokenGuard, RolesGuard)
 export class PaymentMethodController {
   constructor(
     private readonly _getAllPaymentMethodUseCase: GetAllPaymentMethodUseCase,
@@ -24,6 +26,7 @@ export class PaymentMethodController {
   ) {}
 
   @Put('')
+  @Roles(PermissionEnum.PAYMENT_METHOD_UPSERT)
   deleteMany(
     @Body() data: UpsertPaymentMethodRequestDto,
     @Req() req: RequestAccessBranchJWT

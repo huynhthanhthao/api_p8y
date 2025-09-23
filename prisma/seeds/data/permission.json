@@ -1,0 +1,159 @@
+[
+  {
+    "code": "CUSTOMER_GROUP",
+    "name": "Nhóm khách hàng",
+    "permissions": [
+      { "code": "CUSTOMER_GROUP_CREATE", "name": "Tạo nhóm khách hàng" },
+      { "code": "CUSTOMER_GROUP_UPDATE", "name": "Cập nhật nhóm khách hàng" },
+      { "code": "CUSTOMER_GROUP_DELETE", "name": "Xóa nhóm khách hàng" },
+      { "code": "CUSTOMER_GROUP_VIEW", "name": "Xem nhóm khách hàng" }
+    ]
+  },
+  {
+    "code": "CUSTOMER",
+    "name": "Khách hàng",
+    "permissions": [
+      { "code": "CUSTOMER_CREATE", "name": "Tạo khách hàng" },
+      { "code": "CUSTOMER_UPDATE", "name": "Cập nhật khách hàng" },
+      { "code": "CUSTOMER_DELETE", "name": "Xóa khách hàng" },
+      { "code": "CUSTOMER_VIEW", "name": "Xem khách hàng" }
+    ]
+  },
+  {
+    "code": "SUPPLIER_GROUP",
+    "name": "Nhóm nhà cung cấp",
+    "permissions": [
+      { "code": "SUPPLIER_GROUP_CREATE", "name": "Tạo nhóm nhà cung cấp" },
+      { "code": "SUPPLIER_GROUP_UPDATE", "name": "Cập nhật nhóm nhà cung cấp" },
+      { "code": "SUPPLIER_GROUP_DELETE", "name": "Xóa nhóm nhà cung cấp" },
+      { "code": "SUPPLIER_GROUP_VIEW", "name": "Xem nhóm nhà cung cấp" }
+    ]
+  },
+  {
+    "code": "SUPPLIER",
+    "name": "Nhà cung cấp",
+    "permissions": [
+      { "code": "SUPPLIER_CREATE", "name": "Tạo nhà cung cấp" },
+      { "code": "SUPPLIER_UPDATE", "name": "Cập nhật nhà cung cấp" },
+      { "code": "SUPPLIER_DELETE", "name": "Xóa nhà cung cấp" },
+      { "code": "SUPPLIER_VIEW", "name": "Xem nhà cung cấp" }
+    ]
+  },
+  {
+    "code": "PRODUCT_GROUP",
+    "name": "Nhóm sản phẩm",
+    "permissions": [
+      { "code": "PRODUCT_GROUP_CREATE", "name": "Tạo nhóm sản phẩm" },
+      { "code": "PRODUCT_GROUP_UPDATE", "name": "Cập nhật nhóm sản phẩm" },
+      { "code": "PRODUCT_GROUP_DELETE", "name": "Xóa nhóm sản phẩm" },
+      { "code": "PRODUCT_GROUP_VIEW", "name": "Xem nhóm sản phẩm" }
+    ]
+  },
+  {
+    "code": "MANUFACTURER",
+    "name": "Nhà sản xuất",
+    "permissions": [
+      { "code": "MANUFACTURER_CREATE", "name": "Tạo nhà sản xuất" },
+      { "code": "MANUFACTURER_UPDATE", "name": "Cập nhật nhà sản xuất" },
+      { "code": "MANUFACTURER_DELETE", "name": "Xóa nhà sản xuất" },
+      { "code": "MANUFACTURER_VIEW", "name": "Xem nhà sản xuất" }
+    ]
+  },
+  {
+    "code": "PRODUCT_LOCATION",
+    "name": "Vị trí sản phẩm",
+    "permissions": [
+      { "code": "PRODUCT_LOCATION_CREATE", "name": "Tạo vị trí sản phẩm" },
+      { "code": "PRODUCT_LOCATION_UPDATE", "name": "Cập nhật vị trí sản phẩm" },
+      { "code": "PRODUCT_LOCATION_DELETE", "name": "Xóa vị trí sản phẩm" },
+      { "code": "PRODUCT_LOCATION_VIEW", "name": "Xem vị trí sản phẩm" }
+    ]
+  },
+  {
+    "code": "MEDICINE_ROUTE",
+    "name": "Đường dùng thuốc",
+    "permissions": [
+      { "code": "MEDICINE_ROUTE_CREATE", "name": "Tạo đường dùng thuốc" },
+      { "code": "MEDICINE_ROUTE_UPDATE", "name": "Cập nhật đường dùng thuốc" },
+      { "code": "MEDICINE_ROUTE_DELETE", "name": "Xóa đường dùng thuốc" },
+      { "code": "MEDICINE_ROUTE_VIEW", "name": "Xem đường dùng thuốc" }
+    ]
+  },
+  {
+    "code": "PRODUCT",
+    "name": "Sản phẩm",
+    "permissions": [
+      { "code": "PRODUCT_CREATE", "name": "Tạo sản phẩm" },
+      { "code": "PRODUCT_UPDATE", "name": "Cập nhật sản phẩm" },
+      { "code": "PRODUCT_DELETE", "name": "Xóa sản phẩm" },
+      { "code": "PRODUCT_VIEW", "name": "Xem sản phẩm" }
+    ]
+  },
+  {
+    "code": "PAYMENT_METHOD",
+    "name": "Phương thức thanh toán",
+    "permissions": [
+      { "code": "PAYMENT_METHOD_UPSERT", "name": "Cập nhật phương thức thanh toán" },
+      { "code": "PAYMENT_METHOD_VIEW", "name": "Xem phương thức thanh toán" }
+    ]
+  },
+  {
+    "code": "INVOICE",
+    "name": "Hóa đơn",
+    "permissions": [
+      { "code": "INVOICE_CREATE", "name": "Tạo hóa đơn" },
+      { "code": "INVOICE_CANCEL", "name": "Hủy hóa đơn" },
+      { "code": "INVOICE_VIEW", "name": "Xem hóa đơn" }
+    ]
+  },
+  {
+    "code": "PRODUCT_LOT",
+    "name": "Lô sản phẩm",
+    "permissions": [
+      { "code": "PRODUCT_LOT_CREATE", "name": "Tạo lô sản phẩm" },
+      { "code": "PRODUCT_LOT_UPDATE", "name": "Cập nhật thông tin lô sản phẩm" },
+      { "code": "PRODUCT_LOT_DELETE", "name": "Xóa lô sản phẩm" },
+      { "code": "PRODUCT_LOT_VIEW", "name": "Xem lô sản phẩm" }
+    ]
+  },
+  {
+    "code": "STOCK_TRANSACTION",
+    "name": "Giao dịch kho",
+    "permissions": [
+      { "code": "STOCK_TRANSACTION_CREATE", "name": "Tạo giao dịch kho" },
+      { "code": "STOCK_TRANSACTION_UPDATE", "name": "Cập nhật giao dịch kho" },
+      { "code": "STOCK_TRANSACTION_CANCEL", "name": "Hủy giao dịch kho" },
+      { "code": "STOCK_TRANSACTION_VIEW", "name": "Xem giao dịch kho" }
+    ]
+  },
+  {
+    "code": "USER",
+    "name": "Người dùng",
+    "permissions": [
+      { "code": "USER_CREATE", "name": "Tạo người dùng" },
+      { "code": "USER_UPDATE", "name": "Cập nhật người dùng" },
+      { "code": "USER_DELETE", "name": "Xóa người dùng" },
+      { "code": "USER_VIEW", "name": "Xem người dùng" }
+    ]
+  },
+  {
+    "code": "ROLE",
+    "name": "Nhóm quyền",
+    "permissions": [
+      { "code": "ROLE_CREATE", "name": "Tạo nhóm quyền" },
+      { "code": "ROLE_UPDATE", "name": "Cập nhật nhóm quyền" },
+      { "code": "ROLE_DELETE", "name": "Xóa nhóm quyền" },
+      { "code": "ROLE_VIEW", "name": "Xem nhóm quyền" }
+    ]
+  },
+  {
+    "code": "STOCK_CARD",
+    "name": "Thẻ kho",
+    "permissions": [{ "code": "STOCK_CARD_VIEW", "name": "Xem thẻ kho" }]
+  },
+  {
+    "code": "REPORT",
+    "name": "Báo cáo",
+    "permissions": [{ "code": "REPORT_VIEW", "name": "Xem báo cáo" }]
+  }
+]

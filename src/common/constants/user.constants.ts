@@ -24,6 +24,7 @@ export const USER_SELECT_FIELDS = {
     type: true,
     status: true,
     address: true,
+    gender: true,
     lastLogin: true,
     avatar: {
       omit: {

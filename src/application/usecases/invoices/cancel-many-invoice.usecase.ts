@@ -44,11 +44,11 @@ export class CancelManyInvoiceUseCase {
     return await this.prismaClient.invoice.updateMany({
       where: {
         id: { in: data.ids },
-        updatedBy: userId,
         branchId
       },
       data: {
-        status: InvoiceStatusEnum.CANCELED
+        status: InvoiceStatusEnum.CANCELED,
+        updatedBy: userId
       }
     })
   }

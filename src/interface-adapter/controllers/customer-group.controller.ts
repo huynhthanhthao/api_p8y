@@ -25,13 +25,15 @@ import {
   GetAllCustomerGroupResponseDto,
   UpdateCustomerGroupRequestDto
 } from '@interface-adapter/dtos/customer-groups'
-import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
 import { DeleteManyRequestDto, UUIDParamDto } from '@common/dtos'
 import { CustomerGroup } from '@common/types'
+import { AccessTokenGuard, RolesGuard } from '@common/guards'
+import { Roles } from '@common/utils'
+import { PermissionEnum } from '@common/enums'
 
+@UseGuards(AccessTokenGuard, RolesGuard)
 @Controller('customer-groups')
-@UseGuards(AccessTokenGuard)
 export class CustomerGroupController {
   constructor(
     private readonly _getAllCustomerGroupUseCase: GetAllCustomerGroupUseCase,
@@ -43,6 +45,7 @@ export class CustomerGroupController {
   ) {}
 
   @Post()
+  @Roles(PermissionEnum.CUSTOMER_GROUP_CREATE)
   create(
     @Body() data: CreateCustomerGroupRequestDto,
     @Req() req: RequestAccessBranchJWT
@@ -51,6 +54,7 @@ export class CustomerGroupController {
   }
 
   @Patch(':id')
+  @Roles(PermissionEnum.CUSTOMER_GROUP_UPDATE)
   update(
     @Param() params: UUIDParamDto,
     @Body() data: UpdateCustomerGroupRequestDto,
@@ -60,11 +64,13 @@ export class CustomerGroupController {
   }
 
   @Delete(':id')
+  @Roles(PermissionEnum.CUSTOMER_GROUP_DELETE)
   delete(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<string> {
     return this._deleteCustomerGroupUseCase.execute(params.id, req.userId, req.storeCode)
   }
 
   @Delete('')
+  @Roles(PermissionEnum.CUSTOMER_GROUP_DELETE)
   deleteMany(
     @Body() data: DeleteManyRequestDto,
     @Req() req: RequestAccessBranchJWT
@@ -73,6 +79,7 @@ export class CustomerGroupController {
   }
 
   @Get(':id')
+  @Roles(PermissionEnum.CUSTOMER_GROUP_VIEW)
   getOne(
     @Param() params: UUIDParamDto,
     @Req() req: RequestAccessBranchJWT
@@ -81,6 +88,7 @@ export class CustomerGroupController {
   }
 
   @Get()
+  @Roles(PermissionEnum.CUSTOMER_GROUP_VIEW)
   getAll(
     @Query() queryParams: GetAllCustomerGroupRequestDto,
     @Req() req: RequestAccessBranchJWT

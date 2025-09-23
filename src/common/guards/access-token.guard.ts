@@ -30,6 +30,8 @@ export class AccessTokenGuard implements CanActivate {
       request.branchId = decoded.branchId
       request.userId = decoded.userId
       request.storeCode = decoded.storeCode
+      request.permissionCodes = decoded.permissionCodes
+      request.userType = decoded.userType
 
       return true
     } catch (error) {

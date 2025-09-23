@@ -29,9 +29,12 @@ import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
 import { DeleteManyRequestDto, UUIDParamDto } from '@common/dtos'
 import { ProductLocation } from '@common/types'
+import { RolesGuard } from '@common/guards'
+import { Roles } from '@common/utils'
+import { PermissionEnum } from '@common/enums'
 
 @Controller('product-locations')
-@UseGuards(AccessTokenGuard)
+@UseGuards(AccessTokenGuard, RolesGuard)
 export class ProductLocationController {
   constructor(
     private readonly _getAllProductLocationUseCase: GetAllProductLocationUseCase,
@@ -43,6 +46,7 @@ export class ProductLocationController {
   ) {}
 
   @Post()
+  @Roles(PermissionEnum.PRODUCT_LOCATION_CREATE)
   create(
     @Body() data: CreateProductLocationRequestDto,
     @Req() req: RequestAccessBranchJWT
@@ -51,6 +55,7 @@ export class ProductLocationController {
   }
 
   @Patch(':id')
+  @Roles(PermissionEnum.PRODUCT_LOCATION_UPDATE)
   update(
     @Param() params: UUIDParamDto,
     @Body() data: UpdateProductLocationRequestDto,
@@ -60,11 +65,13 @@ export class ProductLocationController {
   }
 
   @Delete(':id')
+  @Roles(PermissionEnum.PRODUCT_LOCATION_DELETE)
   delete(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<string> {
     return this._deleteProductLocationUseCase.execute(params.id, req.userId, req.branchId)
   }
 
   @Delete('')
+  @Roles(PermissionEnum.PRODUCT_LOCATION_DELETE)
   deleteMany(
     @Body() data: DeleteManyRequestDto,
     @Req() req: RequestAccessBranchJWT
@@ -73,6 +80,7 @@ export class ProductLocationController {
   }
 
   @Get(':id')
+  @Roles(PermissionEnum.PRODUCT_LOCATION_VIEW)
   getOne(
     @Param() params: UUIDParamDto,
     @Req() req: RequestAccessBranchJWT
@@ -81,6 +89,7 @@ export class ProductLocationController {
   }
 
   @Get()
+  @Roles(PermissionEnum.PRODUCT_LOCATION_VIEW)
   getAll(
     @Query() queryParams: GetAllProductLocationRequestDto,
     @Req() req: RequestAccessBranchJWT

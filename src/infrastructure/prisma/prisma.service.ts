@@ -8,7 +8,6 @@ import { AnyObject } from '@common/interfaces/any-object.interface'
 
 const softDelete = createSoftDeleteExtension({
   models: {
-    Role: true,
     User: true,
     Branch: true,
     Customer: true,

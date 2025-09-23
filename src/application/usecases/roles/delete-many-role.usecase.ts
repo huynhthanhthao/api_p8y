@@ -38,11 +38,6 @@ export class DeleteManyRoleUseCase {
     if (existingRoles.some(role => role.users.length > 0))
       throw new HttpException(HttpStatus.BAD_REQUEST, ROLE_ERROR.ROLE_IN_USE)
 
-    await this.prismaClient.role.updateMany({
-      where: { id: { in: data.ids }, storeCode },
-      data: { deletedBy: userId }
-    })
-
     return await this.prismaClient.role.deleteMany({
       where: {
         id: { in: data.ids },

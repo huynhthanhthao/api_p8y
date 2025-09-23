@@ -2,8 +2,8 @@ import { PrismaService } from '@infrastructure/prisma'
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { HttpException } from '@common/exceptions'
 import { CreateRoleRequestDto } from '@interface-adapter/dtos/roles'
-import { ROLE_ERROR } from '@common/errors'
 import { Role } from '@common/types'
+import { ROLE_ERROR } from '@common/errors'
 import { ROLE_SELECT_FIELDS } from '@common/constants'
 
 @Injectable()
@@ -31,10 +31,10 @@ export class CreateRoleUseCase {
       data: {
         name: data.name,
         permissions: {
-          connect: data.permissionIds.map(code => ({ code }))
+          connect: data.permissionCodes.map(code => ({ code }))
         },
-        createdBy: userId,
-        storeCode
+        storeCode,
+        createdBy: userId
       },
       ...ROLE_SELECT_FIELDS
     })

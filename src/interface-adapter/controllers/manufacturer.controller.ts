@@ -29,8 +29,12 @@ import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
 import { DeleteManyRequestDto, UUIDParamDto } from '@common/dtos'
 import { Manufacturer } from '@common/types'
+import { RolesGuard } from '@common/guards'
+import { PermissionEnum } from '@common/enums'
+import { Roles } from '@common/utils'
 
 @Controller('manufacturers')
+@UseGuards(AccessTokenGuard, RolesGuard)
 @UseGuards(AccessTokenGuard)
 export class ManufacturerController {
   constructor(
@@ -43,6 +47,7 @@ export class ManufacturerController {
   ) {}
 
   @Post()
+  @Roles(PermissionEnum.MANUFACTURER_CREATE)
   create(
     @Body() data: CreateManufacturerRequestDto,
     @Req() req: RequestAccessBranchJWT
@@ -51,6 +56,7 @@ export class ManufacturerController {
   }
 
   @Patch(':id')
+  @Roles(PermissionEnum.MANUFACTURER_UPDATE)
   update(
     @Param() params: UUIDParamDto,
     @Body() data: UpdateManufacturerRequestDto,
@@ -60,11 +66,13 @@ export class ManufacturerController {
   }
 
   @Delete(':id')
+  @Roles(PermissionEnum.MANUFACTURER_DELETE)
   delete(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<string> {
     return this._deleteManufacturerUseCase.execute(params.id, req.userId, req.branchId)
   }
 
   @Delete('')
+  @Roles(PermissionEnum.MANUFACTURER_DELETE)
   deleteMany(
     @Body() data: DeleteManyRequestDto,
     @Req() req: RequestAccessBranchJWT
@@ -73,11 +81,13 @@ export class ManufacturerController {
   }
 
   @Get(':id')
+  @Roles(PermissionEnum.MANUFACTURER_VIEW)
   getOne(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<Manufacturer> {
     return this._getOneManufacturerUseCase.execute(params.id, req.branchId)
   }
 
   @Get()
+  @Roles(PermissionEnum.MANUFACTURER_VIEW)
   getAll(
     @Query() queryParams: GetAllManufacturerRequestDto,
     @Req() req: RequestAccessBranchJWT

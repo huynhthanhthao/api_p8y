@@ -14,7 +14,19 @@ export async function getUserInfo(tx: PrismaClient, userId: string): Promise<Use
       phone: true,
       status: true,
       avatarId: true,
-      avatar: FILE_SELECT_FIELDS
+      avatar: FILE_SELECT_FIELDS,
+      roles: {
+        select: {
+          id: true,
+          name: true,
+          permissions: {
+            select: {
+              code: true,
+              name: true
+            }
+          }
+        }
+      }
     }
   })
 }

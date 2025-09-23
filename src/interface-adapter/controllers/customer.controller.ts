@@ -29,9 +29,12 @@ import { AccessTokenGuard } from '@common/guards/access-token.guard'
 import { RequestAccessBranchJWT } from '@common/interfaces'
 import { DeleteManyRequestDto, UUIDParamDto } from '@common/dtos'
 import { Customer } from '@common/types'
+import { RolesGuard } from '@common/guards'
+import { Roles } from '@common/utils'
+import { PermissionEnum } from '@common/enums'
 
 @Controller('customers')
-@UseGuards(AccessTokenGuard)
+@UseGuards(AccessTokenGuard, RolesGuard)
 export class CustomerController {
   constructor(
     private readonly _getAllCustomerUseCase: GetAllCustomerUseCase,
@@ -43,6 +46,7 @@ export class CustomerController {
   ) {}
 
   @Post()
+  @Roles(PermissionEnum.CUSTOMER_CREATE)
   create(
     @Body() data: CreateCustomerRequestDto,
     @Req() req: RequestAccessBranchJWT
@@ -51,6 +55,7 @@ export class CustomerController {
   }
 
   @Patch(':id')
+  @Roles(PermissionEnum.CUSTOMER_UPDATE)
   update(
     @Param() params: UUIDParamDto,
     @Body() data: UpdateCustomerRequestDto,
@@ -60,11 +65,13 @@ export class CustomerController {
   }
 
   @Delete(':id')
+  @Roles(PermissionEnum.CUSTOMER_DELETE)
   delete(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<string> {
     return this._deleteCustomerUseCase.execute(params.id, req.userId, req.storeCode)
   }
 
   @Delete('')
+  @Roles(PermissionEnum.CUSTOMER_DELETE)
   deleteMany(
     @Body() data: DeleteManyRequestDto,
     @Req() req: RequestAccessBranchJWT
@@ -73,11 +80,13 @@ export class CustomerController {
   }
 
   @Get(':id')
+  @Roles(PermissionEnum.CUSTOMER_VIEW)
   getOne(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<Customer> {
     return this._getOneCustomerUseCase.execute(params.id, req.storeCode)
   }
 
   @Get()
+  @Roles(PermissionEnum.CUSTOMER_VIEW)
   getAll(
     @Query() queryParams: GetAllCustomerRequestDto,
     @Req() req: RequestAccessBranchJWT

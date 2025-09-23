@@ -17,9 +17,12 @@ import {
   GetAllStockTransactionRequestDto,
   GetAllStockTransactionResponseDto
 } from '@interface-adapter/dtos/stock-transactions'
+import { PermissionEnum } from '@common/enums'
+import { Roles } from '@common/utils'
+import { RolesGuard } from '@common/guards'
 
 @Controller('stock-transactions')
-@UseGuards(AccessTokenGuard)
+@UseGuards(AccessTokenGuard, RolesGuard)
 export class StockTransactionController {
   constructor(
     private readonly _getAllStockTransactionUseCase: GetAllStockTransactionUseCase,
@@ -31,6 +34,7 @@ export class StockTransactionController {
   ) {}
 
   @Patch(':id')
+  @Roles(PermissionEnum.STOCK_TRANSACTION_UPDATE)
   update(
     @Param() params: UUIDParamDto,
     @Req() req: RequestAccessBranchJWT,
@@ -40,6 +44,7 @@ export class StockTransactionController {
   }
 
   @Post('cancel')
+  @Roles(PermissionEnum.STOCK_TRANSACTION_CANCEL)
   cancelMany(
     @Body() data: DeleteManyRequestDto,
     @Req() req: RequestAccessBranchJWT
@@ -48,11 +53,13 @@ export class StockTransactionController {
   }
 
   @Post(':id/cancel')
+  @Roles(PermissionEnum.STOCK_TRANSACTION_CANCEL)
   cancel(@Param() params: UUIDParamDto, @Req() req: RequestAccessBranchJWT): Promise<string> {
     return this._CancelStockTransactionUseCase.execute(params.id, req.userId, req.branchId)
   }
 
   @Post()
+  @Roles(PermissionEnum.STOCK_TRANSACTION_CREATE)
   create(
     @Body() data: CreateStockTransactionRequestDto,
     @Req() req: RequestAccessBranchJWT
@@ -61,6 +68,7 @@ export class StockTransactionController {
   }
 
   @Get(':id')
+  @Roles(PermissionEnum.STOCK_TRANSACTION_VIEW)
   getOne(
     @Param() params: UUIDParamDto,
     @Req() req: RequestAccessBranchJWT
@@ -69,6 +77,7 @@ export class StockTransactionController {
   }
 
   @Get()
+  @Roles(PermissionEnum.STOCK_TRANSACTION_VIEW)
   getAll(
     @Query() queryParams: GetAllStockTransactionRequestDto,
     @Req() req: RequestAccessBranchJWT
