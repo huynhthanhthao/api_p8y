@@ -15,11 +15,14 @@ export class GetAllInvoiceUseCase {
     data: GetAllInvoiceRequestDto,
     branchId: string
   ): Promise<GetAllInvoiceResponseDto> {
-    const { page, perPage, keyword, orderBy, sortBy, from, to } = data
+    const { page, perPage, keyword, orderBy, sortBy, from, to, customerId } = data
 
     const where: Prisma.InvoiceWhereInput = {
       branchId,
       deletedAt: null,
+      ...(customerId && {
+        customerId
+      }),
       ...(from && to
         ? {
             createdAt: {

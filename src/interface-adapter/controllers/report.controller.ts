@@ -34,7 +34,7 @@ export class ReportController {
     return this._reportRevenueUseCase.execute(params, req.branchId)
   }
 
-  @Get('products/top-sales')
+  @Get('product/top-sales')
   @Roles(PermissionEnum.REPORT_VIEW)
   reportBestProductSales(
     @Query() params: ReportQueryDto,

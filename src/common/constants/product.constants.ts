@@ -63,6 +63,9 @@ export const PRODUCT_INCLUDE_FIELDS = {
         code: true,
         unitName: true,
         conversion: true
+      },
+      orderBy: {
+        createdAt: 'asc'
       }
     },
     productLots: {

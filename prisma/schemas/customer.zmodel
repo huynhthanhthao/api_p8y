@@ -26,7 +26,9 @@ model Customer extends BaseModel {
   @@unique([phone, storeCode])
   @@unique([email, storeCode])
   @@unique([code, storeCode])
+
   @@index([storeCode])
+
   @@map("customers")
 }
 

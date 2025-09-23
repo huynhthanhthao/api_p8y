@@ -46,8 +46,6 @@ export class CreateProductUseCase {
           isDirectSale: data.isDirectSale,
           salePrice: data.salePrice,
           costPrice: data.costPrice,
-          isStockEnabled: data.isStockEnabled,
-          isLotEnabled: data.isLotEnabled,
           maxStock: data.maxStock,
           minStock: data.minStock,
           package: data.package,
@@ -57,6 +55,11 @@ export class CreateProductUseCase {
           code: productCode,
           createdBy: userId,
           branchId,
+          ...(data.isStockEnabled && {
+            isStockEnabled: data.isStockEnabled,
+            isLotEnabled: data.isLotEnabled,
+            stockQuantity: data.stockQuantity
+          }),
           ...(data.photoIds && {
             photos: {
               connect: data.photoIds.map(id => ({ id }))
@@ -99,24 +102,37 @@ export class CreateProductUseCase {
         const variantPromises = data.variants.map((variant, index) =>
           tx.product.create({
             data: {
+              /**
+               * data with parent
+               */
+              branchId,
+              createdBy: userId,
               name: data.name,
               shortName: data.shortName,
               productGroupId: data.productGroupId,
-              parentId: newProduct.id,
-              unitName: variant.unitName,
-              conversion: variant.conversion || 1,
-              code: variant.code || generateCodeIncrease(newProduct.code, index + 1),
-              barcode: variant.barcode,
-              costPrice: data.costPrice * variant.conversion,
-              salePrice: variant.salePrice,
-              isDirectSale: variant.isDirectSale,
-              isStockEnabled: false,
-              isLotEnabled: false,
               package: data.package,
               country: data.country,
               manufacturerId: data.manufacturerId,
-              createdBy: userId,
-              branchId
+              ...(data.isStockEnabled && {
+                isStockEnabled: data.isStockEnabled,
+                isLotEnabled: data.isLotEnabled
+              }),
+              ...(data.photoIds && {
+                photos: {
+                  connect: data.photoIds.map(id => ({ id }))
+                }
+              }),
+              /**
+               * data with variant
+               */
+              parentId: newProduct.id,
+              code: variant.code || generateCodeIncrease(newProduct.code, index + 1),
+              unitName: variant.unitName,
+              conversion: variant.conversion || 1,
+              barcode: variant.barcode,
+              costPrice: data.costPrice * variant.conversion,
+              salePrice: variant.salePrice,
+              isDirectSale: variant.isDirectSale
             }
           })
         )

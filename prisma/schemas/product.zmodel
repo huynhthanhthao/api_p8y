@@ -29,7 +29,7 @@ model Product extends BaseModel {
 
   isLotEnabled     Boolean           @map("is_lot_enabled") @db.Boolean @default(false)
   isStockEnabled   Boolean           @map("is_stock_enabled") @db.Boolean @default(false)
-  stockQuantity    Float?            @map("stock_quantity")
+  stockQuantity    Float?            @map("stock_quantity") @default(0)
   minStock         Float?            @map("min_stock") @default(0)
   maxStock         Float?            @map("max_stock") @default(999999999)
 

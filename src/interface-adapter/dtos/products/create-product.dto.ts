@@ -199,7 +199,7 @@ export class CreateProductRequestDto {
   @IsOptional()
   @IsNumber({}, { message: 'Số lượng kho phải là số' })
   @Min(0, { message: 'Số lượng kho không được nhỏ hơn 0' })
-  stockQuantity: number
+  stockQuantity: number = 0
 
   @IsOptional()
   @IsNumber({}, { message: 'Tồn tối thiểu phải là số' })

@@ -30,10 +30,10 @@ export class CreateCustomerUseCase {
             create: {
               ...data.customerInvoiceInfo
             }
-          },
-          code: data.code || (await generateCodeModel({ model: 'Customer', storeCode })),
-          createdBy: userId
+          }
         }),
+        code: await generateCodeModel({ model: 'Customer', storeCode }),
+        createdBy: userId,
         storeCode
       },
       ...CUSTOMER_INCLUDE_FIELDS

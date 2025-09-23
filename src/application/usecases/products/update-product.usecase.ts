@@ -82,9 +82,6 @@ export class UpdateProductUseCase {
     /**
      * Xử lý tạo / cập nhật mã sản phẩm
      */
-    const productCodeNext = await generateCodeModel({ model: 'Product', branchId })
-
-    const productCode = data.code === '' ? productCodeNext : data.code || existingProduct.code
 
     return await this.prismaClient.$transaction(async tx => {
       /**
@@ -124,7 +121,7 @@ export class UpdateProductUseCase {
        * Xử lý cập nhật sản phẩm cùng loại
        */
       if (data.variants) {
-        await this.handleVariants(tx, data, existingProduct, productCodeNext, userId, branchId)
+        await this.handleVariants(tx, data, existingProduct, userId, branchId)
       }
 
       /**
@@ -137,7 +134,7 @@ export class UpdateProductUseCase {
         },
         data: {
           name: data.name,
-          code: productCode,
+          code: data.code || (await generateCodeModel({ model: 'Product', branchId })),
           productGroupId: data.productGroupId,
           type: data.type,
           barcode: data.barcode,
@@ -214,7 +211,6 @@ export class UpdateProductUseCase {
     existingProduct: Awaited<ReturnType<typeof this.prismaClient.product.findUnique>> & {
       variants: Awaited<ReturnType<typeof this.prismaClient.product.findMany>>
     },
-    productCode: string,
     userId: string,
     branchId: string
   ): Promise<void> {
@@ -247,22 +243,46 @@ export class UpdateProductUseCase {
     /**
      * Cập nhật hoặc tạo mới các variant
      */
+
     for (const [index, variant] of data.variants!.entries()) {
+      const productCodeNext = await generateCodeModel({ model: 'Product', branchId })
+
       if (variant.id) {
         /**
          *Cập nhật variant hiện có
          */
+
         await tx.product.update({
           where: { id: variant.id, branchId },
           data: {
+            /**
+             * data with parent
+             */
             name: data.name,
             shortName: data.shortName,
+            isStockEnabled: data.isStockEnabled,
+            isLotEnabled: data.isLotEnabled,
+            description: data.description,
+            manufacturerId: data.manufacturerId,
+            maxStock: data.maxStock,
+            minStock: data.minStock,
+            package: data.package,
+            country: data.country,
+            ...(data.photoIds && {
+              photos: {
+                set: data.photoIds.map(id => ({ id }))
+              }
+            }),
+
+            /**
+             * data with variant
+             */
+            code: variant.code || productCodeNext,
+            barcode: variant.barcode,
             unitName: variant.unitName,
             conversion: variant.conversion || 1,
-            code: variant.code,
-            barcode: variant.barcode,
             salePrice: variant.salePrice,
-            costPrice: costPriceBase * variant.conversion,
+            costPrice: costPriceBase * (variant.conversion || 1),
             isDirectSale: variant.isDirectSale,
             updatedBy: userId
           }
@@ -271,26 +291,35 @@ export class UpdateProductUseCase {
         /**
          * Tạo variant mới
          */
-        const variantCode = variant.code || generateCodeIncrease(productCode, index + 1)
-
         await tx.product.create({
           data: {
+            /**
+             * data with parent
+             */
+            parentId: existingProduct.id,
+            isStockEnabled: data.isStockEnabled || existingProduct.isStockEnabled,
+            isLotEnabled: data.isLotEnabled || existingProduct.isLotEnabled,
             name: data.name || existingProduct.name,
             shortName: data.shortName || existingProduct.shortName,
             productGroupId: data.productGroupId || existingProduct.productGroupId,
             package: data.package || existingProduct.package,
             country: data.country || existingProduct.country,
             manufacturerId: data.manufacturerId || existingProduct.manufacturerId,
-            parentId: existingProduct.id,
+            ...(data.photoIds && {
+              photos: {
+                connect: data.photoIds.map(id => ({ id }))
+              }
+            }),
+            /**
+             * data with variant
+             */
+            code: productCodeNext,
+            barcode: variant.barcode,
             unitName: variant.unitName,
             conversion: variant.conversion,
-            code: variantCode,
-            barcode: variant.barcode,
-            costPrice: costPriceBase,
+            costPrice: costPriceBase * (variant.conversion || 1),
             salePrice: variant.salePrice,
             isDirectSale: variant.isDirectSale,
-            isStockEnabled: false,
-            isLotEnabled: false,
             createdBy: userId,
             branchId
           }
