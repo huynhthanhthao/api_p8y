@@ -11,7 +11,7 @@ import {
 import { UserBasicInfo } from '@common/types'
 import { getBranchWithUserAccess, getStoreWithAccessibleBranches } from '@common/utils'
 import { UserTypeEnum } from '@common/enums'
-import { AccessBranchDecodeJWT } from '@common/interfaces'
+import { AccessBranchDecodeJWT, RefreshTokenDecodeJWT } from '@common/interfaces'
 
 @Injectable()
 export class AccessBranchUseCase {
@@ -83,32 +83,29 @@ export class AccessBranchUseCase {
   ) {
     const uniquePermissionCodes = [...new Set(permissionCodes)]
 
-    const accessToken = this.jwtService.sign(
-      {
-        userId,
-        storeCode,
-        branchId,
-        userType,
-        permissionCodes: uniquePermissionCodes
-      },
-      {
-        expiresIn: ACCESS_TOKEN_EXPIRY,
-        secret: process.env.JWT_SECRET_KEY_ACCESS
-      }
-    )
+    const payloadAccessToken: AccessBranchDecodeJWT = {
+      userId,
+      storeCode,
+      branchId,
+      userType: userType,
+      permissionCodes: uniquePermissionCodes
+    }
 
-    const refreshToken = this.jwtService.sign(
-      {
-        userId,
-        storeCode,
-        branchId,
-        userType
-      },
-      {
-        expiresIn: REFRESH_TOKEN_EXPIRY,
-        secret: process.env.JWT_SECRET_KEY_REFRESH
-      }
-    )
+    const accessToken = this.jwtService.sign(payloadAccessToken, {
+      expiresIn: ACCESS_TOKEN_EXPIRY,
+      secret: process.env.JWT_SECRET_KEY_ACCESS
+    })
+
+    const payloadRefreshToken: RefreshTokenDecodeJWT = {
+      userId,
+      storeCode,
+      branchId
+    }
+
+    const refreshToken = this.jwtService.sign(payloadRefreshToken, {
+      expiresIn: REFRESH_TOKEN_EXPIRY,
+      secret: process.env.JWT_SECRET_KEY_REFRESH
+    })
 
     return { accessToken, refreshToken }
   }

@@ -5,7 +5,8 @@ import { ACCESS_TOKEN_EXPIRY } from '@common/constants'
 import { PrismaService } from '@infrastructure/prisma'
 import { HttpException } from '@common/exceptions'
 import { REFRESH_TOKEN_ERROR } from '@common/errors'
-import { UserStatusEnum } from '@common/enums'
+import { UserStatusEnum, UserTypeEnum } from '@common/enums'
+import { AccessBranchDecodeJWT } from '@common/interfaces'
 
 @Injectable()
 export class RefreshTokenUseCase {
@@ -53,19 +54,18 @@ export class RefreshTokenUseCase {
 
     const uniquePermissionCodes = [...new Set(permissionCodes)]
 
-    const accessToken = this.jwtService.sign(
-      {
-        userId,
-        storeCode,
-        branchId,
-        userType: user.type,
-        permissionCodes: uniquePermissionCodes
-      },
-      {
-        secret: process.env.JWT_SECRET_KEY_ACCESS,
-        expiresIn: ACCESS_TOKEN_EXPIRY
-      }
-    )
+    const payload: AccessBranchDecodeJWT = {
+      userId,
+      storeCode,
+      branchId,
+      userType: user.type as UserTypeEnum,
+      permissionCodes: uniquePermissionCodes
+    }
+
+    const accessToken = this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET_KEY_ACCESS,
+      expiresIn: ACCESS_TOKEN_EXPIRY
+    })
 
     return { accessToken }
   }
