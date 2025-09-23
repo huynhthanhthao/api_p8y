@@ -10,13 +10,8 @@ export class RolesGuard implements CanActivate {
   async canActivate(context: ExecutionContext) {
     const requiredRoles = this.reflector.get<string[]>('roles', context.getHandler())
     const request = context.switchToHttp().getRequest() as AccessBranchDecodeJWT
-    console.log(requiredRoles, request.userType)
 
-    if (
-      !requiredRoles ||
-      requiredRoles.length === 0 ||
-      request.userType === UserTypeEnum.SUPER_ADMIN
-    ) {
+    if (request.userType === UserTypeEnum.SUPER_ADMIN || !requiredRoles || !requiredRoles.length) {
       return true
     }
 
