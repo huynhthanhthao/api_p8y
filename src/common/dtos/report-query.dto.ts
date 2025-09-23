@@ -22,7 +22,7 @@ export class ReportQueryDto {
   to: Date
 
   @IsOptional()
-  @Transform(({ value }) => value?.trim())
+  @Transform(({ value }) => value?.trim()?.toUpperCase())
   @IsEnum(ReportGroupByEnum, {
     message: `groupBy là một trong: ${Object.values(ReportGroupByEnum).join(', ')}`
   })

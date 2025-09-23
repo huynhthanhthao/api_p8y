@@ -8,12 +8,11 @@ const prisma = new PrismaClient()
 async function main() {
   try {
     // Load dữ liệu JSON
-    const filePath = path.resolve(__dirname, 'data/permission.json')
+    const filePath = path.resolve(__dirname, 'data/permissions.json')
     const jsonData = JSON.parse(fs.readFileSync(filePath, 'utf-8'))
 
     // Lấy tất cả permissions hiện có trong DB
     const dbPermissions = await prisma.permission.findMany()
-    const dbPermissionCodes = new Set(dbPermissions.map(p => p.code))
 
     const jsonPermissions: { code: string; name: string; groupCode: string }[] = []
     const jsonPermissionCodes = new Set<string>()

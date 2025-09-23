@@ -24,7 +24,8 @@ import {
   StockTransactionController,
   SupplierController,
   SupplierGroupController,
-  UserController
+  UserController,
+  MedicineController
 } from './controllers'
 import {
   SignInUseCase,
@@ -160,6 +161,7 @@ import {
   ReportTopCustomerByOrderUseCase
 } from '@usecases/reports'
 import { GetAllPermissionGroupUseCase } from '@usecases/permissions'
+import { GetAllMedicineUseCase } from '@usecases/medicines'
 
 const controllers = [
   AuthController,
@@ -182,7 +184,8 @@ const controllers = [
   RoleController,
   StockCardController,
   ReportController,
-  PermissionGroupController
+  PermissionGroupController,
+  MedicineController
 ]
 
 const useCases = [
@@ -325,7 +328,10 @@ const useCases = [
   ReportTopCustomerByOrderUseCase,
 
   // Permission group
-  GetAllPermissionGroupUseCase
+  GetAllPermissionGroupUseCase,
+
+  // Medicine
+  GetAllMedicineUseCase
 ]
 
 @Module({

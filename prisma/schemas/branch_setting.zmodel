@@ -9,5 +9,5 @@ model BranchSetting {
 
   // Relations
   branch                Branch   @relation(fields: [branchId], references: [id])
-  @@map("branches")
+  @@map("branch_settings")
 }

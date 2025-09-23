@@ -1,3 +1,3 @@
-export * from './create-medicine-routes.dto'
-export * from './update-medicine-routes.dto'
-export * from './get-all-medicine-routes.dto'
+export * from './create-medicine-route.dto'
+export * from './update-medicine-route.dto'
+export * from './get-all-medicine-route.dto'
