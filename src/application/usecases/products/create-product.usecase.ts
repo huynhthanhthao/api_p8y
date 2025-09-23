@@ -128,11 +128,11 @@ export class CreateProductUseCase {
               parentId: newProduct.id,
               code: variant.code || generateCodeIncrease(newProduct.code, index + 1),
               unitName: variant.unitName,
-              conversion: variant.conversion || 1,
+              conversion: variant.conversion,
               barcode: variant.barcode,
-              costPrice: data.costPrice * variant.conversion,
               salePrice: variant.salePrice,
-              isDirectSale: variant.isDirectSale
+              isDirectSale: variant.isDirectSale,
+              costPrice: data.costPrice * variant.conversion
             }
           })
         )

@@ -23,6 +23,7 @@ export const INVOICE_INCLUDE_FIELDS = {
             name: true,
             code: true,
             deletedAt: true,
+            unitName: true,
             photos: {
               select: {
                 id: true,

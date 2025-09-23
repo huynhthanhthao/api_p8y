@@ -52,7 +52,7 @@ export class CreateUserRequestDto {
 
   @IsOptional()
   @IsEmail({}, { message: 'Email không hợp lệ' })
-  @MaxLength(255, { message: 'Email không được vượt quá 255 ký tự' })
+  @MaxLength(100, { message: 'Email không được vượt quá 255 ký tự' })
   @Transform(({ value }: TransformFnParams) => value?.trim())
   email: string
 

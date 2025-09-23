@@ -66,9 +66,10 @@ export class CreateStockTransactionRequestDto {
   code: string
 
   @IsNotEmpty({ message: 'Loại giao dịch không được để trống' })
-  @IsString({ message: 'Loại giao dịch phải là chuỗi ký tự' })
-  @MaxLength(50, { message: 'Loại giao dịch không được vượt quá 50 ký tự' })
   @Transform(({ value }: TransformFnParams) => value?.trim())
+  @IsEnum(StockTransactionTypeEnum, {
+    message: `Loại giao dịch phải là một trong: ${Object.values(StockTransactionTypeEnum).join(', ')}`
+  })
   type: StockTransactionTypeEnum
 
   @IsOptional()

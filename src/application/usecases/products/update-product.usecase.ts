@@ -238,8 +238,6 @@ export class UpdateProductUseCase {
       })
     }
 
-    const costPriceBase = data.costPrice || existingProduct.costPrice || 0
-
     /**
      * Cập nhật hoặc tạo mới các variant
      */
@@ -282,7 +280,6 @@ export class UpdateProductUseCase {
             unitName: variant.unitName,
             conversion: variant.conversion || 1,
             salePrice: variant.salePrice,
-            costPrice: costPriceBase * (variant.conversion || 1),
             isDirectSale: variant.isDirectSale,
             updatedBy: userId
           }
@@ -317,11 +314,10 @@ export class UpdateProductUseCase {
             barcode: variant.barcode,
             unitName: variant.unitName,
             conversion: variant.conversion,
-            costPrice: costPriceBase * (variant.conversion || 1),
-            salePrice: variant.salePrice,
-            isDirectSale: variant.isDirectSale,
             createdBy: userId,
-            branchId
+            branchId,
+            salePrice: variant.salePrice,
+            isDirectSale: variant.isDirectSale
           }
         })
       }

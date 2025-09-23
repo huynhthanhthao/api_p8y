@@ -20,7 +20,7 @@ class ProductWeightRequestDto {
   @IsEnum(ProductWeightUnitEnum, {
     message: `Đơn vị phải là một trong: ${Object.values(ProductWeightUnitEnum).join(', ')}`
   })
-  unit: string
+  unit: ProductWeightUnitEnum
 
   @IsOptional()
   @IsNumber({}, { message: 'Giá trị trọng lượng phải là số' })
@@ -31,17 +31,17 @@ class ProductWeightRequestDto {
 class MedicineInfoRequestDto {
   @IsOptional()
   @IsString({ message: 'Số đăng ký phải là chuỗi ký tự' })
-  @MaxLength(100, { message: 'Số đăng ký không được vượt quá 100 ký tự' })
+  @MaxLength(500, { message: 'Số đăng ký không được vượt quá 500 ký tự' })
   regNumber: string
 
   @IsOptional()
   @IsString({ message: 'Hoạt chất phải là chuỗi ký tự' })
-  @MaxLength(100, { message: 'Hoạt chất không được vượt quá 100 ký tự' })
+  @MaxLength(500, { message: 'Hoạt chất không được vượt quá 500 ký tự' })
   ingredient: string
 
   @IsOptional()
   @IsString({ message: 'Hàm lượng phải là chuỗi ký tự' })
-  @MaxLength(100, { message: 'Hàm lượng không được vượt quá 100 ký tự' })
+  @MaxLength(500, { message: 'Hàm lượng không được vượt quá 500 ký tự' })
   dosage: string
 
   @IsOptional()
@@ -127,7 +127,7 @@ export class CreateProductRequestDto {
 
   @IsOptional()
   @IsString({ message: 'Mô tả phải là chuỗi ký tự' })
-  @MaxLength(1000, { message: 'Mô tả không được vượt quá 1000 ký tự' })
+  @MaxLength(500, { message: 'Mô tả không được vượt quá 500 ký tự' })
   description: string
 
   @IsOptional()

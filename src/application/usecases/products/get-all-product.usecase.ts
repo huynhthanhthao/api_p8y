@@ -116,6 +116,13 @@ export class GetAllProductUseCase {
               createdBy: true,
               updatedBy: true
             }
+          },
+          parent: {
+            select: {
+              id: true,
+              conversion: true,
+              stockQuantity: true
+            }
           }
         }
       },

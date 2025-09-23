@@ -78,6 +78,13 @@ export const PRODUCT_INCLUDE_FIELDS = {
       orderBy: {
         createdAt: 'asc'
       }
+    },
+    parent: {
+      select: {
+        id: true,
+        conversion: true,
+        stockQuantity: true
+      }
     }
   }
 } as const satisfies Partial<Prisma.ProductFindUniqueArgs>

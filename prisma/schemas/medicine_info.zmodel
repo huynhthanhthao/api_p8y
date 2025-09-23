@@ -4,9 +4,9 @@ import 'medicine_route'
 
 model MedicineInfo {
   productId  String         @unique @db.Uuid @map("product_id")
-  regNumber  String?        @db.VarChar(100) @map("reg_number")  // Số đăng ký
-  ingredient String?        @db.VarChar(100)   // Hoạt chất
-  dosage     String?        @db.VarChar(100)  // Hàm lượng
+  regNumber  String?        @db.VarChar(500) @map("reg_number")  // Số đăng ký
+  ingredient String?        @db.VarChar(500)   // Hoạt chất
+  dosage     String?        @db.VarChar(500)  // Hàm lượng
   routeId    String?        @db.Uuid @map("route_id")     // FK tới MedicineRoute
 
   // Relations
