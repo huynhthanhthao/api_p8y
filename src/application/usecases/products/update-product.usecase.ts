@@ -3,12 +3,7 @@ import { HttpStatus, Injectable } from '@nestjs/common'
 import { HttpException } from '@common/exceptions'
 import { UpdateProductRequestDto } from '@interface-adapter/dtos/products'
 import { PRODUCT_ERROR } from '@common/errors'
-import {
-  generateCodeIncrease,
-  generateCodeModel,
-  validateUniqueFields,
-  validateValidEnableLot
-} from '@common/utils'
+import { generateCodeModel, validateUniqueFields, validateValidEnableLot } from '@common/utils'
 import { validateStockRange } from '@common/utils/products/validate-stock-range'
 import { PRODUCT_INCLUDE_FIELDS } from '@common/constants'
 import { Prisma } from '@prisma/client'

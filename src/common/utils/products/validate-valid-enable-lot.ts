@@ -13,7 +13,7 @@ export function validateValidEnableLot(
     throw new HttpException(HttpStatus.BAD_REQUEST, PRODUCT_ERROR.LOT_REQUIRES_ENABLE_STOCK)
   }
 
-  if (isLotEnabled && typeof stockQuantity === 'number') {
+  if (isLotEnabled && stockQuantity !== 0) {
     throw new HttpException(HttpStatus.BAD_REQUEST, PRODUCT_ERROR.STOCK_QUANTITY_NOT_ALLOWED)
   }
 
