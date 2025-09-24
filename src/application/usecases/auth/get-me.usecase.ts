@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common'
+import { HttpStatus, Injectable } from '@nestjs/common'
 import { PrismaService } from '@infrastructure/prisma'
 import { getUserInfo } from '@common/utils/auth/get-user-info.util'
-import { UserTypeEnum } from '@common/enums'
+import { UserStatusEnum, UserTypeEnum } from '@common/enums'
 import { getStoreWithAccessibleBranches } from '@common/utils'
 import { Branch } from '@common/types'
 import { GetMeResponseDto } from '@interface-adapter/dtos/auth'
+import { HttpException } from '@common/exceptions'
+import { GET_ME_ERROR } from '@common/errors'
 
 @Injectable()
 export class GetMeUseCase {
@@ -16,6 +18,9 @@ export class GetMeUseCase {
 
   async execute(userId: string, branchId: string, storeCode: string): Promise<GetMeResponseDto> {
     const user = await getUserInfo(this.prismaClient, userId)
+
+    if (user.status === UserStatusEnum.INACTIVE)
+      throw new HttpException(HttpStatus.FORBIDDEN, GET_ME_ERROR.USER_IS_INACTIVE)
 
     const accessUserId = user.type === UserTypeEnum.SUPER_ADMIN ? undefined : user.id
 

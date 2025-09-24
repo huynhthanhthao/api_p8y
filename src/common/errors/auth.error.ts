@@ -49,3 +49,10 @@ export const REFRESH_TOKEN_ERROR = {
     message: 'Tài khoản đã bị khóa'
   }
 }
+
+export const GET_ME_ERROR = {
+  USER_IS_INACTIVE: {
+    code: 'GET_ME_01',
+    message: 'Tài khoản đã bị khóa'
+  }
+}
