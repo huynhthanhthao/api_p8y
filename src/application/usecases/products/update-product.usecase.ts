@@ -3,7 +3,12 @@ import { HttpStatus, Injectable } from '@nestjs/common'
 import { HttpException } from '@common/exceptions'
 import { UpdateProductRequestDto } from '@interface-adapter/dtos/products'
 import { PRODUCT_ERROR } from '@common/errors'
-import { generateCodeModel, validateUniqueFields, validateValidEnableLot } from '@common/utils'
+import {
+  generateCodeModel,
+  validateUniqueFields,
+  validateUniqueUnitNames,
+  validateValidEnableLot
+} from '@common/utils'
 import { validateStockRange } from '@common/utils/products/validate-stock-range'
 import { PRODUCT_INCLUDE_FIELDS } from '@common/constants'
 import { Prisma } from '@prisma/client'
@@ -62,6 +67,7 @@ export class UpdateProductUseCase {
      * Kiểm tra thông tin tồn kho
      * Kiểm tra số lượng kho không được để trống nếu quản lý kho không theo lô
      * Kiểm tra mã sản phẩm, barcode không trùng
+     *
      */
     validateStockRange(
       data.minStock ?? existingProduct.minStock,
@@ -72,6 +78,7 @@ export class UpdateProductUseCase {
       data.isStockEnabled ?? existingProduct.isStockEnabled,
       data.stockQuantity
     )
+    validateUniqueUnitNames(data)
     await validateUniqueFields(this.prismaClient, data, branchId, id)
 
     /**

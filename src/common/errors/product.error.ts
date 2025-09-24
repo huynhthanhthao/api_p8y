@@ -34,5 +34,9 @@ export const PRODUCT_ERROR = {
   LOT_REQUIRES_ENABLE_STOCK: {
     code: 'PRODUCT_11',
     message: 'Sản phẩm quản lý theo lô bắt buộc phải bật quản lý kho'
+  },
+  UNIT_NAME_ALREADY_EXISTS: {
+    code: 'PRODUCT_12',
+    message: 'Tên đơn vị bị trùng'
   }
 }

@@ -4,6 +4,7 @@ import {
   generateCodeIncrease,
   generateCodeModel,
   validateUniqueFields,
+  validateUniqueUnitNames,
   validateValidEnableLot
 } from '@common/utils'
 import { CreateProductRequestDto } from '@interface-adapter/dtos/products'
@@ -24,9 +25,12 @@ export class CreateProductUseCase {
      * Kiểm tra thông tin tồn kho
      * Kiểm tra số lượng kho không được để trống nếu quản lý kho không theo lô
      * Kiểm tra mã sản phẩm, barcode không trùng
+     * Kiểm tra đơn vị tính không trùng
      */
     validateStockRange(data.minStock, data.maxStock)
     validateValidEnableLot(data.isLotEnabled, data.isStockEnabled, data.stockQuantity)
+    validateUniqueUnitNames(data)
+
     await validateUniqueFields(this.prismaClient, data, branchId)
 
     const productCode = data.code || (await generateCodeModel({ model: 'Product', branchId }))

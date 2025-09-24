@@ -6,6 +6,7 @@ export * from './auth/get-store-with-access-branches.util'
 // PRODUCT
 export * from './products/validate-unique-fields.util'
 export * from './products/validate-valid-enable-lot'
+export * from './products/validate-unique-unit-names'
 
 // STOCK TRANSACTION
 export * from './update-stock-quantity.util'
@@ -21,5 +22,3 @@ export * from './stock-transactions/check-duplicate-product-id.util'
 export * from './extract-error-messages.util'
 export * from './generate-code-model.util'
 export * from './roles-decorator.util'
-
-// INVOICE
