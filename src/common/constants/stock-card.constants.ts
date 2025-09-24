@@ -15,6 +15,8 @@ export const STOCK_CARD_SELECT_FIELDS = {
             quantity: true,
             productId: true,
             conversion: true,
+            productName: true,
+            unitName: true,
             productLot: {
               select: {
                 id: true,
@@ -22,6 +24,12 @@ export const STOCK_CARD_SELECT_FIELDS = {
                 stockQuantity: true,
                 productParentId: true,
                 expiryAt: true
+              }
+            },
+            product: {
+              select: {
+                id: true,
+                parentId: true
               }
             }
           }
@@ -40,6 +48,9 @@ export const STOCK_CARD_SELECT_FIELDS = {
             quantity: true,
             previousStock: true,
             productId: true,
+            conversion: true,
+            productName: true,
+            unitName: true,
             productLot: {
               select: {
                 id: true,
@@ -47,6 +58,12 @@ export const STOCK_CARD_SELECT_FIELDS = {
                 stockQuantity: true,
                 productParentId: true,
                 expiryAt: true
+              }
+            },
+            product: {
+              select: {
+                id: true,
+                parentId: true
               }
             }
           }

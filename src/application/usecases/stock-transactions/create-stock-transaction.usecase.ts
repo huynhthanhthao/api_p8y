@@ -13,7 +13,7 @@ import {
 } from '@common/utils'
 import { PrismaService } from '@infrastructure/prisma'
 import { STOCK_TRANSACTION_INCLUDE_FIELDS } from '@common/constants'
-import { STOCK_TRANSACTION_ERROR } from '@common/errors'
+import { PRODUCT_ERROR, STOCK_TRANSACTION_ERROR } from '@common/errors'
 
 @Injectable()
 export class CreateStockTransactionUseCase {
@@ -49,6 +49,8 @@ export class CreateStockTransactionUseCase {
         stockQuantity: true,
         productLots: true,
         conversion: true,
+        name: true,
+        unitName: true,
         parentId: true,
         parent: {
           select: {
@@ -107,11 +109,19 @@ export class CreateStockTransactionUseCase {
           stockItems: {
             create: data.stockItems.map(item => {
               const product = productList.find(p => p.id === item.productId)
-              const parentProduct = product?.parent
+
+              if (!product)
+                throw new HttpException(HttpStatus.NOT_FOUND, PRODUCT_ERROR.PRODUCT_NOT_FOUND)
+
+              const parentProduct = product.parent
               const productLot =
                 parentProduct?.productLots.find(p => p.id === item.productLotId) ||
-                product?.productLots.find(p => p.id === item.productLotId)
+                product.productLots.find(p => p.id === item.productLotId)
+
               return {
+                productName: product.name,
+                conversion: product.conversion,
+                unitName: product.unitName,
                 productId: item.productId,
                 discountType: item.discountType,
                 discountValue: item.discountValue,

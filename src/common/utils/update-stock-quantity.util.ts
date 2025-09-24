@@ -74,7 +74,7 @@ export async function updateStockQuantity(
      */
     const product = await tx.product.findUnique({
       where: { id: data.productId },
-      select: { stockQuantity: true }
+      select: { stockQuantity: true, code: true }
     })
 
     if (!product) {
@@ -99,7 +99,9 @@ export async function updateStockQuantity(
     }
 
     if (updatedStockQuantity < 0) {
-      throw new HttpException(HttpStatus.NOT_FOUND, STOCK_ERROR.INSUFFICIENT_STOCK_PRODUCT)
+      throw new HttpException(HttpStatus.NOT_FOUND, STOCK_ERROR.INSUFFICIENT_STOCK_PRODUCT, [
+        product.code
+      ])
     }
 
     await tx.product.update({

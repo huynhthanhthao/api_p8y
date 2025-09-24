@@ -102,7 +102,10 @@ export class UpdateProductUseCase {
               create: {
                 previousStock: existingProduct.stockQuantity,
                 productId: existingProduct.id,
-                quantity: data.stockQuantity
+                quantity: data.stockQuantity,
+                productName: existingProduct.name,
+                unitName: existingProduct.unitName,
+                conversion: existingProduct.conversion
               }
             },
             stockCards: {

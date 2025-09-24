@@ -2,7 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common'
 import { CreateStockTransactionRequestDto } from '@interface-adapter/dtos/stock-transactions'
 import { PrismaService } from '@infrastructure/prisma'
 import { HttpException } from '@common/exceptions'
-import { STOCK_TRANSACTION_ERROR } from '@common/errors'
+import { PRODUCT_ERROR, STOCK_TRANSACTION_ERROR } from '@common/errors'
 import {
   checkDuplicateProductId,
   checkInventoryEnabled,
@@ -70,6 +70,8 @@ export class UpdateStockTransactionUseCase {
       select: {
         id: true,
         code: true,
+        name: true,
+        unitName: true,
         isLotEnabled: true,
         isStockEnabled: true,
         stockQuantity: true,
@@ -131,7 +133,13 @@ export class UpdateStockTransactionUseCase {
           const product = productList.find(p => p.id === item.productId)
           const productLot = product?.productLots.find(p => p.id === item.productLotId)
 
+          if (!product)
+            throw new HttpException(HttpStatus.NOT_FOUND, PRODUCT_ERROR.PRODUCT_NOT_FOUND)
+
           return {
+            productName: product.name,
+            unitName: product.unitName,
+            conversion: product.conversion,
             transactionId: id,
             productId: item.productId,
             discountType: item.discountType,

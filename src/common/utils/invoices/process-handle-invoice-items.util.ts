@@ -88,7 +88,7 @@ function groupInvoiceItemsByParent(
      */
     const { targetProductId, conversionRate } = calculateTargetProductAndRate(product)
 
-    const parentProduct = productMap.get(targetProductId)
+    const parentProduct = productMap.get(targetProductId) ?? product
 
     if (!parentProduct) {
       throw new HttpException(HttpStatus.NOT_FOUND, PRODUCT_ERROR.PRODUCT_NOT_FOUND)
