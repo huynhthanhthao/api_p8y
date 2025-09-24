@@ -13,7 +13,11 @@ import { validateStockRange } from '@common/utils/products/validate-stock-range'
 import { PRODUCT_INCLUDE_FIELDS } from '@common/constants'
 import { Prisma } from '@prisma/client'
 import { Product } from '@common/types'
-import { StockCardTypeEnum, StockTransactionStatusEnum } from '@common/enums'
+import {
+  StockCardTypeEnum,
+  StockTransactionStatusEnum,
+  StockTransactionTypeEnum
+} from '@common/enums'
 
 @Injectable()
 export class UpdateProductUseCase {
@@ -93,7 +97,7 @@ export class UpdateProductUseCase {
         await tx.stockTransaction.create({
           data: {
             code: await generateCodeModel({ model: 'StockTransaction', branchId, prefix: 'KK' }),
-            type: StockCardTypeEnum.STOCK_TRANSACTION_CHECK,
+            type: StockTransactionTypeEnum.CHECK,
             note: 'Cập nhật số lượng kho',
             createdBy: userId,
             reviewedBy: userId,
