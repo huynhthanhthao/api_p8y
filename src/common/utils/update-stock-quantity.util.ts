@@ -32,8 +32,6 @@ export async function updateStockQuantity(
     /**
      * Có sử dụng lô, cập nhật số lượng cho từng productLot
      */
-    console.log(data, 3333)
-
     const productLot = await tx.productLot.findUnique({
       where: { id: data.productLotId, productParentId: data.productId },
       select: { stockQuantity: true, productParent: { select: { code: true } } }

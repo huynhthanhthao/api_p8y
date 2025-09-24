@@ -87,16 +87,6 @@ function groupInvoiceItemsByParent(
      * Xác định target product (luôn là parent) và conversion rate
      */
     const { targetProductId, conversionRate } = calculateTargetProductAndRate(product)
-
-    const parentProduct = productMap.get(targetProductId) ?? product
-
-    if (!parentProduct) {
-      throw new HttpException(HttpStatus.NOT_FOUND, PRODUCT_ERROR.PRODUCT_NOT_FOUND)
-    }
-
-    /**
-     * Tính quantity sau conversion
-     */
     const convertedQuantity = item.quantity * conversionRate
 
     /**
@@ -112,8 +102,8 @@ function groupInvoiceItemsByParent(
       result.set(groupKey, {
         finalQuantity: convertedQuantity,
         productParentId: targetProductId,
-        isLotEnabled: parentProduct.isLotEnabled,
-        isStockEnabled: parentProduct.isStockEnabled,
+        isLotEnabled: product.parent?.isLotEnabled ?? product.isLotEnabled,
+        isStockEnabled: product.parent?.isStockEnabled ?? product.isStockEnabled,
         productLotId: item.productLotId
       })
     }

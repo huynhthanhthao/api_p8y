@@ -26,7 +26,6 @@ export class DeleteProductGroupUseCase {
     if (!productGroup) {
       throw new HttpException(HttpStatus.NOT_FOUND, PRODUCT_GROUP_ERROR.PRODUCT_GROUP_NOT_FOUND)
     }
-    console.log(productGroup._count.children)
 
     if (productGroup._count.children) {
       throw new HttpException(HttpStatus.NOT_FOUND, PRODUCT_GROUP_ERROR.CANNOT_DELETE_PARENT)

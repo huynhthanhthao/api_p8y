@@ -144,7 +144,10 @@ export class UpdateProductUseCase {
         },
         data: {
           name: data.name,
-          code: data.code || (await generateCodeModel({ model: 'Product', branchId })),
+          code:
+            data.code ||
+            existingProduct.code ||
+            (await generateCodeModel({ model: 'Product', branchId })),
           productGroupId: data.productGroupId,
           type: data.type,
           barcode: data.barcode,

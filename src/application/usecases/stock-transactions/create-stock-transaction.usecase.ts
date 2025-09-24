@@ -128,8 +128,6 @@ export class CreateStockTransactionUseCase {
                 ? (productLot?.stockQuantity ?? 0) / conversionRate
                 : (parentProduct?.stockQuantity ?? product.stockQuantity ?? 0) / conversionRate
 
-              console.log(123, previousStock)
-
               return {
                 productName: product.name,
                 conversion: product.conversion,

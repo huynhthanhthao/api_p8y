@@ -1,6 +1,9 @@
 import { Product } from '@common/types'
 import { StockItemRequestDto } from '@interface-adapter/dtos/stock-transactions'
 import { calculateTargetProductAndRate } from '../calculate-target-product-and-rate.util'
+import { HttpException } from '@common/exceptions'
+import { HttpStatus } from '@nestjs/common'
+import { PRODUCT_ERROR } from '@common/errors'
 
 export function groupStockItemsByParent(
   stockItems: StockItemRequestDto[],
@@ -26,7 +29,9 @@ export function groupStockItemsByParent(
 
   for (const item of stockItems) {
     const product = productMap.get(item.productId)
-    if (!product) continue
+    if (!product) {
+      throw new HttpException(HttpStatus.NOT_FOUND, PRODUCT_ERROR.PRODUCT_NOT_FOUND)
+    }
 
     const { targetProductId, conversionRate } = calculateTargetProductAndRate(product)
     const convertedQuantity = item.quantity * conversionRate
@@ -40,7 +45,7 @@ export function groupStockItemsByParent(
       result.set(groupKey, {
         finalQuantity: convertedQuantity,
         productParentId: targetProductId,
-        isLotEnabled: product.parent ? product.parent.isLotEnabled : product.isLotEnabled,
+        isLotEnabled: product.parent?.isLotEnabled ?? product.isLotEnabled,
         productLotId: item.productLotId
       })
     }
