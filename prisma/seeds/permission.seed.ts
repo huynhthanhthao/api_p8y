@@ -1,4 +1,3 @@
-// prisma/seeds/permission.seed.ts
 import { PrismaClient } from '@prisma/client'
 import * as fs from 'fs'
 import * as path from 'path'
@@ -11,13 +10,25 @@ async function main() {
     const filePath = path.resolve(__dirname, 'data/permissions.json')
     const jsonData = JSON.parse(fs.readFileSync(filePath, 'utf-8'))
 
-    // Lấy tất cả permissions hiện có trong DB
-    const dbPermissions = await prisma.permission.findMany()
+    // ====== 1. Upsert PermissionGroup trước ======
+    const jsonGroups: { code: string; name: string }[] = jsonData.map((group: any) => ({
+      code: group.code,
+      name: group.name
+    }))
 
+    for (const group of jsonGroups) {
+      await prisma.permissionGroup.upsert({
+        where: { code: group.code },
+        update: { name: group.name },
+        create: { code: group.code, name: group.name }
+      })
+    }
+
+    // ====== 2. Upsert Permission ======
+    const dbPermissions = await prisma.permission.findMany()
     const jsonPermissions: { code: string; name: string; groupCode: string }[] = []
     const jsonPermissionCodes = new Set<string>()
 
-    // Duyệt file JSON => gom ra mảng permissions
     for (const group of jsonData) {
       for (const perm of group.permissions) {
         jsonPermissions.push({
@@ -29,7 +40,6 @@ async function main() {
       }
     }
 
-    // 1. Upsert tất cả permission trong JSON
     for (const perm of jsonPermissions) {
       await prisma.permission.upsert({
         where: { code: perm.code },
@@ -45,7 +55,7 @@ async function main() {
       })
     }
 
-    // 2. Xóa những permission không còn trong JSON
+    // ====== 3. Xoá Permission dư trong DB (không có trong JSON) ======
     for (const dbPerm of dbPermissions) {
       if (!jsonPermissionCodes.has(dbPerm.code)) {
         await prisma.permission.delete({
@@ -55,7 +65,7 @@ async function main() {
       }
     }
 
-    console.log('✅ Đồng bộ permission thành công!')
+    console.log('✅ Đồng bộ Permission & PermissionGroup thành công!')
   } catch (error) {
     console.error('❌ Lỗi khi seed permission:', error)
     throw error

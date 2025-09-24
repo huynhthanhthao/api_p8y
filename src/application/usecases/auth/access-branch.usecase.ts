@@ -139,7 +139,8 @@ export class AccessBranchUseCase {
             permissions: {
               select: {
                 code: true,
-                name: true
+                name: true,
+                groupCode: true
               }
             }
           }

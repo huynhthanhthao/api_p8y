@@ -155,5 +155,13 @@
     "code": "REPORT",
     "name": "Báo cáo",
     "permissions": [{ "code": "REPORT_VIEW", "name": "Xem báo cáo" }]
+  },
+  {
+    "code": "VIEW",
+    "name": "Truy cập giao diện",
+    "permissions": [
+      { "code": "MANAGER_VIEW", "name": "Truy cập giao diện quản lý" },
+      { "code": "SALE_VIEW", "name": "Truy cập giao diện bán hàng" }
+    ]
   }
 ]

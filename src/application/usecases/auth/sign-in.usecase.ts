@@ -98,7 +98,9 @@ export class SignInUseCase {
           select: {
             permissions: {
               select: {
-                code: true
+                code: true,
+                groupCode: true,
+                name: true
               }
             }
           }

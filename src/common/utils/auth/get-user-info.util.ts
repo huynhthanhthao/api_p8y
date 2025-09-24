@@ -22,7 +22,8 @@ export async function getUserInfo(tx: PrismaClient, userId: string): Promise<Use
           permissions: {
             select: {
               code: true,
-              name: true
+              name: true,
+              groupCode: true
             }
           }
         }
