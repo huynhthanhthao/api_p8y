@@ -34,7 +34,7 @@ export function checkDuplicateProductId(
       throw new HttpException(
         HttpStatus.BAD_REQUEST,
         STOCK_TRANSACTION_ERROR.DUPLICATE_PRODUCT_IN_CHECK,
-        [product.code]
+        product.code
       )
     }
 

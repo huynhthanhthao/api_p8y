@@ -59,9 +59,11 @@ export async function updateStockQuantity(
     }
 
     if (updatedStockQuantity < 0) {
-      throw new HttpException(HttpStatus.NOT_FOUND, STOCK_ERROR.INSUFFICIENT_STOCK_LOT, [
+      throw new HttpException(
+        HttpStatus.NOT_FOUND,
+        STOCK_ERROR.INSUFFICIENT_STOCK_LOT,
         productLot.productParent.code
-      ])
+      )
     }
 
     await tx.productLot.update({
@@ -99,9 +101,11 @@ export async function updateStockQuantity(
     }
 
     if (updatedStockQuantity < 0) {
-      throw new HttpException(HttpStatus.NOT_FOUND, STOCK_ERROR.INSUFFICIENT_STOCK_PRODUCT, [
+      throw new HttpException(
+        HttpStatus.NOT_FOUND,
+        STOCK_ERROR.INSUFFICIENT_STOCK_PRODUCT,
         product.code
-      ])
+      )
     }
 
     await tx.product.update({

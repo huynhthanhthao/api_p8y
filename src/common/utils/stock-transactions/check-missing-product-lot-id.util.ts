@@ -17,9 +17,11 @@ export function checkMissingProductLotId(
     const product = productMap.get(item.productId)
 
     if (!product) {
-      throw new HttpException(HttpStatus.BAD_REQUEST, PRODUCT_ERROR.PRODUCT_NOT_FOUND, [
+      throw new HttpException(
+        HttpStatus.BAD_REQUEST,
+        PRODUCT_ERROR.PRODUCT_NOT_FOUND,
         item.productId
-      ])
+      )
     }
 
     const isLotEnabled = product.isLotEnabled || product.parent?.isLotEnabled
@@ -43,7 +45,7 @@ function validateLotEnabledProduct(
     throw new HttpException(
       HttpStatus.BAD_REQUEST,
       STOCK_TRANSACTION_ERROR.MISSING_PRODUCT_LOT_ID,
-      [product.code]
+      product.code
     )
   }
 
@@ -52,9 +54,11 @@ function validateLotEnabledProduct(
    */
   const productLot = findProductLot(product, item.productLotId)
   if (!productLot) {
-    throw new HttpException(HttpStatus.BAD_REQUEST, PRODUCT_LOT_ERROR.PRODUCT_LOT_NOT_FOUND, [
+    throw new HttpException(
+      HttpStatus.BAD_REQUEST,
+      PRODUCT_LOT_ERROR.PRODUCT_LOT_NOT_FOUND,
       product.code
-    ])
+    )
   }
 }
 
@@ -69,7 +73,7 @@ function validateLotDisabledProduct(
     throw new HttpException(
       HttpStatus.BAD_REQUEST,
       STOCK_TRANSACTION_ERROR.UNEXPECTED_PRODUCT_LOT,
-      [product.code]
+      product.code
     )
   }
 }

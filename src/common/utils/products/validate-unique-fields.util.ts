@@ -34,12 +34,12 @@ export async function validateUniqueFields(
 
   const dupCodes = findDuplicates(codes)
   if (dupCodes.length > 0) {
-    throw new HttpException(HttpStatus.CONFLICT, PRODUCT_ERROR.CODE_EXISTS, dupCodes)
+    throw new HttpException(HttpStatus.CONFLICT, PRODUCT_ERROR.CODE_EXISTS, dupCodes[0])
   }
 
-  const dupBarcodes = findDuplicates(barcodes)
-  if (dupBarcodes.length > 0) {
-    throw new HttpException(HttpStatus.CONFLICT, PRODUCT_ERROR.BARCODE_EXISTS, dupBarcodes)
+  const dupBarCodes = findDuplicates(barcodes)
+  if (dupBarCodes.length > 0) {
+    throw new HttpException(HttpStatus.CONFLICT, PRODUCT_ERROR.BARCODE_EXISTS, dupBarCodes[0])
   }
 
   // B3: check DB
@@ -60,14 +60,14 @@ export async function validateUniqueFields(
   if (existing.code && codes.includes(existing.code)) {
     const expectId = codeMap.get(existing.code)
     if (!expectId || existing.id !== expectId) {
-      throw new HttpException(HttpStatus.CONFLICT, PRODUCT_ERROR.CODE_EXISTS, [existing.code])
+      throw new HttpException(HttpStatus.CONFLICT, PRODUCT_ERROR.CODE_EXISTS, existing.code)
     }
   }
 
   if (existing.barcode && barcodes.includes(existing.barcode)) {
     const expectId = barcodeMap.get(existing.barcode)
     if (!expectId || existing.id !== expectId) {
-      throw new HttpException(HttpStatus.CONFLICT, PRODUCT_ERROR.BARCODE_EXISTS, [existing.barcode])
+      throw new HttpException(HttpStatus.CONFLICT, PRODUCT_ERROR.BARCODE_EXISTS, existing.barcode)
     }
   }
 }

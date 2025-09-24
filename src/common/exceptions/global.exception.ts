@@ -1,7 +1,6 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common'
 import { Response } from 'express'
 import { Prisma } from '@prisma/client'
-import { ErrorResponse } from '../interfaces'
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -15,6 +14,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     let errorCode = 'ERR_BAD_REQUEST' // Giá trị mặc định
     let message = 'Có lỗi xảy ra'
     let errors: string[] = []
+    let invalidValue: string | undefined
 
     // Xử lý lỗi Prisma
     if (exception instanceof Prisma.PrismaClientKnownRequestError) {
@@ -54,12 +54,14 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         message = responseObj.message
 
         if (responseObj.errorCode) errorCode = responseObj.errorCode
+        if (responseObj.invalidValue) invalidValue = responseObj.invalidValue
       }
     }
 
     response.status(statusCode).json({
       message,
       errorCode,
+      invalidValue,
       errors
     })
   }

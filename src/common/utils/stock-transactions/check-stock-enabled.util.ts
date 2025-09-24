@@ -18,7 +18,7 @@ export function checkInventoryEnabled(
       throw new HttpException(
         HttpStatus.BAD_REQUEST,
         STOCK_TRANSACTION_ERROR.PRODUCT_NOT_INVENTORY_ENABLED,
-        [product.code]
+        product.code
       )
     }
   }

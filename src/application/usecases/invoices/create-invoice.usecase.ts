@@ -146,18 +146,22 @@ export class CreateInvoiceUseCase {
          * Quản lý theo lô: bắt buộc có lots, quantity = 0
          */
         if (!item.productLotId) {
-          throw new HttpException(HttpStatus.BAD_REQUEST, INVOICE_ERROR.MISSING_PRODUCT_LOT_ID, [
+          throw new HttpException(
+            HttpStatus.BAD_REQUEST,
+            INVOICE_ERROR.MISSING_PRODUCT_LOT_ID,
             product.code
-          ])
+          )
         }
       } else {
         /**
          * Không quản lý lô: không được truyền lots
          */
         if (item.productLotId) {
-          throw new HttpException(HttpStatus.BAD_REQUEST, INVOICE_ERROR.UNEXPECTED_PRODUCT_LOT, [
+          throw new HttpException(
+            HttpStatus.BAD_REQUEST,
+            INVOICE_ERROR.UNEXPECTED_PRODUCT_LOT,
             product.code
-          ])
+          )
         }
       }
     }
