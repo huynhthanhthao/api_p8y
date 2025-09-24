@@ -105,7 +105,8 @@ export class UpdateProductUseCase {
                 quantity: data.stockQuantity,
                 productName: existingProduct.name,
                 unitName: existingProduct.unitName,
-                conversion: existingProduct.conversion
+                conversion: existingProduct.conversion,
+                unitPrice: existingProduct.costPrice ?? 0
               }
             },
             stockCards: {
