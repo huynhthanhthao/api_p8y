@@ -1,60 +1,44 @@
 import { PrismaService } from '@infrastructure/prisma'
 import { StockTransactionTypeEnum } from '@common/enums'
-import { PRODUCT_ERROR } from '@common/errors'
 import { Product } from '@common/types'
 import { StockItemRequestDto } from '@interface-adapter/dtos/stock-transactions'
-import { HttpStatus } from '@nestjs/common'
 import { getStockCardType } from './get-stock-card-type.util'
-import { updateStockQuantity } from './update-stock-quantity.util'
-import { HttpException } from '@common/exceptions'
-import { groupStockItems } from './grouped-stock-item.util'
+import { updateStockQuantity } from '../update-stock-quantity.util'
+import { groupStockItemsByParent } from './group-stock-items-by-parent'
 
 export async function processHandleStockItems(
   stockTransactionType: StockTransactionTypeEnum,
   stockItems: StockItemRequestDto[],
-  productList: Pick<Product, 'id' | 'isLotEnabled' | 'code'>[],
+  productList: Pick<Product, 'id' | 'isLotEnabled' | 'code' | 'parent' | 'conversion'>[],
   tx: PrismaService
 ): Promise<void> {
-  const productMap = new Map<string, Pick<Product, 'id' | 'isLotEnabled' | 'code'>>(
-    productList.map(p => [p.id, p])
-  )
+  const productMap = new Map(productList.map(p => [p.id, p]))
 
   /**
-   * Group stock items trước
+   * Group stock items theo parent và tính toán conversion
    */
-  const stockItemsGrouped = groupStockItems(stockItems)
+  const parentGroupedItems = groupStockItemsByParent(stockItems, productMap)
 
   /**
-   * Kiểm tra tất cả products tồn tại một lần
+   * Xử lý tất cả item đã group theo parent
    */
-  for (const stockItem of stockItemsGrouped) {
-    if (!productMap.has(stockItem.productId)) {
-      throw new HttpException(HttpStatus.NOT_FOUND, PRODUCT_ERROR.PRODUCT_NOT_FOUND)
-    }
-  }
-
-  /**
-   * Xử lý tất cả stock items song song
-   */
-  const updatePromises = stockItemsGrouped.map(async stockItem => {
-    const productTarget = productMap.get(stockItem.productId)!
-
+  const updatePromises = Array.from(parentGroupedItems.entries()).map(async ([, item]) => {
     const stockCardType = getStockCardType(stockTransactionType)
 
-    const stockInput = productTarget.isLotEnabled
+    const stockInput = item.isLotEnabled
       ? {
-          productId: productTarget.id,
+          productId: item.productParentId, // ID của parent product
           isLotEnabled: true as const,
-          quantity: stockItem.quantity,
-          productLotId: stockItem.productLotId
+          quantity: item.finalQuantity, // Quantity đã được conversion
+          productLotId: item.productLotId!
         }
       : {
-          productId: productTarget.id,
+          productId: item.productParentId, // ID của parent product
           isLotEnabled: false as const,
-          quantity: stockItem.quantity
+          quantity: item.finalQuantity // Quantity đã được conversion
         }
 
-    return updateStockQuantity(stockInput, stockCardType, tx)
+    return await updateStockQuantity(stockInput, stockCardType, tx)
   })
 
   await Promise.all(updatePromises)

@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client'
 import { PrismaService } from '@infrastructure/prisma'
 import { Injectable } from '@nestjs/common'
 import { GetAllProductRequestDto, GetAllProductResponseDto } from '@interface-adapter/dtos/products'
+import { PRODUCT_INCLUDE_FIELDS } from '@common/constants'
 
 @Injectable()
 export class GetAllProductUseCase {
@@ -62,69 +63,7 @@ export class GetAllProductUseCase {
       {
         where,
         orderBy: { [sortBy]: orderBy },
-        omit: {
-          deletedAt: true,
-          deletedBy: true,
-          createdBy: true,
-          updatedBy: true
-        },
-        include: {
-          medicineInfo: {
-            include: {
-              route: {
-                omit: {
-                  deletedAt: true,
-                  deletedBy: true,
-                  createdBy: true,
-                  updatedBy: true
-                }
-              }
-            }
-          },
-          photos: {
-            omit: {
-              deletedAt: true,
-              deletedBy: true,
-              createdBy: true,
-              updatedBy: true
-            }
-          },
-          variants: {
-            select: {
-              id: true,
-              salePrice: true,
-              costPrice: true,
-              isDirectSale: true,
-              barcode: true,
-              code: true,
-              unitName: true,
-              conversion: true
-            }
-          },
-          productGroup: {
-            omit: {
-              deletedAt: true,
-              deletedBy: true,
-              createdBy: true,
-              updatedBy: true
-            }
-          },
-          productLocations: {
-            omit: {
-              deletedAt: true,
-              deletedBy: true,
-              createdBy: true,
-              updatedBy: true
-            }
-          },
-          parent: {
-            select: {
-              id: true,
-              conversion: true,
-              stockQuantity: true
-            }
-          }
-        }
+        ...PRODUCT_INCLUDE_FIELDS
       },
       { page, perPage }
     )

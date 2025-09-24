@@ -14,12 +14,13 @@ export const STOCK_CARD_SELECT_FIELDS = {
             productLotId: true,
             quantity: true,
             productId: true,
+            conversion: true,
             productLot: {
               select: {
                 id: true,
                 name: true,
                 stockQuantity: true,
-                productId: true,
+                productParentId: true,
                 expiryAt: true
               }
             }
@@ -44,7 +45,7 @@ export const STOCK_CARD_SELECT_FIELDS = {
                 id: true,
                 name: true,
                 stockQuantity: true,
-                productId: true,
+                productParentId: true,
                 expiryAt: true
               }
             }

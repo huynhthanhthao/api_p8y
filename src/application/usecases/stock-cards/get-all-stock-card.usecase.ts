@@ -20,11 +20,22 @@ export class GetAllStockCardUseCase {
     const where: Prisma.StockCardWhereInput = {
       branchId,
       ...(productId && {
-        products: {
-          some: {
-            id: productId
+        OR: [
+          {
+            products: {
+              some: {
+                id: productId
+              }
+            }
+          },
+          {
+            products: {
+              some: {
+                parentId: productId
+              }
+            }
           }
-        }
+        ]
       })
     }
 

@@ -73,7 +73,25 @@ export class UpdateStockTransactionUseCase {
         isLotEnabled: true,
         isStockEnabled: true,
         stockQuantity: true,
-        productLots: true
+        productLots: true,
+        conversion: true,
+        parentId: true,
+        parent: {
+          select: {
+            id: true,
+            conversion: true,
+            stockQuantity: true,
+            isStockEnabled: true,
+            isLotEnabled: true,
+            productLots: {
+              select: {
+                id: true,
+                name: true,
+                stockQuantity: true
+              }
+            }
+          }
+        }
       }
     })
 
@@ -81,7 +99,7 @@ export class UpdateStockTransactionUseCase {
      * Check sản phẩm lô và sản phẩm có bật quản lý kho
      */
     checkMissingProductLotId(data, productList)
-    checkInventoryEnabled(data, productList)
+    checkInventoryEnabled(productList)
     checkDuplicateProductId(data.type, data.stockItems, productList)
 
     /**

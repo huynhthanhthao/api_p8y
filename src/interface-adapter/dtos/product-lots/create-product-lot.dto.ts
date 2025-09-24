@@ -24,5 +24,5 @@ export class CreateProductLotRequestDto {
 
   @IsOptional()
   @IsUUID('4', { message: 'ID sản phẩm phải là UUID hợp lệ' })
-  productId: string
+  productParentId: string
 }

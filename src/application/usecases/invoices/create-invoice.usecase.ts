@@ -10,6 +10,7 @@ import { HttpException } from '@common/exceptions'
 import { INVOICE_ERROR } from '@common/errors'
 import { Invoice, Product } from '@common/types'
 import { InvoiceStatusEnum, StockCardTypeEnum } from '@common/enums'
+import { processHandleInvoiceItems } from '@common/utils/invoices/process-handle-invoice-items.util'
 
 @Injectable()
 export class CreateInvoiceUseCase {
@@ -36,11 +37,31 @@ export class CreateInvoiceUseCase {
       select: {
         id: true,
         code: true,
+        name: true,
+        unitName: true,
         costPrice: true,
         isStockEnabled: true,
         isLotEnabled: true,
         isDirectSale: true,
-        stockQuantity: true
+        stockQuantity: true,
+        conversion: true,
+        parentId: true,
+        parent: {
+          select: {
+            id: true,
+            conversion: true,
+            stockQuantity: true,
+            isStockEnabled: true,
+            isLotEnabled: true,
+            productLots: {
+              select: {
+                id: true,
+                name: true,
+                stockQuantity: true
+              }
+            }
+          }
+        }
       }
     })
 
@@ -71,16 +92,22 @@ export class CreateInvoiceUseCase {
           branchId,
           createdBy: userId,
           invoiceItems: {
-            create: data.invoiceItems.map(item => ({
-              costPrice: productList.find(p => p.id === item.productId)?.costPrice || 0,
-              salePrice: item.salePrice,
-              discountValue: item.discountValue,
-              quantity: item.quantity,
-              discountType: item.discountType,
-              note: item.note,
-              productId: item.productId,
-              productLotId: item.productLotId
-            }))
+            create: data.invoiceItems.map(item => {
+              const product = productList.find(p => p.id === item.productId)!
+              return {
+                costPrice: product.costPrice ?? 0,
+                conversion: product.conversion ?? 1,
+                productName: product.name ?? '',
+                unitName: product.unitName ?? '',
+                salePrice: item.salePrice,
+                discountValue: item.discountValue,
+                quantity: item.quantity,
+                discountType: item.discountType,
+                note: item.note,
+                productId: item.productId,
+                productLotId: item.productLotId
+              }
+            })
           }
         },
         ...INVOICE_INCLUDE_FIELDS
@@ -89,26 +116,7 @@ export class CreateInvoiceUseCase {
       /**
        * Xử lý cập nhật kho
        */
-      for (const item of this.groupInvoiceItems(data.invoiceItems)) {
-        const product = productList.find(p => p.id === item.productId)
-        if (!product) continue
-
-        /**
-         * Chỉ cập nhật kho nếu sản phẩm có bật quản lý kho
-         *  */
-        if (product.isStockEnabled) {
-          await updateStockQuantity(
-            {
-              productId: product.id,
-              isLotEnabled: product.isLotEnabled,
-              productLotId: item.productLotId!,
-              quantity: item.quantity
-            },
-            StockCardTypeEnum.INVOICE,
-            tx
-          )
-        }
-      }
+      await processHandleInvoiceItems(data.invoiceItems, productList, StockCardTypeEnum.INVOICE, tx)
 
       await tx.stockCard.create({
         data: {

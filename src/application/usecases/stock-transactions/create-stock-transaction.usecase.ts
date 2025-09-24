@@ -47,7 +47,25 @@ export class CreateStockTransactionUseCase {
         isLotEnabled: true,
         isStockEnabled: true,
         stockQuantity: true,
-        productLots: true
+        productLots: true,
+        conversion: true,
+        parentId: true,
+        parent: {
+          select: {
+            id: true,
+            conversion: true,
+            stockQuantity: true,
+            isStockEnabled: true,
+            isLotEnabled: true,
+            productLots: {
+              select: {
+                id: true,
+                name: true,
+                stockQuantity: true
+              }
+            }
+          }
+        }
       }
     })
 
@@ -55,7 +73,7 @@ export class CreateStockTransactionUseCase {
      * Check sản phẩm lô
      * Check sản phẩm có bật quản lý kho
      */
-    checkInventoryEnabled(data, productList)
+    checkInventoryEnabled(productList)
     checkMissingProductLotId(data, productList)
     checkDuplicateProductId(data.type, data.stockItems, productList)
 
@@ -64,7 +82,7 @@ export class CreateStockTransactionUseCase {
        * Xử lý nếu hoàn thành phiếu
        */
       if (data.status === StockTransactionStatusEnum.COMPLETED)
-        processHandleStockItems(
+        await processHandleStockItems(
           data.type as StockTransactionTypeEnum,
           data.stockItems,
           productList,
@@ -89,7 +107,10 @@ export class CreateStockTransactionUseCase {
           stockItems: {
             create: data.stockItems.map(item => {
               const product = productList.find(p => p.id === item.productId)
-              const productLot = product?.productLots.find(p => p.id === item.productLotId)
+              const parentProduct = product?.parent
+              const productLot =
+                parentProduct?.productLots.find(p => p.id === item.productLotId) ||
+                product?.productLots.find(p => p.id === item.productLotId)
               return {
                 productId: item.productId,
                 discountType: item.discountType,
@@ -98,7 +119,7 @@ export class CreateStockTransactionUseCase {
                 quantity: item.quantity,
                 previousStock: item.productLotId
                   ? productLot?.stockQuantity
-                  : product?.stockQuantity,
+                  : (parentProduct?.stockQuantity ?? product?.stockQuantity),
                 ...(product?.isLotEnabled && {
                   productLotId: item.productLotId
                 })

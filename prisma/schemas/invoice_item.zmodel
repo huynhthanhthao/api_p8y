@@ -6,12 +6,15 @@ import 'product_lot'
 model InvoiceItem extends BaseModel {
   salePrice     Float       @map("sale_price") @default(0)            // Unit price at the time of sale
   costPrice     Float       @map("cost_price") @default(0)            // Cost price at the time of sale
+  quantity      Float       @default(0)
+  productName   String      @db.VarChar(255)
+  productId     String      @map("product_id") @db.Uuid
+  invoiceId     String      @map("invoice_id") @db.Uuid
+  unitName      String?     @db.VarChar(50) @map("unit_name") @default("")
   discountValue Float?      @map("discount_value") @default(0)         // Discount (VND or %)
   discountType  String?     @map("discount_type") @db.VarChar(10) @default("VALUE") // PERCENT or VALUE
   note          String?     @map("note") @db.VarChar(500) @default("")           // Note
-  quantity      Float       @default(0)
-  productId     String      @map("product_id") @db.Uuid
-  invoiceId     String      @map("invoice_id") @db.Uuid
+  conversion    Float?      @default(1)
   productLotId  String?     @map("product_lot_id") @db.Uuid
 
   // Relations

@@ -26,6 +26,7 @@ export const STOCK_TRANSACTION_INCLUDE_FIELDS = {
             code: true,
             deletedAt: true,
             isLotEnabled: true,
+            unitName: true,
             photos: {
               select: {
                 id: true,

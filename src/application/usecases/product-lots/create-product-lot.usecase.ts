@@ -24,7 +24,7 @@ export class CreateProductLotUseCase {
           equals: data.name,
           mode: 'insensitive'
         },
-        productId: data.productId,
+        productParentId: data.productParentId,
         branchId
       }
     })
@@ -32,11 +32,27 @@ export class CreateProductLotUseCase {
     if (existingRecord)
       throw new HttpException(HttpStatus.CONFLICT, PRODUCT_LOT_ERROR.NAME_ALREADY_EXISTS)
 
+    const product = await this.prismaClient.product.findUnique({
+      where: { id: data.productParentId },
+      select: {
+        parent: {
+          select: {
+            id: true
+          }
+        }
+      }
+    })
+
+    if (!product) throw new HttpException(HttpStatus.CONFLICT, PRODUCT_LOT_ERROR.PRODUCT_NOT_FOUND)
+
+    if (product.parent !== null)
+      throw new HttpException(HttpStatus.CONFLICT, PRODUCT_LOT_ERROR.PRODUCT_NOT_BASE_UNIT)
+
     return await this.prismaClient.productLot.create({
       data: {
         name: data.name,
         expiryAt: data.expiryAt,
-        productId: data.productId,
+        productParentId: data.productParentId,
         createdBy: userId,
         branchId
       },

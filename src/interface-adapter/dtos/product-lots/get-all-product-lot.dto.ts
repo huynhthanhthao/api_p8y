@@ -18,7 +18,7 @@ export class GetAllProductLotRequestDto extends PaginationQueryDto {
 
   @IsOptional()
   @IsUUID('4', { message: 'ID nhóm cha phải là UUID hợp lệ' })
-  productId: string
+  productParentId: string
 
   @IsOptional()
   @Type(() => Date)

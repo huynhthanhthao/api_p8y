@@ -1,11 +1,13 @@
 import { Prisma } from '@prisma/client'
 import { PrismaService } from '@infrastructure/prisma'
-import { Injectable } from '@nestjs/common'
+import { HttpStatus, Injectable } from '@nestjs/common'
 import {
   GetAllProductLotRequestDto,
   GetAllProductLotResponseDto
 } from '@interface-adapter/dtos/product-lots'
 import { getEndOfDay } from '@common/helpers'
+import { HttpException } from '@common/exceptions'
+import { PRODUCT_ERROR } from '@common/errors'
 
 @Injectable()
 export class GetAllProductLotUseCase {
@@ -27,14 +29,23 @@ export class GetAllProductLotUseCase {
       sortBy,
       isExpired,
       quantityGreaterThan,
-      productId,
+      productParentId,
       expiryFrom,
       expiryTo
     } = params
 
+    const product = await this.prismaClient.product.findUnique({
+      where: { id: productParentId },
+      select: { id: true, parentId: true }
+    })
+
+    if (!product) {
+      throw new HttpException(HttpStatus.NOT_FOUND, PRODUCT_ERROR.PRODUCT_NOT_FOUND)
+    }
+
     const where: Prisma.ProductLotWhereInput = {
       branchId,
-      productId,
+      productParentId: product.parentId ?? product.id,
       stockQuantity: {
         gt: quantityGreaterThan
       },

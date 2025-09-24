@@ -83,7 +83,19 @@ export const PRODUCT_INCLUDE_FIELDS = {
       select: {
         id: true,
         conversion: true,
-        stockQuantity: true
+        stockQuantity: true,
+        isStockEnabled: true,
+        isLotEnabled: true,
+        productLots: {
+          select: {
+            id: true,
+            name: true,
+            stockQuantity: true
+          },
+          orderBy: {
+            createdAt: 'asc'
+          }
+        }
       }
     }
   }

@@ -1,4 +1,3 @@
-import { select } from './../../types/paymentMethod.type'
 import { StockCardTypeEnum } from '@common/enums'
 import { PRODUCT_ERROR, PRODUCT_LOT_ERROR, STOCK_ERROR } from '@common/errors'
 import { HttpException } from '@common/exceptions'
@@ -33,9 +32,11 @@ export async function updateStockQuantity(
     /**
      * Có sử dụng lô, cập nhật số lượng cho từng productLot
      */
+    console.log(data, 3333)
+
     const productLot = await tx.productLot.findUnique({
-      where: { id: data.productLotId, productId: data.productId },
-      select: { stockQuantity: true, product: { select: { code: true } } }
+      where: { id: data.productLotId, productParentId: data.productId },
+      select: { stockQuantity: true, productParent: { select: { code: true } } }
     })
 
     if (!productLot) {
@@ -59,7 +60,7 @@ export async function updateStockQuantity(
 
     if (updatedStockQuantity < 0) {
       throw new HttpException(HttpStatus.NOT_FOUND, STOCK_ERROR.INSUFFICIENT_STOCK_LOT, [
-        productLot.product.code
+        productLot.productParent.code
       ])
     }
 
