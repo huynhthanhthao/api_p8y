@@ -47,16 +47,9 @@ export class DeleteManyProductGroupUseCase {
       throw new HttpException(HttpStatus.BAD_REQUEST, PRODUCT_GROUP_ERROR.CANNOT_DELETE_PARENT)
     }
 
-    await this.prismaClient.productGroup.updateMany({
+    return await this.prismaClient.productGroup.updateMany({
       where: { id: { in: data.ids }, branchId },
-      data: { deletedBy: userId }
-    })
-
-    return await this.prismaClient.productGroup.deleteMany({
-      where: {
-        id: { in: data.ids },
-        branchId
-      }
+      data: { deletedBy: userId, deletedAt: new Date() }
     })
   }
 }

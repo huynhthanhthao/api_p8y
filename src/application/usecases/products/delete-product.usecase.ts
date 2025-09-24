@@ -14,22 +14,62 @@ export class DeleteProductUseCase {
 
   async execute(id: string, userId: string, branchId: string): Promise<string> {
     const product = await this.prismaClient.product.findUnique({
-      where: { id, branchId }
+      where: { id, branchId },
+      include: {
+        variants: {
+          select: {
+            id: true,
+            code: true,
+            barcode: true
+          }
+        }
+      }
     })
 
     if (!product) {
       throw new HttpException(HttpStatus.NOT_FOUND, PRODUCT_ERROR.SOME_PRODUCTS_NOT_FOUND)
     }
 
+    /**
+     *  Soft delete variants trước
+     */
+    if (product.variants.length > 0) {
+      await this.prismaClient.$transaction(
+        product.variants.map(variant =>
+          this.prismaClient.product.update({
+            where: { id: variant.id, branchId },
+            data: {
+              code: `del_${variant.code}_${generateTimesTamp()}`,
+              barcode: variant.barcode ? `del_${variant.barcode}_${generateTimesTamp()}` : null,
+              deletedBy: userId
+            }
+          })
+        )
+      )
+
+      await this.prismaClient.product.deleteMany({
+        where: {
+          parentId: id,
+          branchId
+        }
+      })
+    }
+
+    /**
+     * Soft delete product cha
+     */
     await this.prismaClient.product.update({
       where: { id, branchId },
       data: {
         code: `del_${product.code}_${generateTimesTamp()}`,
-        barcode: product.barcode || `del_${product.barcode}_${generateTimesTamp()}`,
+        barcode: product.barcode ? `del_${product.barcode}_${generateTimesTamp()}` : null,
         deletedBy: userId
       }
     })
 
+    /**
+     * Xoá hẳn product cha
+     */
     await this.prismaClient.product.delete({
       where: {
         id,

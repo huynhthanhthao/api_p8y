@@ -32,20 +32,14 @@ export class DeleteManySupplierGroupUseCase {
       )
     }
 
-    await this.prismaClient.supplierGroup.updateMany({
+    return await this.prismaClient.supplierGroup.updateMany({
       where: {
         id: { in: data.ids },
         branchId
       },
       data: {
-        deletedBy: userId
-      }
-    })
-
-    return await this.prismaClient.supplierGroup.deleteMany({
-      where: {
-        id: { in: data.ids },
-        branchId
+        deletedBy: userId,
+        deletedAt: new Date()
       }
     })
   }

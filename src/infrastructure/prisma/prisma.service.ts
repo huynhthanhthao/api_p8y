@@ -72,7 +72,13 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
   public readonly client: PrismaService
 
   constructor() {
-    super()
+    super({
+      log: ['query', 'error', 'warn'],
+      transactionOptions: {
+        maxWait: 10000,
+        timeout: 20000
+      }
+    })
     this.client = this.$extends(softDelete) as PrismaService
   }
 

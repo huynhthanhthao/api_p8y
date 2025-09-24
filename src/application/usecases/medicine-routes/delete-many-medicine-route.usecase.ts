@@ -32,16 +32,9 @@ export class DeleteManyMedicineRouteUseCase {
       )
     }
 
-    await this.prismaClient.medicineRoute.updateMany({
+    return await this.prismaClient.medicineRoute.updateMany({
       where: { id: { in: data.ids }, branchId },
-      data: { deletedBy: userId }
-    })
-
-    return await this.prismaClient.medicineRoute.deleteMany({
-      where: {
-        id: { in: data.ids },
-        branchId
-      }
+      data: { deletedBy: userId, deletedAt: new Date() }
     })
   }
 }

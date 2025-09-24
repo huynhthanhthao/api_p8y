@@ -32,16 +32,9 @@ export class DeleteManyProductLotUseCase {
       throw new HttpException(HttpStatus.NOT_FOUND, PRODUCT_LOT_ERROR.SOME_PRODUCT_LOTS_NOT_FOUND)
     }
 
-    await this.prismaClient.productLot.updateMany({
+    return await this.prismaClient.productLot.updateMany({
       where: { id: { in: data.ids }, branchId },
-      data: { deletedBy: userId }
-    })
-
-    return await this.prismaClient.productLot.deleteMany({
-      where: {
-        id: { in: data.ids },
-        branchId
-      }
+      data: { deletedBy: userId, deletedAt: new Date() }
     })
   }
 }

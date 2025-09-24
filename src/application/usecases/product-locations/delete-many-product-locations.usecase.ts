@@ -32,16 +32,9 @@ export class DeleteManyProductLocationUseCase {
       )
     }
 
-    await this.prismaClient.productLocation.updateMany({
+    return await this.prismaClient.productLocation.updateMany({
       where: { id: { in: data.ids }, branchId },
-      data: { deletedBy: userId }
-    })
-
-    return await this.prismaClient.productLocation.deleteMany({
-      where: {
-        id: { in: data.ids },
-        branchId
-      }
+      data: { deletedBy: userId, deletedAt: new Date() }
     })
   }
 }

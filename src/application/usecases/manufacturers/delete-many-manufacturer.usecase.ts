@@ -29,16 +29,9 @@ export class DeleteManyManufacturerUseCase {
       throw new HttpException(HttpStatus.NOT_FOUND, MANUFACTURER_ERROR.SOME_MANUFACTURERS_NOT_FOUND)
     }
 
-    await this.prismaClient.manufacturer.updateMany({
+    return await this.prismaClient.manufacturer.updateMany({
       where: { id: { in: data.ids }, branchId },
-      data: { deletedBy: userId }
-    })
-
-    return await this.prismaClient.manufacturer.deleteMany({
-      where: {
-        id: { in: data.ids },
-        branchId
-      }
+      data: { deletedBy: userId, deletedAt: new Date() }
     })
   }
 }

@@ -42,18 +42,14 @@ export class DeleteManySupplierUseCase {
         data: {
           deletedBy: userId,
           code: `del_${supplier.code}_${generateTimesTamp()}`,
-          phone: supplier.phone ? `del_${supplier.phone}_${generateTimesTamp()}` : null
+          phone: supplier.phone ? `del_${supplier.phone}_${generateTimesTamp()}` : null,
+          deletedAt: new Date()
         }
       })
     )
 
     await Promise.all(updatePromises)
 
-    return await this.prismaClient.supplier.deleteMany({
-      where: {
-        id: { in: data.ids },
-        branchId
-      }
-    })
+    return { count: suppliers.length }
   }
 }
