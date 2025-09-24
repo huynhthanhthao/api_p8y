@@ -3,7 +3,7 @@ import { Product } from '@common/types'
 export function calculateTargetProductAndRate(
   product: Pick<Product, 'id' | 'parent' | 'conversion'>
 ): {
-  targetProductId: string // LUÔN LÀ ID CỦA PARENT PRODUCT
+  targetProductId: string
   conversionRate: number
 } {
   if (product.parent) {

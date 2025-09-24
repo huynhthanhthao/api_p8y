@@ -14,6 +14,7 @@ import {
 import { PrismaService } from '@infrastructure/prisma'
 import { STOCK_TRANSACTION_INCLUDE_FIELDS } from '@common/constants'
 import { PRODUCT_ERROR, STOCK_TRANSACTION_ERROR } from '@common/errors'
+import { calculateTargetProductAndRate } from '@common/utils/calculate-target-product-and-rate.util'
 
 @Injectable()
 export class CreateStockTransactionUseCase {
@@ -108,15 +109,26 @@ export class CreateStockTransactionUseCase {
           }),
           stockItems: {
             create: data.stockItems.map(item => {
+              // 1. Lấy product từ cache
               const product = productList.find(p => p.id === item.productId)
-
-              if (!product)
+              if (!product) {
                 throw new HttpException(HttpStatus.NOT_FOUND, PRODUCT_ERROR.PRODUCT_NOT_FOUND)
+              }
 
+              // 2. Lấy parent + productLot (nếu có)
               const parentProduct = product.parent
               const productLot =
-                parentProduct?.productLots.find(p => p.id === item.productLotId) ||
-                product.productLots.find(p => p.id === item.productLotId)
+                parentProduct?.productLots.find(lot => lot.id === item.productLotId) ||
+                product.productLots.find(lot => lot.id === item.productLotId)
+
+              // 3. Tính conversion + previousStock
+              const { conversionRate } = calculateTargetProductAndRate(product)
+
+              const previousStock = item.productLotId
+                ? (productLot?.stockQuantity ?? 0) / conversionRate
+                : (parentProduct?.stockQuantity ?? product.stockQuantity ?? 0) / conversionRate
+
+              console.log(123, previousStock)
 
               return {
                 productName: product.name,
@@ -127,9 +139,7 @@ export class CreateStockTransactionUseCase {
                 discountValue: item.discountValue,
                 unitPrice: item.unitPrice,
                 quantity: item.quantity,
-                previousStock: item.productLotId
-                  ? productLot?.stockQuantity
-                  : (parentProduct?.stockQuantity ?? product?.stockQuantity),
+                previousStock: previousStock,
                 ...(product?.isLotEnabled && {
                   productLotId: item.productLotId
                 })

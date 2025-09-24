@@ -14,6 +14,7 @@ import {
 import { StockTransactionStatusEnum, StockTransactionTypeEnum } from '@common/enums'
 import { STOCK_TRANSACTION_INCLUDE_FIELDS } from '@common/constants'
 import { StockTransaction } from '@common/types'
+import { calculateTargetProductAndRate } from '@common/utils/calculate-target-product-and-rate.util'
 
 @Injectable()
 export class UpdateStockTransactionUseCase {
@@ -130,11 +131,23 @@ export class UpdateStockTransactionUseCase {
       await tx.stockItem.deleteMany({ where: { transactionId: id } })
       await tx.stockItem.createMany({
         data: data.stockItems.map(item => {
+          // 1. Lấy product từ cache
           const product = productList.find(p => p.id === item.productId)
-          const productLot = product?.productLots.find(p => p.id === item.productLotId)
-
-          if (!product)
+          if (!product) {
             throw new HttpException(HttpStatus.NOT_FOUND, PRODUCT_ERROR.PRODUCT_NOT_FOUND)
+          }
+
+          // 2. Lấy parent + productLot (nếu có)
+          const parentProduct = product.parent
+          const productLot =
+            parentProduct?.productLots.find(lot => lot.id === item.productLotId) ||
+            product.productLots.find(lot => lot.id === item.productLotId)
+
+          // 3. Chuẩn hóa previousStock theo conversion
+          const { conversionRate } = calculateTargetProductAndRate(product)
+          const previousStock = item.productLotId
+            ? (productLot?.stockQuantity ?? 0) / conversionRate
+            : (parentProduct?.stockQuantity ?? product.stockQuantity ?? 0) / conversionRate
 
           return {
             productName: product.name,
@@ -146,7 +159,7 @@ export class UpdateStockTransactionUseCase {
             discountValue: item.discountValue,
             unitPrice: item.unitPrice,
             quantity: item.quantity,
-            previousStock: item.productLotId ? productLot?.stockQuantity : product?.stockQuantity,
+            previousStock: previousStock,
             ...(product?.isLotEnabled && {
               productLotId: item.productLotId
             })
