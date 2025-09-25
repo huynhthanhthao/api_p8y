@@ -55,7 +55,7 @@ export class ReportRevenueUseCase {
         let itemDiscount = 0
 
         if (item.discountType === DiscountTypeEnum.PERCENT) {
-          itemDiscount = itemTotal * (item.discountValue || 0 / 100)
+          itemDiscount = itemTotal * ((item.discountValue || 0) / 100)
         } else if (item.discountType === DiscountTypeEnum.VALUE) {
           itemDiscount = item.discountValue || 0
         }
@@ -68,7 +68,7 @@ export class ReportRevenueUseCase {
        */
       let invoiceDiscount = 0
       if (invoice.discountType === DiscountTypeEnum.PERCENT) {
-        invoiceDiscount = itemsRevenue * (invoice.discountValue || 0 / 100)
+        invoiceDiscount = itemsRevenue * ((invoice.discountValue || 0) / 100)
       } else if (invoice.discountType === DiscountTypeEnum.VALUE) {
         invoiceDiscount = invoice.discountValue || 0
       }
