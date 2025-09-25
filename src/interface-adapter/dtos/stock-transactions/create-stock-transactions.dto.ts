@@ -28,7 +28,6 @@ export class StockItemRequestDto {
   @IsNotEmpty({ message: 'Số lượng không được để trống' })
   @IsNumber({}, { message: 'Số lượng phải là số' })
   @Min(0, { message: 'Số lượng không được nhỏ hơn 0' })
-  @IsInt({ message: 'Số lượng phải là số nguyên' })
   quantity: number
 
   @IsNotEmpty({ message: 'Đơn giá không được để trống' })
