@@ -11,7 +11,6 @@ export class GetAllProductLotRequestDto extends PaginationQueryDto {
   isExpired: boolean
 
   @IsOptional()
-  @IsInt({ message: 'Giá trị minStockQuantity phải là số nguyên' })
   @Min(0)
   @Transform(({ value }: TransformFnParams) => parseInt(value, 10))
   quantityGreaterThan: number

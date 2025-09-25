@@ -7,7 +7,8 @@ import {
   IsEnum,
   IsUUID,
   IsInt,
-  ArrayNotEmpty
+  ArrayNotEmpty,
+  IsNumber
 } from 'class-validator'
 import { Transform, TransformFnParams } from 'class-transformer'
 import { GenderEnum, UserStatusEnum, UserTypeEnum } from '@common/enums'
@@ -57,7 +58,7 @@ export class CreateUserRequestDto {
   email: string
 
   @IsOptional()
-  @IsInt({ message: 'Mã huyện phải là số' })
+  @IsInt({ message: 'Mã phường phải là số' })
   wardCode: number
 
   @IsOptional()

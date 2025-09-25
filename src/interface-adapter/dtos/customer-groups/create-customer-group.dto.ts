@@ -21,7 +21,6 @@ export class CreateCustomerGroupRequestDto {
   @IsOptional()
   @IsNumber({}, { message: 'Giá trị giảm giá phải là số' })
   @Min(0, { message: 'Giá trị phải lớn hơn hoặc bằng 0' })
-  @IsInt({ message: 'Giá trị giảm giá phải là số nguyên' })
   discountValue: number
 
   @IsOptional()

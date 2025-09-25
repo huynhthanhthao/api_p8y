@@ -67,7 +67,6 @@ export class CreateInvoiceRequestDto {
   @IsOptional()
   @IsNumber({}, { message: 'Giá trị giảm giá phải là số' })
   @Min(0, { message: 'Giá trị giảm giá phải lớn hơn hoặc bằng 0' })
-  @IsInt({ message: 'Giá trị giảm giá phải là số nguyên' })
   discountValue: number
 
   @IsOptional()
@@ -94,7 +93,6 @@ export class CreateInvoiceRequestDto {
   @IsOptional()
   @IsNumber({}, { message: 'Tiền khách đưa giảm giá phải là số' })
   @Min(0, { message: 'Tiền khách đưa giảm giá phải lớn hơn hoặc bằng 0' })
-  @IsInt({ message: 'Tiền khách đưa giảm giá phải là số nguyên' })
   moneyReceived: number
 
   @IsNotEmpty({ message: 'Hóa đơn phải có ít nhất một sản phẩm' })
