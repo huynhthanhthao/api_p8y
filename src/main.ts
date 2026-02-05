@@ -49,10 +49,11 @@ async function bootstrap() {
 
     const port = cfgService.get<number>('PORT') || 3000
 
+    app.set('trust proxy', 1)
+
     await app.listen(port, '0.0.0.0')
     
-    console.log(`🌟 Server is running on http://localhost:${port}`)
-    console.log(`Swagger documentation available at: http://localhost:${port}/api`)
+    console.log(`🌟 Server is running on http://0.0.0.0:${port}`)
   } catch (error) {
     console.error('❌ Failed to start server:', error)
   }
